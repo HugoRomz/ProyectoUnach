@@ -1,6 +1,6 @@
-<template >
-    <header class="bg-primaryBlue ">
-        <div class="flex flex-col lg:flex-row lg:max-w-7xl lg:mx-auto items-center ">
+<template>
+    <header class="bg-primaryBlue">
+        <div class="flex flex-col lg:flex-row container mx-auto items-center ">
             <div class="mt-2 mb-4">
                 <img class="lg:w-3/6 w-11/12 m-auto lg:m-0" src="../assets/unach.jpg" alt="Logo unach 2023">
             </div>
@@ -18,48 +18,46 @@
             </div>         -->
         </div>
     </header>
-    <nav class=" bg-SecundaryGold text-white">
-      <div class="container mx-auto px-4">
-        <div class="flex justify-between items-center">
-          <div class="text-xl font-semibold">
-            MiSitio
-          </div>
-          <div class="hidden md:flex space-x-4">
-            <a href="#" class="hover:bg-primaryBlue px-3 py-2 rounded">Inicio</a>
-            <div @mouseover="showSubList = true" @mouseout="showSubList = false" class="relative group">
-              <a href="#" class="hover:bg-primaryBlue px-3 py-2 rounded">Sublista</a>
-              <div v-if="showSubList" class="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white text-black z-10">
-                <a href="#" class="block px-4 py-2 hover:bg-blue-500 hover:text-white">Sublink 1</a>
-                <a href="#" class="block px-4 py-2 hover:bg-blue-500 hover:text-white">Sublink 2</a>
-              </div>
-            </div>
-            <a href="#" class="hover:bg-primaryBlue px-3 py-2 rounded">Contacto</a>
-          </div>
-          <div class="md:hidden flex items-center">
-            <button @click="isOpen = !isOpen">
-              <i class="fas fa-bars"></i>
-            </button>
-          </div>
-        </div>
+    <nav class="bg-SecundaryGold">
+    <div class="flex flex-wrap items-center justify-between py-4 md:py-0 pl-4 text-lg mx-auto container">
+      <div></div>
+      <span
+        id="menu-button"
+        class="h-6 w-6 cursor-pointer md:hidden block text-white text-xl"
+        @click="toggleMenu"
+      >
+        <i class="pi pi-bars"></i>
+      </span>
+
+      <div :class="{ hidden: !showMenu }" class="w-full md:flex md:items-center md:w-auto" id="menu">
+        <ul class="pt-4 text-lg md:flex md:justify-between  md:pt-0">
+            <li v-for="item in menuItems" :key="item.text">
+        <a :href="item.href" class="md:p-4 py-2 block md:hover:bg-primaryBlue text-white font-bold">{{ item.text }}</a>
+      </li>
+        </ul>
       </div>
-      <div v-if="isOpen" class="block md:hidden">
-        <a href="#" class="block hover:bg-primaryBlue px-4 py-2">Inicio</a>
-        <a href="#" class="block hover:bg-primaryBlue px-4 py-2">Sublista</a>
-        <div v-if="showSubList" class="px-4 py-2">
-          <a href="#" class="block hover:bg-primaryBlue">Sublink 1</a>
-          <a href="#" class="block hover:bg-primaryBlue">Sublink 2</a>
-        </div>
-        <a href="#" class="block hover:bg-primaryBlue px-4 py-2">Contacto</a>
-      </div>
-    </nav>
+    </div>
+  </nav>
 </template>
+
 <script>
 export default {
-  data() {
+    data() {
     return {
-      isOpen: false,
-      showSubList: false
+      showMenu: true,
+      menuItems: [
+        { text: 'Features', href: '#features1' },
+        { text: 'Features', href: '#features2' },
+        { text: 'Features', href: '#features3' },
+        { text: 'Features', href: '#features4' },
+        { text: 'Features', href: '#features5' }
+      ]
     };
+  },
+  methods: {
+    toggleMenu() {
+      this.showMenu = !this.showMenu;
+    }
   }
 };
 </script>
