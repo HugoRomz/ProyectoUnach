@@ -1,6 +1,4 @@
 <template>
-  <Navbar />
-
   <div class="container mx-auto">
     <div class="mt-8 flex flex-wrap space-x-0 space-y-2 md:space-x-4 md:space-y-0">
       <!-- Primer contenedor -->
