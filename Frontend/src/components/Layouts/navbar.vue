@@ -30,12 +30,13 @@
       </span>
 
       <div :class="{ hidden: !showMenu }" class="w-full md:flex md:items-center md:w-auto" id="menu">
-        <ul class="pt-4 text-lg md:flex md:justify-between  md:pt-0">
-            <li v-for="item in menuItems" :key="item.text">
-        <a :href="item.href" class="md:p-4 py-2 block md:hover:bg-primaryBlue text-white font-bold">{{ item.text }}</a>
-      </li>
-        </ul>
-      </div>
+  <ul class="pt-4 text-lg md:flex md:justify-between md:pt-0">
+    <li v-for="item in menuItems" :key="item.text">
+      <router-link :to="item.route" class="md:p-4 py-2 block md:hover:bg-primaryBlue text-white font-bold">{{ item.text }}</router-link>
+    </li>
+  </ul>
+</div>
+
     </div>
   </nav>
 </template>
@@ -47,11 +48,11 @@ export default {
     return {
       showMenu: true,
       menuItems: [
-        { text: 'Features', href: '#features1' },
-        { text: 'Features', href: '#features2' },
-        { text: 'Features', href: '#features3' },
-        { text: 'Features', href: '#features4' },
-        { text: 'Features', href: '#features5' }
+        { text: 'Home', route: '/' },
+        { text: 'Tutorias', route: '/tutorias' },
+        { text: 'Ensenanza', route: '/ensenanza' },
+        { text: 'Features', route: '#features4' },
+        { text: 'Features', route: '#features5' }
       ]
     };
   },
