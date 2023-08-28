@@ -37,7 +37,7 @@ function eliminarArticulo(id, callback) {
     const query = 'DELETE FROM articulos WHERE id = ?';
     db.query(query, [id], (error, results) => {
         if (error) {
-            callback(error, null);
+            callback(error, null); 
         } else {
             callback(null, results);
         }
