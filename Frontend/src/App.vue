@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import Navbar from './components/navbar.vue'; // Ajusta la ruta según tu estructura de archivos
+import Navbar from './components/Layouts/navbar.vue'; // Ajusta la ruta según tu estructura de archivos
 
 export default {
   name: 'App',

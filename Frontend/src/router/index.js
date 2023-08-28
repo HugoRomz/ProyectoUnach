@@ -1,26 +1,27 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import ListaArticulos from '../components/ProductList.vue'; 
-import TutoriasHome from '../components/tutorias.vue'
+import Home from '../views/HomeView.vue'; 
+import TutoriasView from '../views/TutoriaView.vue';
+import EnsenanzaView from '../views/EnsenanzaView.vue';
 // Ajusta la ruta según tu estructura
 
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: ListaArticulos,
+    component: Home,
     meta: { title: 'Sistema de Gestión de Actividades' }
   },
   {
     path: '/tutorias',
     name: 'Tutorias',
-    component: TutoriasHome,
+    component: TutoriasView,
     meta: { title: 'Tutorias' }
   }
   ,
   {
     path: '/ensenanza',
     name: 'Enseñanza',
-    component: TutoriasHome,
+    component: EnsenanzaView,
     meta: { title: 'Enseñanza' }
   }
   
