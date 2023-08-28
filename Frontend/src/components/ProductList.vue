@@ -7,7 +7,7 @@
         <h2 class=" text-primaryBlue text-lg font-bold pb-1">Tabla de Prueba</h2>
         <div class="my-1"></div> <!-- Espacio de separación -->
         <div class="bg-gradient-to-r from-yellow-300 to-yellow-500 h-px mb-6"></div>
-        <div class="h-auto">
+        <div class="h-auto"> 
           <div class="flex bg-white p-4 shadow-xl border rounded-lg ">
             <table class="w-full h-auto text-sm text-left text-gray-500 rounded-xl">
             <thead class="text-xs text-gray-700 uppercase bg-gray-100 ">
