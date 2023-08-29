@@ -65,7 +65,6 @@
   </template>
   
   <script>
-  import axios from 'axios'
   import DataTable from 'datatables.net-vue3'
   import Select from 'datatables.net-select';
   import DataTableLib from 'datatables.net-bs5'
@@ -74,7 +73,7 @@
   import print from 'datatables.net-buttons/js/buttons.print'
   import pdfmake from 'pdfmake'
   import pdfFonts from 'pdfmake/build/vfs_fonts'
-  pdfmake.vsf = pdfFonts.pdfMake.vsf;
+  pdfmake.vfs = pdfFonts.pdfMake.vfs;
   import 'datatables.net-responsive-bs5'
   import JsZip from 'jszip'
   import api from '../../services/apiTutorias';
@@ -93,7 +92,18 @@
               columns: [
                   { data: null, render: function (data, type, row, meta) { return `${meta.row + 1}` } },
                   { data: 'nombre' },
-                  { data: 'fecha' },
+                  { data: 'fecha',
+                      render: function(data, type, row) {
+                      if (type === 'display' || type === 'filter') {
+                        var fecha = new Date(data);
+                        var dia = fecha.getDate();
+                        var mes = fecha.getMonth() + 1;
+                        var año = fecha.getFullYear();
+                        return `${año}-${mes < 10 ? '0' + mes : mes}-${dia < 10 ? '0' + dia : dia}`;
+                      }
+                      return data; // para otros tipos de datos, devuelves el valor original
+                    }
+                  },
                   { data: 'descripcion' },
                   { data: 'prog_academico' }
               ],
