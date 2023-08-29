@@ -66,7 +66,7 @@
           ">
         </div> 
 
-        <button type="submit" class="w-full bg-primaryBlue text-white p-2 rounded hover:bg-SecundaryGold">Guardar</button>
+        <button type="submit" class="w-full bg-blue-800 text-white p-2 rounded hover:bg-blue-900">Guardar</button>
       </form>
       <button @click="closeModal" class="w-full bg-red-500 text-white p-2 rounded hover:bg-red-600 mt-4">Cerrar</button>
     </div>
@@ -115,7 +115,19 @@
                     }
                   },
                   { data: 'descripcion' },
-                  { data: 'prog_academico' }
+                  { data: 'prog_academico', width:'15%' },
+                  {
+                    title: 'Acciones',
+                    data: null,
+                    render: (data, type, row) => {
+                      return `
+                        <button class="bg-yellow-500 text-white p-2 rounded" @click="editarActividad(${data.id})">Editar</button>
+                        <button class="bg-red-500 text-white p-2 rounded" @click="eliminarActividad(${data.id})">Eliminar</button>
+                        <button class="bg-blue-500 text-white p-2 rounded" @click="detalleActividad(${data.id})">Detalles</button>
+                      `;
+                    },
+                    width: '16%', // Esto permite que la columna se ajuste al contenido
+                  }
               ],
               dtoptions: {
                   responsive: true,
