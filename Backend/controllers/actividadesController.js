@@ -10,4 +10,21 @@ function obtenerActividades(req, res) {
     });
 }
 
-module.exports = {obtenerActividades}
+function insertarActividad(req, res) {
+    const data = {
+        nombre: req.body.nombre,
+        fecha: req.body.fecha,
+        descripcion: req.body.descripcion,
+        prog_academico: req.body.prog_academico
+    };
+
+    actividadesModel.insertarActividad(data, (error, results) => {
+        if (error) {
+            res.status(500).json({ error: 'Error al insertar el artículo.' });
+        } else {
+            res.json(results);
+        }
+    });
+}
+
+module.exports = {obtenerActividades, insertarActividad}

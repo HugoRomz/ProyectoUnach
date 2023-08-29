@@ -12,4 +12,15 @@ function obtenerActividades(callback) {
     });
 }
 
-module.exports = {obtenerActividades}
+function insertarActividad(data, callback) {
+    const query = 'INSERT INTO act_tutorias SET ?';
+    db.query(query, data, (error, results) => {
+        if (error) {
+            callback(error, null);
+        } else {
+            callback(null, results);
+        }
+    });
+}
+
+module.exports = {obtenerActividades, insertarActividad}
