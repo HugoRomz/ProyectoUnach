@@ -44,18 +44,28 @@
           <textarea id="descripcion" v-model="form.descripcion" rows="4" class="p-2 rounded border focus:border-blue-400"></textarea>
         </div>
         <div class="flex flex-col">
-        <label for="prog_academico" class="text-sm font-semibold">Programa Académico:</label>
-        <select id="prog_academico" v-model="form.prog_academico" class="p-2 rounded border focus:border-blue-400">
-          <option disabled value="">Por favor seleccione una opción</option>
-          <option>LIDTS</option>
-          <option>LC</option>
-          <option>Ambas</option>
-        </select>
-      </div>
-        <div class="flex flex-col">
-          <label for="evidencias" class="text-sm font-semibold">Evidencias:</label>
-          <input type="file" id="evidencias" multiple @change="handleFileUpload($event)" class="p-2 rounded border focus:border-blue-400">
+          <label for="prog_academico" class="text-sm font-semibold">Programa Académico:</label>
+          <select id="prog_academico" v-model="form.prog_academico" class="p-2 rounded border focus:border-blue-400">
+            <option disabled value="">Por favor seleccione una opción</option>
+            <option>LIDTS</option>
+            <option>LC</option>
+            <option>Ambas</option>
+          </select>
         </div>
+        
+        <div class="flex flex-col">
+          <label for="evidencias" class="text-sm font-semibold mb-2">Evidencias:</label>
+          <input type="file" id="evidencias" multiple @change="handleFileUpload($event)" class="block w-full text-sm text-gray-500
+          file:mr-4 file:py-2 file:px-4
+          file:rounded-md file:border-0
+          file:text-sm file:font-semibold
+          file:bg-blue-500 file:text-white
+          hover:file:bg-blue-600
+          border
+          rounded
+          ">
+        </div> 
+
         <button type="submit" class="w-full bg-primaryBlue text-white p-2 rounded hover:bg-SecundaryGold">Guardar</button>
       </form>
       <button @click="closeModal" class="w-full bg-red-500 text-white p-2 rounded hover:bg-red-600 mt-4">Cerrar</button>
@@ -185,10 +195,19 @@
           },
           // Función para manejar el envío del formulario
           submitForm() {
+
+            // Verifica si los campos del formulario están vacíos
+            if (!this.form.nombre || !this.form.fecha || !this.form.descripcion || !this.form.prog_academico) {
+              alert("Todos los campos son obligatorios");
+              return;
+            }
+
             api.insertarActividad(this.form)
             .then(response => {
                 console.log('Formulario enviado exitosamente', response);
                 this.obtenerActividades(); // Actualiza la lista de actividades
+                this.showModal = false;
+
             })
             .catch(error => {
                 console.error('Hubo un error enviando el formulario', error);
