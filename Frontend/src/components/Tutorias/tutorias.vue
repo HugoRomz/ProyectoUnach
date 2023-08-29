@@ -88,7 +88,7 @@
   import JsZip from 'jszip'
   import api from '../../services/apiTutorias';
 
-  window.JsZip = JsZip
+  window.JSZip = JsZip
   DataTable.use(DataTableLib)
   DataTable.use(pdfmake)
   DataTable.use(ButtonsHtml5)
@@ -97,7 +97,7 @@
   export default {
       components: { DataTable },
       data() {
-          return {
+          return { 
               actividades: [],
               columns: [
                   { data: null, render: function (data, type, row, meta) { return `${meta.row + 1}` } },
@@ -130,32 +130,32 @@
                   },
                   buttons: [
                       {
+                          tittle: 'Reporte de actividades PAT',
+                          extend: 'excelHtml5',
+                          text: 'Excel',
+                          className: 'bg-green-500 btn btn-success border-0'
+                      }, 
+                      { 
+                          tittle: 'Reporte de actividades PAT',
                           extend: 'pdfHtml5',
-                          text: 'PDF',
-                          className: 'bg-gray-500 text-white p-2 rounded mx-3',
+                          text: '<i class="fa-regular fa-file"></i> PDF',
+                          className: 'bg-red-500 btn btn-danger border-0',
                           customize: function (doc) {
                               // Personalizar el documento PDF aquí
                           }
                       },
+                                           
                       {
-                          extend: 'excelHtml5',
-                          text: 'Excel',
-                          className: 'bg-gray-500 text-white p-2 rounded mx-3'
-                      },
-                      {
-                          extend: 'csvHtml5',
-                          text: 'CSV',
-                          className: 'bg-gray-500 text-white p-2 rounded mx-3'
-                      },
-                      {
+                          tittle: 'Reporte de actividades PAT',
                           extend: 'print',
                           text: 'Imprimir',
-                          className: 'bg-gray-500 text-white p-2 rounded mx-3'
+                          className: 'bg-gray-500 btn btn-dark border-0'
                       },
                       {
-                          extend: 'copyHtml5',
-                          text: 'Copiar',
-                          className: 'bg-gray-500 text-white p-2 rounded mx-3'
+                          tittle: 'Reporte de actividades PAT',
+                          extend: 'copy',
+                          text: 'Copiar Texto',
+                          className: 'bg-slate-300 btn btn-light border-0'
                       }
                   ],
               },
