@@ -1,6 +1,11 @@
 node_modules/
-dist/
-.vscode/
+
+.env
+
+
+*.log
+
+.cache/
 
 *.temp
 *.swp
