@@ -15,21 +15,20 @@
                             <option >A</option>
                             <option >B</option>
                             <option >C</option>
-                            
                         </select>
                     </div>
                 </div>
             </div>
             <!-- Segundo elemento -->
             <div className="col-span-1 sm:col-span-2 sm:row-span-2 sm:col-start-1 sm:row-start-3">
-                <div class="w-full bg-white p-4 shadow-xl border rounded-lg border-gray-600">
-                    <!-- Contenido aquí -->
+                <div class="w-full bg-white shadow-xl border rounded-lg border-gray-600">
+                    
                 </div>
             </div>
             <!-- Tercer elemento -->
             <div className="col-span-1 sm:col-span-4 sm:row-span-4 sm:col-start-3 sm:row-start-1">
-                <div class="w-full bg-white p-4 shadow-xl border rounded-lg border-gray-600">
-                    <!-- Contenido aquí -->
+                <div class="w-full bg-white shadow-xl border rounded-lg border-gray-600">
+                    <TabComponentEnsenanza />
                 </div>
             </div>
         </div>
@@ -39,9 +38,11 @@
 
 <script>
     import HeaderEnsenanza from './HeaderEnsenanza.vue';
+    import TabComponentEnsenanza from './TabComponentEnsenanza.vue';
     export default {
         components: {
-            HeaderEnsenanza
+            HeaderEnsenanza,
+            TabComponentEnsenanza
         }
     }
 </script>
