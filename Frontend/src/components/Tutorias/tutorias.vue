@@ -44,19 +44,29 @@
           <textarea id="descripcion" v-model="form.descripcion" rows="4" class="p-2 rounded border focus:border-blue-400"></textarea>
         </div>
         <div class="flex flex-col">
-        <label for="prog_academico" class="text-sm font-semibold">Programa Académico:</label>
-        <select id="prog_academico" v-model="form.prog_academico" class="p-2 rounded border focus:border-blue-400">
-          <option disabled value="">Por favor seleccione una opción</option>
-          <option>LIDTS</option>
-          <option>LC</option>
-          <option>Ambas</option>
-        </select>
-      </div>
-        <div class="flex flex-col">
-          <label for="evidencias" class="text-sm font-semibold">Evidencias:</label>
-          <input type="file" id="evidencias" multiple @change="handleFileUpload($event)" class="p-2 rounded border focus:border-blue-400">
+          <label for="prog_academico" class="text-sm font-semibold">Programa Académico:</label>
+          <select id="prog_academico" v-model="form.prog_academico" class="p-2 rounded border focus:border-blue-400">
+            <option disabled value="">Por favor seleccione una opción</option>
+            <option>LIDTS</option>
+            <option>LC</option>
+            <option>Ambas</option>
+          </select>
         </div>
-        <button type="submit" class="w-full bg-primaryBlue text-white p-2 rounded hover:bg-SecundaryGold">Guardar</button>
+        
+        <div class="flex flex-col">
+          <label for="evidencias" class="text-sm font-semibold mb-2">Evidencias:</label>
+          <input type="file" id="evidencias" multiple @change="handleFileUpload($event)" class="block w-full text-sm text-gray-500
+          file:mr-4 file:py-2 file:px-4
+          file:rounded-md file:border-0
+          file:text-sm file:font-semibold
+          file:bg-blue-500 file:text-white
+          hover:file:bg-blue-600
+          border
+          rounded
+          ">
+        </div> 
+
+        <button type="submit" class="w-full bg-blue-800 text-white p-2 rounded hover:bg-blue-900">Guardar</button>
       </form>
       <button @click="closeModal" class="w-full bg-red-500 text-white p-2 rounded hover:bg-red-600 mt-4">Cerrar</button>
     </div>
@@ -78,7 +88,7 @@
   import JsZip from 'jszip'
   import api from '../../services/apiTutorias';
 
-  window.JsZip = JsZip
+  window.JSZip = JsZip
   DataTable.use(DataTableLib)
   DataTable.use(pdfmake)
   DataTable.use(ButtonsHtml5)
@@ -87,7 +97,7 @@
   export default {
       components: { DataTable },
       data() {
-          return {
+          return { 
               actividades: [],
               columns: [
                   { data: null, render: function (data, type, row, meta) { return `${meta.row + 1}` } },
@@ -105,7 +115,19 @@
                     }
                   },
                   { data: 'descripcion' },
-                  { data: 'prog_academico' }
+                  { data: 'prog_academico', width:'15%' },
+                  {
+                    title: 'Acciones',
+                    data: null,
+                    render: (data, type, row) => {
+                      return `
+                        <button class="bg-yellow-500 text-white p-2 rounded" @click="editarActividad(${data.id})">Editar</button>
+                        <button class="bg-red-500 text-white p-2 rounded" @click="eliminarActividad(${data.id})">Eliminar</button>
+                        <button class="bg-blue-500 text-white p-2 rounded" @click="detalleActividad(${data.id})">Detalles</button>
+                      `;
+                    },
+                    width: '16%', // Esto permite que la columna se ajuste al contenido
+                  }
               ],
               dtoptions: {
                   responsive: true,
@@ -120,32 +142,32 @@
                   },
                   buttons: [
                       {
+                          tittle: 'Reporte de actividades PAT',
+                          extend: 'excelHtml5',
+                          text: 'Excel',
+                          className: 'bg-green-500 btn btn-success border-0'
+                      }, 
+                      { 
+                          tittle: 'Reporte de actividades PAT',
                           extend: 'pdfHtml5',
-                          text: 'PDF',
-                          className: 'bg-gray-500 text-white p-2 rounded mx-3',
+                          text: '<i class="fa-regular fa-file"></i> PDF',
+                          className: 'bg-red-500 btn btn-danger border-0',
                           customize: function (doc) {
                               // Personalizar el documento PDF aquí
                           }
                       },
+                                           
                       {
-                          extend: 'excelHtml5',
-                          text: 'Excel',
-                          className: 'bg-gray-500 text-white p-2 rounded mx-3'
-                      },
-                      {
-                          extend: 'csvHtml5',
-                          text: 'CSV',
-                          className: 'bg-gray-500 text-white p-2 rounded mx-3'
-                      },
-                      {
+                          tittle: 'Reporte de actividades PAT',
                           extend: 'print',
                           text: 'Imprimir',
-                          className: 'bg-gray-500 text-white p-2 rounded mx-3'
+                          className: 'bg-gray-500 btn btn-dark border-0'
                       },
                       {
-                          extend: 'copyHtml5',
-                          text: 'Copiar',
-                          className: 'bg-gray-500 text-white p-2 rounded mx-3'
+                          tittle: 'Reporte de actividades PAT',
+                          extend: 'copy',
+                          text: 'Copiar Texto',
+                          className: 'bg-slate-300 btn btn-light border-0'
                       }
                   ],
               },
@@ -185,10 +207,19 @@
           },
           // Función para manejar el envío del formulario
           submitForm() {
+
+            // Verifica si los campos del formulario están vacíos
+            if (!this.form.nombre || !this.form.fecha || !this.form.descripcion || !this.form.prog_academico) {
+              alert("Todos los campos son obligatorios");
+              return;
+            }
+
             api.insertarActividad(this.form)
             .then(response => {
                 console.log('Formulario enviado exitosamente', response);
                 this.obtenerActividades(); // Actualiza la lista de actividades
+                this.showModal = false;
+
             })
             .catch(error => {
                 console.error('Hubo un error enviando el formulario', error);
