@@ -1,9 +1,11 @@
 <template>
     <div class="container mx-auto">
+      <HeaderTutorias />
         <!-- Botón para abrir la ventana flotante -->
-      <button @click="openModal" class="bg-blue-500 text-white p-2 rounded mt-4">Registrar Actividad</button>
+     
       <div class="mt-8 flex flex-wrap space-x-0 space-y-2 md:space-x-4 md:space-y-0">
         <div class="flex-1 bg-white p-4 shadow-xl border rounded-lg md:w-1/2">
+          <button @click="openModal" class="bg-blue-500 text-white p-2 rounded mt-4 mb-4">Registrar Actividad</button>
           <div class="row">
             <div class="w-full">
               <div class="table responsive">
@@ -75,6 +77,7 @@
   </template>
   
   <script>
+  import HeaderTutorias from './HeaderTutorias.vue'
   import DataTable from 'datatables.net-vue3'
   import Select from 'datatables.net-select';
   import DataTableLib from 'datatables.net-bs5'
@@ -94,7 +97,7 @@
   DataTable.use(Select);
 
   export default {
-      components: { DataTable },
+      components: { DataTable, HeaderTutorias },
       data() {
           return { 
               actividades: [],
@@ -120,9 +123,9 @@
                     data: null,
                     render: (data, type, row) => {
                       return `
-                        <button class="bg-yellow-500 text-white p-2 rounded" @click="editarActividad(${data.id})">Editar</button>
-                        <button class="bg-red-500 text-white p-2 rounded" @click="eliminarActividad(${data.id})">Eliminar</button>
-                        <button class="bg-blue-500 text-white p-2 rounded" @click="detalleActividad(${data.id})">Detalles</button>
+                        <button class="bg-yellow-500 text-white p-2 rounded" @click="editarActividad(${data.id})"><i class="pi pi-pencil"></i></button>
+                        <button class="bg-red-500 text-white p-2 rounded" @click="eliminarActividad(${data.id})"><i class="pi pi-trash"></i></button>
+                        <button class="bg-blue-500 text-white p-2 rounded" @click="detalleActividad(${data.id})"><i class="pi pi-info-circle"></i></button>
                       `;
                     },
                     width: '16%', // Esto permite que la columna se ajuste al contenido
