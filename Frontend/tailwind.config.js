@@ -12,7 +12,7 @@ export default {
         white : 'rgb(255,255,255)'
       },
       fontFamily:{
-        'sans': ['Helveltica Condensed', 'Arial', 'sistem-ui']
+        'sans': ['Helvetica', 'Arial', 'sistem-ui']
       },
     },
   },
