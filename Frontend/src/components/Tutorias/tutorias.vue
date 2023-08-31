@@ -1,78 +1,78 @@
 <template>
-    <div class="container mx-auto">
+  <div class="container mx-auto">
         <!-- Botón para abrir la ventana flotante -->
-      <button @click="openModal" class="bg-blue-500 text-white p-2 rounded mt-4">Registrar Actividad</button>
-      <div class="mt-8 flex flex-wrap space-x-0 space-y-2 md:space-x-4 md:space-y-0">
-        <div class="flex-1 bg-white p-4 shadow-xl border rounded-lg md:w-1/2">
-          <div class="row">
-            <div class="w-full">
-              <div class="table responsive">
-                <DataTable :data="actividades" :columns="columns" class="table table-striped table-bordered display"
-                :options="dtoptions">
-                  <thead>
-                    <tr>
-                      <th>No_Actividad</th>
-                      <th>Nombre</th>
-                      <th>Fecha</th>
-                      <th>Descripcion</th>
-                      <th>Programa Academico</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </thead>
-                </DataTable>
-              </div>
+    <button @click="openModal" class="bg-blue-500 text-white p-2 rounded mt-4">Registrar Actividad</button>
+    <div class="mt-8 flex flex-wrap space-x-0 space-y-2 md:space-x-4 md:space-y-0">
+      <div class="flex-1 bg-white p-4 shadow-xl border rounded-lg md:w-1/2">
+        <div class="row">
+          <div class="w-full">
+            <div class="table responsive">
+              <DataTable :data="actividades" :columns="columns" class="table table-striped table-bordered display"
+              :options="dtoptions">
+                <thead>
+                  <tr>
+                    <th>No_Actividad</th>
+                    <th>Nombre</th>
+                    <th>Fecha</th>
+                    <th>Descripcion</th>
+                    <th>Programa Academico</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+              </DataTable>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
       <!-- Ventana flotante con formulario -->
-  <div v-if="showModal" class="fixed top-0 left-0 w-full h-full bg-gray-700 bg-opacity-50 flex justify-center items-center">
-    <div class="bg-white p-8 rounded-lg w-1/2">
-      <h2 class="text-lg mb-4 text-center font-semibold">Registra Actividad</h2>
-      <form @submit.prevent="submitForm" class="space-y-4">
-        <div class="flex flex-col">
-          <label for="nombre" class="text-sm font-semibold">Nombre:</label>
-          <input type="text" id="nombre" v-model="form.nombre" class="p-2 rounded border focus:border-blue-400">
-        </div>
-        <div class="flex flex-col">
-          <label for="fecha" class="text-sm font-semibold">Fecha:</label>
-          <input type="date" id="fecha" v-model="form.fecha" class="p-2 rounded border focus:border-blue-400">
-        </div>
-        <div class="flex flex-col">
-          <label for="descripcion" class="text-sm font-semibold">Descripción:</label>
-          <textarea id="descripcion" v-model="form.descripcion" rows="4" class="p-2 rounded border focus:border-blue-400"></textarea>
-        </div>
-        <div class="flex flex-col">
-          <label for="prog_academico" class="text-sm font-semibold">Programa Académico:</label>
-          <select id="prog_academico" v-model="form.prog_academico" class="p-2 rounded border focus:border-blue-400">
-            <option disabled value="">Por favor seleccione una opción</option>
-            <option>LIDTS</option>
-            <option>LC</option>
-            <option>Ambas</option>
-          </select>
-        </div>
-        
-        <div class="flex flex-col">
-          <label for="evidencias" class="text-sm font-semibold mb-2">Evidencias:</label>
-          <input type="file" id="evidencias" multiple @change="handleFileUpload($event)" class="block w-full text-sm text-gray-500
-          file:mr-4 file:py-2 file:px-4
-          file:rounded-md file:border-0
-          file:text-sm file:font-semibold
-          file:bg-blue-500 file:text-white
-          hover:file:bg-blue-600
-          border
-          rounded
-          ">
-        </div> 
+    <div v-if="showModal" class="fixed top-0 left-0 w-full h-full bg-gray-700 bg-opacity-50 flex justify-center items-center">
+      <div class="bg-white p-8 rounded-lg w-1/2">
+        <h2 class="text-lg mb-4 text-center font-semibold">Registra Actividad</h2>
+        <form @submit.prevent="submitForm" class="space-y-4">
+          <div class="flex flex-col">
+            <label for="nombre" class="text-sm font-semibold">Nombre:</label>
+            <input type="text" id="nombre" v-model="form.nombre" class="p-2 rounded border focus:border-blue-400">
+          </div>
+          <div class="flex flex-col">
+            <label for="fecha" class="text-sm font-semibold">Fecha:</label>
+            <input type="date" id="fecha" v-model="form.fecha" class="p-2 rounded border focus:border-blue-400">
+          </div>
+          <div class="flex flex-col">
+            <label for="descripcion" class="text-sm font-semibold">Descripción:</label>
+            <textarea id="descripcion" v-model="form.descripcion" rows="4" class="p-2 rounded border focus:border-blue-400"></textarea>
+          </div>
+          <div class="flex flex-col">
+            <label for="prog_academico" class="text-sm font-semibold">Programa Académico:</label>
+            <select id="prog_academico" v-model="form.prog_academico" class="p-2 rounded border focus:border-blue-400">
+              <option disabled value="">Por favor seleccione una opción</option>
+              <option>LIDTS</option>
+              <option>LC</option>
+              <option>Ambas</option>
+            </select>
+          </div>
+          
+          <div class="flex flex-col">
+            <label for="evidencias" class="text-sm font-semibold mb-2">Evidencias:</label>
+            <input type="file" id="evidencias" multiple @change="handleFileUpload($event)" class="block w-full text-sm text-gray-500
+            file:mr-4 file:py-2 file:px-4
+            file:rounded-md file:border-0
+            file:text-sm file:font-semibold
+            file:bg-blue-500 file:text-white
+            hover:file:bg-blue-600
+            border
+            rounded
+            ">
+          </div> 
 
-        <button type="submit" class="w-full bg-blue-800 text-white p-2 rounded hover:bg-blue-900">Guardar</button>
-      </form>
-      <button @click="closeModal" class="w-full bg-red-500 text-white p-2 rounded hover:bg-red-600 mt-4">Cerrar</button>
+          <button type="submit" class="w-full bg-blue-800 text-white p-2 rounded hover:bg-blue-900">Guardar</button>
+        </form>
+        <button @click="closeModal" class="w-full bg-red-500 text-white p-2 rounded hover:bg-red-600 mt-4">Cerrar</button>
+      </div>
     </div>
   </div>
-  </div>
-  </template>
+</template>
   
   <script>
   import DataTable from 'datatables.net-vue3'
