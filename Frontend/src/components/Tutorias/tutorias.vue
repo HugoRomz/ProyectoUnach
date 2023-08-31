@@ -78,7 +78,6 @@
   import DataTable from 'datatables.net-vue3'
   import Select from 'datatables.net-select';
   import DataTableLib from 'datatables.net-bs5'
-  import Buttons from 'datatables.net-buttons-bs5'
   import ButtonsHtml5 from 'datatables.net-buttons/js/buttons.html5'
   import print from 'datatables.net-buttons/js/buttons.print'
   import pdfmake from 'pdfmake'
