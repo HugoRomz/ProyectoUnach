@@ -1,6 +1,6 @@
 <template>
     <router-link :to="card.route">
-        <div class="my-8 border border-gray-500  rounded shadow-lg shadow-gray-200 bg-white duration-300 hover:-translate-y-1 ">
+        <div class="my-8 border border-gray-300  rounded shadow-lg shadow-gray-200 bg-white duration-300 hover:-translate-y-1 ">
                 <figure>
                     <img :src="card.img" :alt="card.alt" class="rounded h-72 w-full object-cover">
                     <figcaption class="p-4">

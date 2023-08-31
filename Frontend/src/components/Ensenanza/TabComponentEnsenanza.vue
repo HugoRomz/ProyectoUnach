@@ -7,7 +7,7 @@
                 {{ tab }}
             </button>
         </div>
-        <hr class="h-px bg-gray-600 border-0 ">
+        <hr class="h-px bg-gray-300 border-0 m-0">
         <!-- Contenido de las pestañas -->
         <div >
             <div v-if="activeTab === 'Ejercicios'">
@@ -37,7 +37,7 @@
         },
         data() {
             return {
-                activeTab: 'Ejercicios', // Pestaña activa por defecto
+                activeTab: 'Examenes', // Pestaña activa por defecto
                 tabs: ['Ejercicios', 'Examenes', 'Apuntes'] // Puedes añadir más pestañas aquí
             };
         }

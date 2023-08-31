@@ -1,6 +1,6 @@
 <template>
     <div class="container mx-auto">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 m-2">
             <HomeList v-for="card in cards" :card="card"/>
         </div>
     </div>
