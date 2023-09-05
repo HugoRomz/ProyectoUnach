@@ -10,6 +10,10 @@ export default {
 
   insertarActividad(data) {
     return axios.post(`${API_URL}/api/tutorias`, data);
-}
+  },
+
+  editarActividad(id, data) {
+    return axios.put(`${API_URL}/api/tutorias/${id}`, data);
+  }
   // Agrega más funciones para otras peticiones si es necesario
 };
