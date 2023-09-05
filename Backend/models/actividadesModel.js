@@ -35,4 +35,15 @@ function editarActividad(id, newData, callback) {
     });
 }
 
-module.exports = {obtenerActividades, insertarActividad, editarActividad}
+function eliminarActividad(id, callback) {
+    const query = 'DELETE FROM act_tutorias WHERE id_act = ?';
+    db.query(query, [id], (error, results) => {
+        if (error) {
+            callback(error, null);
+        } else {
+            callback(null, results);
+        }
+    });
+}
+
+module.exports = {obtenerActividades, insertarActividad, editarActividad, eliminarActividad}

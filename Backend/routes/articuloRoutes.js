@@ -18,5 +18,6 @@ router.delete('/api/articulos/:id', articuloController.eliminarArticulo);
 router.get('/api/tutorias', actividadesController.obtenerActividades);
 router.post('/api/tutorias', actividadesController.insertarActividad);
 router.put('/api/tutorias/:id', actividadesController.editarActividad);
+router.delete('/api/tutorias/:id', actividadesController.eliminarActividad);
 
 module.exports = router;

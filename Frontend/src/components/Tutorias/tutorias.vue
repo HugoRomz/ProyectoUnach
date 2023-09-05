@@ -124,7 +124,7 @@
                     render: (data, type, row) => {
                       return `
                         <button class="btn-editar-actividad bg-yellow-500 text-white p-2 rounded" data-id="${data.id_act}">Editar<i class="pi pi-pencil"></i></button>
-                        <button class="bg-red-500 text-white p-2 rounded" @click="eliminarActividad(${data.id})">Eliminar<i class="pi pi-trash"></i></button>
+                        <button class="btn-eliminar-actividad bg-red-500 text-white p-2 rounded" data-id="${data.id_act})">Eliminar<i class="pi pi-trash"></i></button>
                         <button class="bg-blue-500 text-white p-2 rounded" @click="detalleActividad(${data.id})">Detalles<i class="pi pi-info-circle"></i></button>
                       `;
                     },
@@ -192,9 +192,16 @@
 
           this.$nextTick(() => {
               document.addEventListener('click', event => {
+                  // Verificar si se hizo clic en el botón de editar
                   if (event.target.matches('.btn-editar-actividad')) {
                       const id = event.target.getAttribute('data-id');
                       this.cargarActividadParaEditar(id);
+                  }
+
+                  // Verificar si se hizo clic en el botón de eliminar
+                  if (event.target.matches('.btn-eliminar-actividad')) {
+                      const id = event.target.getAttribute('data-id');
+                      this.eliminarActividad(id);
                   }
               });
           });
@@ -208,6 +215,18 @@
                   .catch(error => {
                       console.error('Error al obtener las actividades:', error);
                   });
+          },
+          eliminarActividad(id) {
+              if(confirm("¿Estás seguro de que deseas eliminar esta actividad?")) {
+                  api.eliminarActividad(id)
+                  .then(response => {
+                      console.log('Actividad eliminada exitosamente', response);
+                      this.obtenerActividades(); // Actualiza la lista de actividades
+                  })
+                  .catch(error => {
+                      console.error('Hubo un error eliminando la actividad', error);
+                  });
+              }
           },
           cargarActividadParaEditar(id) {
             const actividad = this.actividades.find(act => act.id_act == id);
@@ -231,7 +250,7 @@
             } else {
                 console.error('No se encontró la actividad con el ID:', id);
             }
-        },
+          },
 
           handleFileUpload(event) {
             this.form.evidencias = event.target.files;

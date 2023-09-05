@@ -14,6 +14,10 @@ export default {
 
   editarActividad(id, data) {
     return axios.put(`${API_URL}/api/tutorias/${id}`, data);
+  },
+
+  eliminarActividad(id) {
+    return axios.delete(`${API_URL}/api/tutorias/${id}`);
   }
   // Agrega más funciones para otras peticiones si es necesario
 };

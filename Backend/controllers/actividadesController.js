@@ -45,4 +45,15 @@ function editarActividad(req, res) {
     });
 }
 
-module.exports = {obtenerActividades, insertarActividad, editarActividad}
+function eliminarActividad(req, res) {
+    const id = req.params.id;
+    actividadesModel.eliminarActividad(id, (error, results) => {
+        if (error) {
+            res.status(500).json({ error: 'Error al eliminar la actividad.' });
+        } else {
+            res.json(results);
+        }
+    });
+}
+
+module.exports = {obtenerActividades, insertarActividad, editarActividad, eliminarActividad}
