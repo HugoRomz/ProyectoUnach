@@ -31,7 +31,7 @@
       <!-- Ventana flotante con formulario -->
   <div v-if="showModal" class="fixed top-0 left-0 w-full h-full bg-gray-700 bg-opacity-50 flex justify-center items-center">
     <div class="bg-white p-8 rounded-lg w-1/2">
-      <h2 class="text-lg mb-4 text-center font-semibold">Registra Actividad</h2>
+      <h2 class="text-lg mb-4 text-center font-semibold">{{ modalTitle }}</h2>
       <form @submit.prevent="submitForm" class="space-y-4">
         <div class="flex flex-col">
           <label for="nombre" class="text-sm font-semibold">Nombre:</label>
@@ -102,7 +102,7 @@
           return { 
               actividades: [],
               columns: [
-                  { data: null, render: function (data, type, row, meta) { return `${meta.row + 1}` } },
+                  { data: 'id_act' },
                   { data: 'nombre' },
                   { data: 'fecha',
                       render: function(data, type, row) {
@@ -123,9 +123,9 @@
                     data: null,
                     render: (data, type, row) => {
                       return `
-                        <button class="bg-yellow-500 text-white p-2 rounded" @click="editarActividad(${data.id})"><i class="pi pi-pencil"></i></button>
-                        <button class="bg-red-500 text-white p-2 rounded" @click="eliminarActividad(${data.id})"><i class="pi pi-trash"></i></button>
-                        <button class="bg-blue-500 text-white p-2 rounded" @click="detalleActividad(${data.id})"><i class="pi pi-info-circle"></i></button>
+                        <button class="btn-editar-actividad bg-yellow-500 text-white p-2 rounded" data-id="${data.id_act}">Editar<i class="pi pi-pencil"></i></button>
+                        <button class="btn-eliminar-actividad bg-red-500 text-white p-2 rounded" data-id="${data.id_act})">Eliminar<i class="pi pi-trash"></i></button>
+                        <button class="bg-blue-500 text-white p-2 rounded" @click="detalleActividad(${data.id})">Detalles<i class="pi pi-info-circle"></i></button>
                       `;
                     },
                     width: '16%', // Esto permite que la columna se ajuste al contenido
@@ -181,11 +181,30 @@
                   prog_academico: '',
                   evidencias: null
               },
-              showModal: false // Controla si se muestra o no la ventana flotante
+              showModal: false, // Controla si se muestra o no la ventana flotante
+              modalTitle: '',
+              formMode: '',  // Puede ser 'insertar' o 'editar'
+              editingId: null  // ID del elemento que se está editando
           }
       },
       mounted() {
           this.obtenerActividades()
+
+          this.$nextTick(() => {
+              document.addEventListener('click', event => {
+                  // Verificar si se hizo clic en el botón de editar
+                  if (event.target.matches('.btn-editar-actividad')) {
+                      const id = event.target.getAttribute('data-id');
+                      this.cargarActividadParaEditar(id);
+                  }
+
+                  // Verificar si se hizo clic en el botón de eliminar
+                  if (event.target.matches('.btn-eliminar-actividad')) {
+                      const id = event.target.getAttribute('data-id');
+                      this.eliminarActividad(id);
+                  }
+              });
+          });
       },
       methods: {
           obtenerActividades() {
@@ -197,15 +216,63 @@
                       console.error('Error al obtener las actividades:', error);
                   });
           },
+          eliminarActividad(id) {
+              if(confirm("¿Estás seguro de que deseas eliminar esta actividad?")) {
+                  api.eliminarActividad(id)
+                  .then(response => {
+                      console.log('Actividad eliminada exitosamente', response);
+                      this.obtenerActividades(); // Actualiza la lista de actividades
+                  })
+                  .catch(error => {
+                      console.error('Hubo un error eliminando la actividad', error);
+                  });
+              }
+          },
+          cargarActividadParaEditar(id) {
+            const actividad = this.actividades.find(act => act.id_act == id);
+            
+            // Convertir la fecha al formato YYYY-MM-DD
+            const fecha = new Date(actividad.fecha);
+            const formattedDate = `${fecha.getFullYear()}-${(fecha.getMonth() + 1).toString().padStart(2, '0')}-${fecha.getDate().toString().padStart(2, '0')}`;
+
+            if (actividad) {
+                this.form.nombre = actividad.nombre;
+                this.form.fecha = formattedDate;
+                this.form.descripcion = actividad.descripcion;
+                this.form.prog_academico = actividad.prog_academico;
+                // Para evidencias, debes decidir cómo tratarlas. Por ahora, la dejaremos como null.
+                this.form.evidencias = null;
+
+                this.showModal=true;
+                this.modalTitle = 'Editar Actividad';
+                this.formMode = 'editar';  // Establece el modo a editar
+                this.editingId = id;  // Guarda el ID que se está editando
+            } else {
+                console.error('No se encontró la actividad con el ID:', id);
+            }
+          },
+
           handleFileUpload(event) {
             this.form.evidencias = event.target.files;
           },
           // Nuevas funciones para abrir y cerrar la ventana flotante
           openModal() {
+              this.modalTitle = 'Registrar Actividad';
+              this.resetForm();  // Aquí restableces el formulario
+              this.formMode = 'insertar';  // Establece el modo a insertar
               this.showModal = true;
           },
           closeModal() {
               this.showModal = false;
+          },
+          resetForm() {
+              this.form = {
+                  nombre: '',
+                  fecha: '',
+                  descripcion: '',
+                  prog_academico: '',
+                  evidencias: null
+              };
           },
           // Función para manejar el envío del formulario
           submitForm() {
@@ -216,17 +283,29 @@
               return;
             }
 
-            api.insertarActividad(this.form)
-            .then(response => {
-                console.log('Formulario enviado exitosamente', response);
-                this.obtenerActividades(); // Actualiza la lista de actividades
-                this.showModal = false;
+            if (this.formMode === 'insertar'){
+              api.insertarActividad(this.form)
+              .then(response => {
+                  console.log('Formulario enviado exitosamente', response);
+                  this.obtenerActividades(); // Actualiza la lista de actividades
+                  this.showModal = false;
 
-            })
-            .catch(error => {
-                console.error('Hubo un error enviando el formulario', error);
-            });
-            }
+              })
+              .catch(error => {
+                  console.error('Hubo un error enviando el formulario', error);
+              });
+            }else if (this.formMode === 'editar'){
+              api.editarActividad(this.editingId, this.form)
+              .then(response => {
+                  console.log('Actividad editada exitosamente', response);
+                  this.obtenerActividades();
+                  this.showModal = false;
+              })
+              .catch(error => {
+                  console.error('Hubo un error editando la actividad', error);
+              });
+              }
+          }
       },
   }
 </script>
