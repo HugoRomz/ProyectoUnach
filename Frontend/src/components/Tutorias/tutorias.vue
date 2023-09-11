@@ -123,9 +123,9 @@
                     data: null,
                     render: (data, type, row) => {
                       return `
-                        <button class="btn-editar-actividad bg-yellow-500 text-white p-2 rounded" data-id="${data.id_act}">Editar<i class="pi pi-pencil"></i></button>
-                        <button class="btn-eliminar-actividad bg-red-500 text-white p-2 rounded" data-id="${data.id_act})">Eliminar<i class="pi pi-trash"></i></button>
-                        <button class="bg-blue-500 text-white p-2 rounded" @click="detalleActividad(${data.id})">Detalles<i class="pi pi-info-circle"></i></button>
+                        <button class="btn-editar-actividad bg-yellow-500 text-white p-2 rounded" data-id="${data.id_act}">Editar</button>
+                        <button class="btn-eliminar-actividad bg-red-500 text-white p-2 rounded" data-id="${data.id_act})">Eliminar</button>
+                        <button class="bg-blue-500 text-white p-2 rounded" @click="detalleActividad(${data.id})">Detalles</button>
                       `;
                     },
                     width: '16%', // Esto permite que la columna se ajuste al contenido
