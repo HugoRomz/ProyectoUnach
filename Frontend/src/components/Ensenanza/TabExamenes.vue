@@ -5,48 +5,30 @@
         </button>
 
         <div class="w-full">
-            <div class="">
-                <DataTable :data="actividades" :columns="columns" class="table table-striped table-bordered m-0"
-                    :options="dtoptions">
-                    <thead>
-                        <tr>
-                            <th>No_Actividad</th>
-                            <th>Nombre</th>
-                            <th>Fecha</th>
-                            <th>Descripcion</th>
-                            <th>Programa Academico</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                </DataTable>
-            </div>
+                <DataTableComponent :data="actividades" :columns="columns" :dtoptions="dtoptions">
+                    <template #headers>
+                        <th>No_Actividad</th>
+                        <th>Nombre</th>
+                        <th>Fecha</th>
+                        <th>Descripcion</th>
+                        <th>Programa Academico</th>
+                        <th>Acciones</th>
+                    </template>
+                </DataTableComponent>   
         </div>
     </div>
 </template>
 
 <script>
-    import DataTable from 'datatables.net-vue3'
-    import Select from 'datatables.net-select';
-    import ButtonsHtml5 from 'datatables.net-buttons/js/buttons.html5'
-    import print from 'datatables.net-buttons/js/buttons.print'
-    import pdfmake from 'pdfmake'
-    import pdfFonts from 'pdfmake/build/vfs_fonts'
-    pdfmake.vfs = pdfFonts.pdfMake.vfs;
-    import 'datatables.net-responsive-dt';
-    import JsZip from 'jszip'
-    import api from '../../services/apiTutorias';
+import api from '../../services/apiTutorias';
+import DataTableComponent from '../Plantillas/DataTableComponent.vue'; // Asegúrate de ajustar la ruta
 
-    window.JSZip = JsZip
-    DataTable.use(pdfmake)
-    DataTable.use(ButtonsHtml5)
-    DataTable.use(Select);
-
-    export default {
-        components: {
-            DataTable
-        },
-        data() {
-            return {
+export default {
+    components: {
+        DataTableComponent // Cambiado a nuestro componente personalizado
+    },
+    data() {
+        return {
                 actividades: [],
                 columns: [{
                         data: null,
@@ -75,7 +57,6 @@
                     },
                     {
                         data: 'prog_academico',
-                        width: '15%'
                     },
                     {
                         title: 'Acciones',
@@ -91,10 +72,6 @@
                     }
                 ],
                 dtoptions: {
-                    responsive: true,
-                    autoWidth: false,
-                    scrollY: '400px',
-                    crollCollapse: true,
                     dom: 'Bfrtip',
                     language: {
                         search: 'Buscar',
@@ -138,21 +115,23 @@
                         }
                     ],
                 },
-            }
+            };
+    },
+    mounted() {
+        this.obtenerActividades();
+    },
+    methods: {
+        obtenerActividades() {
+            api.obtenerActividades()
+                .then(response => {
+                    this.actividades = response.data;
+                })
+                .catch(error => {
+                    console.error('Error al obtener las actividades:', error);
+                });
         },
-        mounted() {
-            this.obtenerActividades()
-        },
-        methods: {
-            obtenerActividades() {
-                api.obtenerActividades()
-                    .then(response => {
-                        this.actividades = response.data;
-                    })
-                    .catch(error => {
-                        console.error('Error al obtener las actividades:', error);
-                    });
-            }
-        },
-    }
+        // Si tienes más métodos como editarActividad, eliminarActividad, detalleActividad, etc.
+        // Estos también deberían ser declarados aquí
+    },
+}
 </script>
