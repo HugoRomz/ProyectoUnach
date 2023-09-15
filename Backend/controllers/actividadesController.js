@@ -9,6 +9,16 @@ function obtenerActividades(req, res) {
         }
     });
 }
+function buscarActividad(req, res) {
+    const id = req.params.id;
+    actividadesModel.buscarActividad(id, (error, rows) => {
+        if (error) {
+            res.status(500).json({ error: 'Error al obtener la actividad.' });
+        } else {
+            res.json(rows);
+        }
+    });
+}
 
 function insertarActividad(req, res) {
     const data = {
@@ -56,4 +66,4 @@ function eliminarActividad(req, res) {
     });
 }
 
-module.exports = {obtenerActividades, insertarActividad, editarActividad, eliminarActividad}
+module.exports = {obtenerActividades, insertarActividad, editarActividad, eliminarActividad, buscarActividad}

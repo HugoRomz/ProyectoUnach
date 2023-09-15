@@ -8,6 +8,10 @@ export default {
     return axios.get(`${API_URL}/api/tutorias`);
   },
 
+  buscarActividad(id) {
+    return axios.get(`${API_URL}/api/buscartutorias/${id}`);
+  },
+
   insertarActividad(data) {
     return axios.post(`${API_URL}/api/tutorias`, data);
   },
