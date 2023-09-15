@@ -12,6 +12,17 @@ function obtenerActividades(callback) {
     });
 }
 
+function buscarActividad(id, callback) {
+    const query = 'SELECT * FROM act_tutorias WHERE id_act = ?';
+    db.query(query, [id], (error, rows) => {
+        if (error) {
+            callback(error, null);
+        } else {
+            callback(null, rows);
+        }
+    });
+}
+
 function insertarActividad(data, callback) {
     const query = 'INSERT INTO act_tutorias SET ?';
     db.query(query, data, (error, results) => {
@@ -46,4 +57,4 @@ function eliminarActividad(id, callback) {
     });
 }
 
-module.exports = {obtenerActividades, insertarActividad, editarActividad, eliminarActividad}
+module.exports = {obtenerActividades, insertarActividad, editarActividad, eliminarActividad, buscarActividad}
