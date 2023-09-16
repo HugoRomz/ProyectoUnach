@@ -1,11 +1,10 @@
 <template>
   <!-- Ventana flotante con formulario -->
   <div
-    v-if="visible"
-    class="fixed top-0 left-0 w-full h-full bg-gray-700 bg-opacity-50 flex justify-center items-center"
-  >
+    v-if="visible && dataLoaded"
+    class="fixed top-0 left-0 w-full h-full bg-gray-700 bg-opacity-50 flex justify-center items-center">
     <div class="bg-white p-8 rounded-lg w-1/2">
-      <h2 class="text-lg mb-4 text-center font-semibold">Insertar</h2>
+      <h2 class="text-lg mb-4 text-center font-semibold">{{ modalTitle }}</h2>
       <form @submit.prevent="submitForm" class="space-y-4">
         <div class="flex flex-col">
           <input type="hidden" id="id_act" v-model="form.id_act" />
@@ -100,13 +99,25 @@ export default {
         prog_academico: "",
         evidencias: null,
       },
+      modalTitle: "Insertar",
+      dataLoaded: false,
     };
   },
   watch: {
     // Este watcher se mantendrá para reaccionar a cambios de `visible`
     async visible(newVal) {
-      if (newVal && this.id_act) {
-        this.loadActivityData();
+      if (newVal) {
+        if (this.id_act) {
+          this.modalTitle = "Editar",
+          await this.loadActivityData();
+        } else {
+          this.modalTitle = "Insertar";
+          this.dataLoaded = true;
+          this.resetForm();
+        }
+      } else {
+        this.dataLoaded = false;
+        this.resetForm();
       }
     },
   },
@@ -115,6 +126,7 @@ export default {
       this.form.evidencias = event.target.files;
     },
     async loadActivityData() {
+      
       this.loading = true;
       try {
         const response = await apiTutorias.buscarActividad(this.id_act);
@@ -130,6 +142,7 @@ export default {
         this.form.descripcion = response.data[0].descripcion;
         this.form.prog_academico = response.data[0].prog_academico;
         this.form.id_act = response.data[0].id_act;
+        this.dataLoaded = true;
       } catch (error) {
         Swal.fire({
           title: "Error",
@@ -142,6 +155,7 @@ export default {
     },
     closeModal() {
       this.$emit("update:visible", false);
+      this.dataLoaded = false;
       this.resetForm();
     },
     resetForm() {

@@ -33,7 +33,8 @@ import ModalFormComponent from "../Tutorias/Modals/FormActividades.vue";
 
 export default {
   components: {
-    DataTableComponent,ModalFormComponent // Cambiado a nuestro componente personalizado
+    DataTableComponent,
+    ModalFormComponent, // Cambiado a nuestro componente personalizado
   },
   data() {
     return {
@@ -63,9 +64,9 @@ export default {
           data: null,
           render: (data, type, row) => {
             return `
-                        <button class="btn-editar-actividad bg-yellow-500 text-white p-2 pt-3 rounded" data-id="${data.id_act}"><i class="pi pi-pencil"></i></button>
-                        <button class="btn-eliminar-actividad bg-red-500 text-white  p-2 pt-3  rounded" data-id="${data.id_act}"><i class="pi pi-trash"></i></button>
-                        <button class="bg-blue-500 text-white  p-2 pt-3  rounded" @click="detalleActividad(${data.id})"><i class="pi pi-info-circle"></i></button>
+                        <button class="btn-editar-actividad bg-yellow-500 text-white p-2 pt-3 rounded" data-id="${data.id_act}"><i class="pi pi-pencil pointer-events-none"></i></button>
+                        <button class="btn-eliminar-actividad bg-red-500 text-white  p-2 pt-3  rounded" data-id="${data.id_act}"><i class="pi pi-trash pointer-events-none"></i></button>
+                        <button class="bg-blue-500 text-white  p-2 pt-3  rounded" @click="detalleActividad(${data.id})"><i class="pi pi-info-circle pointer-events-none"></i></button>
                       `;
           },
         },
