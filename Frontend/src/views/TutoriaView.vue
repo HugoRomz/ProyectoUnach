@@ -4,7 +4,7 @@
       titulo="Programa de Accion Tutorial (PAT)"
       ciclo="AGTO - NOV 2023"
     />
-    <div class="w-full bg-white shadow-xl border rounded-lg border-gray-300">
+    <div class="w-full bg-white shadow-xl border rounded-lg border-gray-300 mb-7">
       <button
         @click="showModal = true"
         class="bg-blue-500 text-white font-bold p-2 rounded m-4"

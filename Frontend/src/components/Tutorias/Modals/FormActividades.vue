@@ -1,70 +1,94 @@
 <template>
   <!-- Ventana flotante con formulario -->
+
+
+
+  
   <div
     v-if="visible && dataLoaded"
-    class="fixed top-0 left-0 w-full h-full bg-gray-700 bg-opacity-50 flex justify-center items-center">
+    class="fixed top-0 left-0 w-full h-full bg-gray-700 bg-opacity-50 flex justify-center items-center"
+  >
     <div class="bg-white p-8 rounded-lg w-1/2">
+      
       <h2 class="text-lg mb-4 text-center font-semibold">{{ modalTitle }}</h2>
-      <form @submit.prevent="submitForm" class="space-y-4">
-        <div class="flex flex-col">
-          <input type="hidden" id="id_act" v-model="form.id_act" />
-          <label for="nombre" class="text-sm font-semibold">Nombre:</label>
-          <input
-            type="text"
-            id="nombre"
-            v-model="form.nombre"
-            class="p-2 rounded border focus:border-blue-400"
-          />
+      <form class="w-full" @submit.prevent="submitForm">
+        <div class="flex flex-wrap -mx-3 mb-6">
+          <div class="w-full px-3">
+            <label
+              class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+              for="grid-password"
+            >
+              Nombre de la actividad:
+            </label>
+            <input
+              class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              id="nombre"
+              v-model="form.nombre"
+              type="text"
+              placeholder="Simposio de tutorías"
+            />
+          </div>
         </div>
-        <div class="flex flex-col">
-          <label for="fecha" class="text-sm font-semibold">Fecha:</label>
-          <input
-            type="date"
-            id="fecha"
-            v-model="form.fecha"
-            class="p-2 rounded border focus:border-blue-400"
-          />
+        <div class="flex flex-wrap -mx-3 mb-6">
+          <div class="w-full md:w-1/2 px-3">
+            <label
+              class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+              for="grid-last-name"
+            >
+              Fecha:
+            </label>
+            <input
+              class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              id="fecha"
+              v-model="form.fecha"
+              type="date"
+            />
+          </div>
+          <div class="w-full md:w-1/2 px-3">
+            <label
+              class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+              for="grid-last-name"
+            >
+              Programa académico:
+            </label>
+            <VueMultiselect v-model="form.prog_academico" :options="options" placeholder="Elige un programa..."
+  label="name"
+  track-by="name">
+            </VueMultiselect>
+          </div>
         </div>
-        <div class="flex flex-col">
-          <label for="descripcion" class="text-sm font-semibold"
-            >Descripción:</label
-          >
-          <textarea
-            id="descripcion"
-            v-model="form.descripcion"
-            rows="4"
-            class="p-2 rounded border focus:border-blue-400"
-          ></textarea>
+        <div class="flex flex-wrap -mx-3 mb-6">
+          <div class="w-full px-3">
+            <label
+              class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+              for="grid-password"
+            >
+              Evidencias:
+            </label>
+            <input
+              class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600"
+              id="grid-password"
+              type="file"
+              placeholder="Simposio de tutorías"
+            />
+          </div>
         </div>
-        <div class="flex flex-col">
-          <label for="prog_academico" class="text-sm font-semibold"
-            >Programa Académico:</label
-          >
-          <select
-            id="prog_academico"
-            v-model="form.prog_academico"
-            class="p-2 rounded border focus:border-blue-400"
-          >
-            <option disabled value="">Por favor seleccione una opción</option>
-            <option>LIDTS</option>
-            <option>LC</option>
-            <option>Ambas</option>
-          </select>
+        <div class="flex flex-wrap -mx-3 mb-6">
+          <div class="w-full px-3">
+            <label
+              class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+              for="grid-password"
+            >
+              Descripcion de la actividad:
+            </label>
+            <textarea
+              id="descripcion"
+              v-model="form.descripcion"
+              rows="4"
+              class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            ></textarea>
+          </div>
         </div>
-
-        <div class="flex flex-col">
-          <label for="evidencias" class="text-sm font-semibold mb-2"
-            >Evidencias:</label
-          >
-          <input
-            type="file"
-            id="evidencias"
-            multiple
-            @change="handleFileUpload($event)"
-            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600 border rounded"
-          />
-        </div>
-
         <button
           type="submit"
           class="w-full bg-blue-800 text-white p-2 rounded hover:bg-blue-900"
@@ -84,10 +108,12 @@
 
 <script>
 import apiTutorias from "../../../services/apiTutorias";
+import VueMultiselect from "vue-multiselect";
 import Swal from "sweetalert2";
 
 export default {
   props: ["visible", "id_act"],
+  components: { VueMultiselect },
   data() {
     return {
       // Para el formulario y la ventana flotante
@@ -101,6 +127,8 @@ export default {
       },
       modalTitle: "Insertar",
       dataLoaded: false,
+      selected: null,
+      options: [{ name: "LIDTS" }, { name: "LC" }, { name: "AMBAS" }],
     };
   },
   watch: {
@@ -108,8 +136,7 @@ export default {
     async visible(newVal) {
       if (newVal) {
         if (this.id_act) {
-          this.modalTitle = "Editar",
-          await this.loadActivityData();
+          (this.modalTitle = "Editar"), await this.loadActivityData();
         } else {
           this.modalTitle = "Insertar";
           this.dataLoaded = true;
@@ -126,7 +153,6 @@ export default {
       this.form.evidencias = event.target.files;
     },
     async loadActivityData() {
-      
       this.loading = true;
       try {
         const response = await apiTutorias.buscarActividad(this.id_act);
@@ -141,6 +167,10 @@ export default {
         this.form.fecha = formattedDate;
         this.form.descripcion = response.data[0].descripcion;
         this.form.prog_academico = response.data[0].prog_academico;
+        
+        const prog_academico = response.data[0].prog_academico;
+        this.form.prog_academico = this.options.find(option => option.name === prog_academico);
+
         this.form.id_act = response.data[0].id_act;
         this.dataLoaded = true;
       } catch (error) {
@@ -168,15 +198,19 @@ export default {
         evidencias: null,
       };
     },
-    
+
     // Función para manejar el envío del formulario
     submitForm() {
+    
       // Verifica si los campos del formulario están vacíos
       if (
         !this.form.nombre ||
         !this.form.fecha ||
         !this.form.descripcion ||
         !this.form.prog_academico
+
+//object objectr
+
       ) {
         Swal.fire({
           title: "Datos incompletos",
@@ -207,24 +241,24 @@ export default {
             });
           });
       } else if (this.form.id_act != null || this.form.id_act != "") {
-
-        apiTutorias.editarActividad(this.form.id_act , this.form)
-        .then(response => {
+        apiTutorias
+          .editarActividad(this.form.id_act, this.form)
+          .then((response) => {
             Swal.fire({
-                title: 'Actividad editada',
-                text: 'La actividad se ha editado exitosamente',
-                icon: 'success',
+              title: "Actividad editada",
+              text: "La actividad se ha editado exitosamente",
+              icon: "success",
             });
-             this.closeModal();
+            this.closeModal();
             this.$emit("activityChanged");
-        })
-        .catch(error => {
+          })
+          .catch((error) => {
             Swal.fire({
-                title: 'Error',
-                text: 'Hubo un error editando la actividad',
-                icon: 'error',
+              title: "Error",
+              text: "Hubo un error editando la actividad",
+              icon: "error",
             });
-        });
+          });
       }
     },
   },
