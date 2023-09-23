@@ -1,4 +1,50 @@
+const multer = require('multer');
+
 const actividadesModel = require('../models/actividadesModel');
+
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'public/evidenciasTutoria')
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname) 
+    },
+});
+
+const upload = multer({ storage: storage }).single('evidencias');
+
+function cargarEvidencia(req, res) {
+    
+    upload(req, res, function (err) {
+        if (err){
+            return res.status(500).json({ error: err.message });
+        }
+        const {originalname, filename} = req.file;
+
+        const urlArchivo = '/public/evidenciasTutoria/' + filename;
+
+        const {nombre, fecha, descripcion, prog_academico} = req.body;
+
+        const data = {
+            nombre,
+            fecha,
+            descripcion,
+            prog_academico,
+            evidencias: urlArchivo,
+        };
+
+        actividadesModel.insertarActividad(data, (error, results) => {
+            if (error) {
+                res.status(500).json({ error: 'Error al insertar las actividades.' });
+            } else {
+                res.json(results);
+            }
+        });
+    });
+}
+
+
 
 function obtenerActividades(req, res) {
     actividadesModel.obtenerActividades((error, rows) => {
@@ -8,7 +54,8 @@ function obtenerActividades(req, res) {
             res.json(rows);
         }
     });
-}
+}        
+
 function buscarActividad(req, res) {
     const id = req.params.id;
     actividadesModel.buscarActividad(id, (error, rows) => {
@@ -20,39 +67,19 @@ function buscarActividad(req, res) {
     });
 }
 
-function insertarActividad(req, res) {
-    const data = {
-        nombre: req.body.nombre,
-        fecha: req.body.fecha,
-        descripcion: req.body.descripcion,
-        prog_academico: req.body.prog_academico
-    };
 
-    actividadesModel.insertarActividad(data, (error, results) => {
-        if (error) {
-            res.status(500).json({ error: 'Error al insertar las actividades.' });
-        } else {
-            res.json(results);
-        }
-    });
-}
 
 function editarActividad(req, res) {
-    const id = req.params.id;
-    const newData = {
-        nombre: req.body.nombre,
-        fecha: req.body.fecha,
-        descripcion: req.body.descripcion,
-        prog_academico: req.body.prog_academico
-    };
+    const {nombre, fecha, descripcion, prog_academico} = req.body;
+    console.log(req.body);
 
-    actividadesModel.editarActividad(id, newData, (error, results) => {
-        if (error) {
-            res.status(500).json({ error: 'Error al editar la actividad.' });
-        } else {
-            res.json(results);
-        }
-    });
+    // actividadesModel.editarActividad(id, newData, (error, results) => {
+    //     if (error) {
+    //         res.status(500).json({ error: 'Error al editar la actividad.' });
+    //     } else {
+    //         res.json(results);
+    //     }
+    // });
 }
 
 function eliminarActividad(req, res) {
@@ -66,4 +93,4 @@ function eliminarActividad(req, res) {
     });
 }
 
-module.exports = {obtenerActividades, insertarActividad, editarActividad, eliminarActividad, buscarActividad}
+module.exports = {obtenerActividades, cargarEvidencia, editarActividad, eliminarActividad, buscarActividad}
