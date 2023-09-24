@@ -37,7 +37,7 @@
         },
         data() {
             return {
-                activeTab: 'Examenes', // Pestaña activa por defecto
+                activeTab: 'Ejercicios', // Pestaña activa por defecto
                 tabs: ['Ejercicios', 'Examenes', 'Apuntes'] // Puedes añadir más pestañas aquí
             };
         }
