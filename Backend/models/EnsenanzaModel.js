@@ -12,4 +12,14 @@ function obtenerActividades(tipoActividad,callback) {
   });
 }
 
-module.exports = { obtenerActividades };
+function buscarTipoActividad(callback){
+    const query = "SELECT * FROM tipoActividad;";
+    db.query(query,(error,rows)=>{
+        if(error){
+            callback(error,null);
+        }else{
+            callback(null,rows);
+        }
+    });
+}
+module.exports = { obtenerActividades, buscarTipoActividad };
