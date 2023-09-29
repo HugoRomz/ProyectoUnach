@@ -19,18 +19,12 @@
       </DataTableComponent>
     </div>
   </div>
-  <!-- <ModalFormComponent
-    :visible="showModal"
-    :id_act="editingId"
-    @update:visible="closeModal"
-    @activityChanged="obtenerData"
-  /> -->
 </template>
 
 <script>
 import apiEnsenanza from "../../services/apiEnsenanza";
 import DataTableComponent from "../Plantillas/DataTableComponent.vue";
-import Swal from "sweetalert2";
+
 
 // import ModalFormComponent from "";
 
@@ -155,6 +149,16 @@ export default {
       showModal: false,
       editingId: null,
     };
+  },
+  computed: {
+    actualizarTabla() {
+      return this.$store.state.actualizarTabla;
+    }
+  },
+  watch: {
+    actualizarTabla() {
+      this.obtenerData();
+    }
   },
   mounted() {
     this.obtenerData();
