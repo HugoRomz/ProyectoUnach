@@ -181,46 +181,42 @@ export default {
         return;
       }
 
+      let promise; // Almacenará la promesa del API, para insertar o actualizar
       if (!this.form.idActEnsenanza) {
-        apiEnsenanza
-          .insertarActividad(data)
-          .then((res) => {
-            Swal.fire({
-              title: "Actividad insertada",
-              text: "La actividad se ha insertado correctamente",
-              icon: "success",
-            });
-            this.resetForm();
-            this.cerrarFormulario();
-          })
-          .catch((err) => {
-            Swal.fire({
-              title: "Error",
-              text: "Hubo un error al insertar la actividad",
-              icon: "error",
-            });
-          });
+        promise = apiEnsenanza.insertarActividad(data);
       } else {
-        // apiEnsenanza
-        //   .actualizarActividad(formData)
-        //   .then((res) => {
-        //     Swal.fire({
-        //       title: "Actividad actualizada",
-        //       text: "La actividad se ha actualizado correctamente",
-        //       icon: "success",
-        //     });
-        //     this.resetForm();
-        //   })
-        //   .catch((err) => {
-        //     console.log("Error al actualizar actividad", err);
-        //     Swal.fire({
-        //       title: "Error",
-        //       text: "Hubo un error al actualizar la actividad",
-        //       icon: "error",
-        //     });
-        //   });
-        console.log("Actualizar");
+        promise = apiEnsenanza.actualizarActividad(data);
       }
+
+      promise
+        .then((res) => {
+          const message = this.form.idActEnsenanza
+            ? "La actividad se ha actualizado correctamente"
+            : "La actividad se ha insertado correctamente";
+
+          Swal.fire({
+            title: this.form.idActEnsenanza
+              ? "Actividad actualizada"
+              : "Actividad insertada",
+            text: message,
+            icon: "success",
+          });
+
+          this.resetForm();
+          this.cerrarFormulario();
+          // Actualiza la tabla
+          this.$store.dispatch('cambiarBanderaActualizarTabla');
+        })
+        .catch((err) => {
+          Swal.fire({
+            title: "Error",
+            text:
+              "Hubo un error al " +
+              (this.form.idActEnsenanza ? "actualizar" : "insertar") +
+              " la actividad",
+            icon: "error",
+          });
+        });
     },
   },
   mounted() {

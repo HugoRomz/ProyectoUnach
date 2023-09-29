@@ -40,20 +40,20 @@ import logoInferior from "../../assets/LogoInferior";
 export default {
   components: {
     DataTableComponent,
-
   },
   //   idActEnsenanza":1,"nombreAct":"Bubble Sort","descripcionAct":"Creacion de un algoritmo bubble sort","tipoAct":1,"materia":5,"cicloEscolar":"2023-Agosto-Diciembre","fecha":"2023-05-05T06:00:00.000Z"}]
   data() {
     return {
       actEjercicios: [],
       columns: [
-        {data: "idActEnsenanza"},
-         { data: "nombreAct"},
-         { data: "descripcionAct"},
-         { data: "nombretipoAct"},
-         { data: "nombreMateria"},
-         { data: "cicloEscolar"},
-         { data: "fecha",
+        { data: "idActEnsenanza" },
+        { data: "nombreAct" },
+        { data: "descripcionAct" },
+        { data: "nombretipoAct" },
+        { data: "nombreMateria" },
+        { data: "cicloEscolar" },
+        {
+          data: "fecha",
           render: function (data, type, row) {
             if (type === "display" || type === "filter") {
               var fecha = new Date(data);
@@ -155,6 +155,16 @@ export default {
       showModal: false,
       editingId: null,
     };
+  },
+  computed: {
+    actualizarTabla() {
+      return this.$store.state.actualizarTabla;
+    },
+  },
+  watch: {
+    actualizarTabla() {
+      this.obtenerData();
+    },
   },
   mounted() {
     this.obtenerData();

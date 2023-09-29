@@ -1,8 +1,14 @@
 import { createApp } from 'vue'
-import './style.css'
 import App from './App.vue'
+import router from './router/'; // Importación del router
+import store from './store';   // Importación del store
+
 import 'primeicons/primeicons.css';
+import './style.css';
 
-import router from './router/'; // Asegúrate de tener este import
+const app = createApp(App);
 
-createApp(App).use(router).mount('#app');
+app.use(router); // Uso del router
+app.use(store);  // Uso del store
+
+app.mount('#app');
