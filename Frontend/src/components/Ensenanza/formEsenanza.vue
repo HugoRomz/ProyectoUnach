@@ -9,9 +9,10 @@
     </button>
 
     <!-- Div que contiene el formulario -->
-    <div v-if="mostrarFormulario" class="bg-white rounded shadow-md p-4 mt-4">
+    <div v-if="mostrarFormulario" class="bg-white px-4">
       <h2 class="text-lg mb-4 text-center font-semibold">Insertar</h2>
       <form class="w-full" @submit.prevent="submitForm">
+        <input type="text" id="idActEnsenanza" v-model="form.idActEnsenanza" />
         <div class="flex flex-wrap -mx-3 mb-6">
           <div class="w-full px-3">
             <label
@@ -101,6 +102,7 @@
 <script>
 import VueMultiselect from "vue-multiselect";
 import apiEnsenanza from "../../services/apiEnsenanza";
+import Swal from "sweetalert2";
 
 export default {
   components: { VueMultiselect },
@@ -112,9 +114,13 @@ export default {
       isLoading: false,
       // Para el formulario y la ventana flotante
       mostrarFormulario: false,
+      // Para el formulario
       form: {
-        nombre: "",
-        // Otros campos del formulario
+        idActEnsenanza: "",
+        nombreAct: "",
+        fechaAct: "",
+        descripcionAct: "",
+        tipoAct: "",
       },
     };
   },
@@ -144,7 +150,7 @@ export default {
     },
     resetForm() {
       this.form = {
-        id_act: "",
+        idActEnsenanza: "",
         nombreAct: "",
         fechaAct: "",
         descripcionAct: "",
@@ -153,8 +159,68 @@ export default {
     },
     submitForm() {
       // Lógica para enviar el formulario
-      // Luego, oculta el formulario al enviarlo
-      this.mostrarFormulario = false;
+      const data = {
+        idActEnsenanza: this.form.idActEnsenanza,
+        nombreAct: this.form.nombreAct,
+        fecha: this.form.fechaAct,
+        descripcionAct: this.form.descripcionAct,
+        tipoAct: this.form.tipoAct.idtipoActividad,
+      };
+
+      if (
+        !this.form.nombreAct ||
+        !this.form.fechaAct ||
+        !this.form.descripcionAct ||
+        !this.form.tipoAct
+      ) {
+        Swal.fire({
+          title: "Datos incompletos",
+          text: "Todos los campos son obligatorios",
+          icon: "warning",
+        });
+        return;
+      }
+
+      if (!this.form.idActEnsenanza) {
+        apiEnsenanza
+          .insertarActividad(data)
+          .then((res) => {
+            Swal.fire({
+              title: "Actividad insertada",
+              text: "La actividad se ha insertado correctamente",
+              icon: "success",
+            });
+            this.resetForm();
+            this.cerrarFormulario();
+          })
+          .catch((err) => {
+            Swal.fire({
+              title: "Error",
+              text: "Hubo un error al insertar la actividad",
+              icon: "error",
+            });
+          });
+      } else {
+        // apiEnsenanza
+        //   .actualizarActividad(formData)
+        //   .then((res) => {
+        //     Swal.fire({
+        //       title: "Actividad actualizada",
+        //       text: "La actividad se ha actualizado correctamente",
+        //       icon: "success",
+        //     });
+        //     this.resetForm();
+        //   })
+        //   .catch((err) => {
+        //     console.log("Error al actualizar actividad", err);
+        //     Swal.fire({
+        //       title: "Error",
+        //       text: "Hubo un error al actualizar la actividad",
+        //       icon: "error",
+        //     });
+        //   });
+        console.log("Actualizar");
+      }
     },
   },
   mounted() {

@@ -8,6 +8,10 @@ export default {
   },
   buscarTipoActividad() {
     return axios.get(`${API_URL}/ensenanza/buscarTipoActividad`);
+  },
+
+  insertarActividad(formData) {
+    return axios.post(`${API_URL}/ensenanza/insertarActividad`, formData);
   }
 
   // Agrega más funciones para otras peticiones si es necesario

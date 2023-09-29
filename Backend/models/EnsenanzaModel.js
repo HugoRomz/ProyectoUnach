@@ -22,4 +22,15 @@ function buscarTipoActividad(callback){
         }
     });
 }
-module.exports = { obtenerActividades, buscarTipoActividad };
+
+function insertarActividad(formData, callback) {
+  const query = "INSERT INTO actividadesEnsenanza SET ?";
+  db.query(query, formData, (error, results) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, results);
+    }
+  });
+}
+module.exports = { obtenerActividades, buscarTipoActividad, insertarActividad };
