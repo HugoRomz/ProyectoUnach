@@ -1,22 +1,18 @@
 <template>
   <!-- Ventana flotante con formulario -->
 
-
-
-  
   <div
     v-if="visible && dataLoaded"
     class="fixed top-0 left-0 w-full h-full bg-gray-700 bg-opacity-50 flex justify-center items-center"
   >
     <div class="bg-white p-8 rounded-lg w-1/2">
-      
       <h2 class="text-lg mb-4 text-center font-semibold">{{ modalTitle }}</h2>
       <form class="w-full" @submit.prevent="submitForm">
         <div class="flex flex-wrap -mx-3 mb-6">
           <div class="w-full px-3">
             <label
               class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              for="grid-password"
+              for="nombre"
             >
               Nombre de la actividad:
             </label>
@@ -33,7 +29,7 @@
           <div class="w-full md:w-1/2 px-3">
             <label
               class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              for="grid-last-name"
+              for="fecha"
             >
               Fecha:
             </label>
@@ -47,13 +43,18 @@
           <div class="w-full md:w-1/2 px-3">
             <label
               class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              for="grid-last-name"
+              for="programa_academico"
             >
               Programa académico:
             </label>
-            <VueMultiselect v-model="form.prog_academico" :options="options" placeholder="Elige un programa..."
-  label="name"
-  track-by="name">
+            <VueMultiselect
+              id="programa_academico"
+              v-model="form.prog_academico"
+              :options="options"
+              placeholder="Elige un programa..."
+              label="name"
+              track-by="name"
+            >
             </VueMultiselect>
           </div>
         </div>
@@ -61,15 +62,18 @@
           <div class="w-full px-3">
             <label
               class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              for="grid-password"
+              for="evidencias"
             >
               Evidencias:
             </label>
             <input
               class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600"
-              id="grid-password"
+              id="evidencias"
+              name="evidencias"
               type="file"
               placeholder="Simposio de tutorías"
+              ref="evidenciasInput"
+              @change="handleFileUpload"
             />
           </div>
         </div>
@@ -77,7 +81,7 @@
           <div class="w-full px-3">
             <label
               class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              for="grid-password"
+              for="descripcion"
             >
               Descripcion de la actividad:
             </label>
@@ -123,8 +127,8 @@ export default {
         fecha: "",
         descripcion: "",
         prog_academico: "",
-        evidencias: null,
       },
+      archivo: null,
       modalTitle: "Insertar",
       dataLoaded: false,
       selected: null,
@@ -149,8 +153,8 @@ export default {
     },
   },
   methods: {
-    handleFileUpload(event) {
-      this.form.evidencias = event.target.files;
+    handleFileUpload() {
+      this.archivo = this.$refs.evidenciasInput.files[0];
     },
     async loadActivityData() {
       this.loading = true;
@@ -167,9 +171,11 @@ export default {
         this.form.fecha = formattedDate;
         this.form.descripcion = response.data[0].descripcion;
         this.form.prog_academico = response.data[0].prog_academico;
-        
+
         const prog_academico = response.data[0].prog_academico;
-        this.form.prog_academico = this.options.find(option => option.name === prog_academico);
+        this.form.prog_academico = this.options.find(
+          (option) => option.name === prog_academico
+        );
 
         this.form.id_act = response.data[0].id_act;
         this.dataLoaded = true;
@@ -201,20 +207,24 @@ export default {
 
     // Función para manejar el envío del formulario
     submitForm() {
-    
+      // Crea un objeto FormData para enviar datos de formulario incluyendo el archivo
+      const formData = new FormData();
+      formData.append("nombre", this.form.nombre);
+      formData.append("fecha", this.form.fecha);
+      formData.append("descripcion", this.form.descripcion);
+      formData.append("prog_academico", this.form.prog_academico.name);
+      formData.append("evidencias", this.archivo); // Agrega el archivo al FormData
+
       // Verifica si los campos del formulario están vacíos
       if (
         !this.form.nombre ||
         !this.form.fecha ||
         !this.form.descripcion ||
-        !this.form.prog_academico
-
-//object objectr
-
+        !this.form.prog_academico 
       ) {
         Swal.fire({
           title: "Datos incompletos",
-          text: "Porfavor rellena todos los campos",
+          text: "Por favor rellena todos los campos",
           icon: "warning",
         });
         return;
@@ -222,7 +232,7 @@ export default {
 
       if (this.form.id_act === null || this.form.id_act === "") {
         apiTutorias
-          .insertarActividad(this.form)
+          .insertarActividad(formData) // Envía el FormData con el archivo
           .then((response) => {
             Swal.fire({
               title: "Actividad registrada",
@@ -242,7 +252,7 @@ export default {
           });
       } else if (this.form.id_act != null || this.form.id_act != "") {
         apiTutorias
-          .editarActividad(this.form.id_act, this.form)
+          .editarActividad(this.form.id_act, formData) // Envía el FormData con el archivo
           .then((response) => {
             Swal.fire({
               title: "Actividad editada",

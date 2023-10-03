@@ -31,6 +31,9 @@ import DataTableComponent from "../Plantillas/DataTableComponent.vue"; // Asegú
 import Swal from "sweetalert2";
 import ModalFormComponent from "../Tutorias/Modals/FormActividades.vue";
 
+import logoSuperior from "../../assets/LogoSuperior";
+import logoInferior from "../../assets/LogoInferior";
+
 export default {
   components: {
     DataTableComponent,
@@ -99,7 +102,34 @@ export default {
             className: "bg-red-500 btn btn-danger border-0",
             customize: function (doc) {
               // Personalizar el documento PDF aquí
-            },
+
+               // Añadir margen superior al título
+          if (doc.content[0].text) { // Verifica si hay un título
+            doc.content[0].margin = [0, 10, 0, 0]; // 50 es el margen superior
+          }
+
+          // Añadir margen superior a la tabla para moverla hacia abajo
+          if (doc.content[1].table) { // Verifica si hay una tabla
+            doc.content[1].margin = [0, 10, 0, 0]; // 70 es el margen superior
+          }
+              doc['header'] = function (currentPage, pageCount, pageSize) {
+                return {
+                  image: logoSuperior,
+                  width: 550,
+                  alignment: 'center',
+                  margin: [0, 28, 0, 25]  // Ajusta según necesites
+                };
+              };
+
+              doc['footer'] = function (currentPage, pageCount, pageSize) {
+                return {
+                  image: logoInferior,
+                  width: 450,
+                  alignment: 'center',
+                  margin: [0, 10, 0, 10]  // Ajusta según necesites
+                };
+              };
+            }
           },
 
           {
