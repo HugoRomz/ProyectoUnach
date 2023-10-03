@@ -12,6 +12,13 @@ export default {
 
   insertarActividad(formData) {
     return axios.post(`${API_URL}/ensenanza/insertarActividad`, formData);
+  },
+  actualizarActividad(id, formData) {
+
+    return axios.put(`${API_URL}/ensenanza/editarActividad/${id}`, formData);
+  },
+  eliminarActividad(id) {
+    return axios.delete(`${API_URL}/ensenanza/eliminarActividad/${id}`);
   }
 
   // Agrega más funciones para otras peticiones si es necesario
