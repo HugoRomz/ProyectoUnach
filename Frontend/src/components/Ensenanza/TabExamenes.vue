@@ -19,20 +19,13 @@
       </DataTableComponent>
     </div>
   </div>
-  <!-- <ModalFormComponent
-      :visible="showModal"
-      :id_act="editingId"
-      @update:visible="closeModal"
-      @activityChanged="obtenerData"
-    /> -->
 </template>
 
 <script>
 import apiEnsenanza from "../../services/apiEnsenanza";
 import DataTableComponent from "../Plantillas/DataTableComponent.vue";
 import Swal from "sweetalert2";
-
-// import ModalFormComponent from "";
+import dayjs from "dayjs";
 
 import logoSuperior from "../../assets/LogoSuperior";
 import logoInferior from "../../assets/LogoInferior";
@@ -41,7 +34,6 @@ export default {
   components: {
     DataTableComponent,
   },
-  //   idActEnsenanza":1,"nombreAct":"Bubble Sort","descripcionAct":"Creacion de un algoritmo bubble sort","tipoAct":1,"materia":5,"cicloEscolar":"2023-Agosto-Diciembre","fecha":"2023-05-05T06:00:00.000Z"}]
   data() {
     return {
       actEjercicios: [],
@@ -56,15 +48,9 @@ export default {
           data: "fecha",
           render: function (data, type, row) {
             if (type === "display" || type === "filter") {
-              var fecha = new Date(data);
-              var dia = fecha.getDate();
-              var mes = fecha.getMonth() + 1;
-              var año = fecha.getFullYear();
-              return `${año}-${mes < 10 ? "0" + mes : mes}-${
-                dia < 10 ? "0" + dia : dia
-              }`;
+              return dayjs(data).format("YYYY-MM-DD"); // ajusta el formato como desees
             }
-            return data; // para otros tipos de datos, devuelves el valor original
+            return data;
           },
         },
         {
@@ -72,10 +58,10 @@ export default {
           data: null,
           render: (data, type, row) => {
             return `
-                          <button class="btn-editar-actividad bg-yellow-500 text-white p-2 pt-3 rounded" data-id="${data.id_act}"><i class="pi pi-pencil pointer-events-none"></i></button>
-                          <button class="btn-eliminar-actividad bg-red-500 text-white  p-2 pt-3  rounded" data-id="${data.id_act}"><i class="pi pi-trash pointer-events-none"></i></button>
-                          <button class="bg-blue-500 text-white  p-2 pt-3  rounded" @click="detalleActividad(${data.id})"><i class="pi pi-info-circle pointer-events-none"></i></button>
-                        `;
+                        <button class="btn-editar-actividad bg-yellow-500 text-white p-2 pt-3 rounded" data-id="${data.idActEnsenanza}"><i class="pi pi-pencil pointer-events-none"></i></button>
+                        <button class="btn-eliminar-actividad bg-red-500 text-white  p-2 pt-3  rounded" data-id="${data.idActEnsenanza}"><i class="pi pi-trash pointer-events-none"></i></button>
+                        <button class="bg-blue-500 text-white  p-2 pt-3  rounded" @click="detalleActividad(${data.idActEnsenanza})"><i class="pi pi-info-circle pointer-events-none"></i></button>
+                      `;
           },
         },
       ],
@@ -103,7 +89,7 @@ export default {
           {
             tittle: "Reporte de actividades PAT",
             extend: "pdfHtml5",
-            text: '<i class="fa-regular fa-file"></i> PDF',
+            text: "PDF",
             className: "bg-red-500 btn btn-danger border-0",
             customize: function (doc) {
               // Personalizar el documento PDF aquí
@@ -152,8 +138,6 @@ export default {
           },
         ],
       },
-      showModal: false,
-      editingId: null,
     };
   },
   computed: {
@@ -168,8 +152,22 @@ export default {
   },
   mounted() {
     this.obtenerData();
-  },
+    this.$nextTick(() => {
+      document.addEventListener("click", (event) => {
+        // Verificar si se hizo clic en el botón de editar
+        if (event.target.matches(".btn-editar-actividad")) {
+          const id = event.target.getAttribute("data-id");
+          this.cargarActividadParaEditar(id);
+        }
 
+        // Verificar si se hizo clic en el botón de eliminar
+        if (event.target.matches(".btn-eliminar-actividad")) {
+          const id = event.target.getAttribute("data-id");
+          this.eliminarActividad(id);
+        }
+      });
+    });
+  },
   methods: {
     obtenerData() {
       apiEnsenanza
@@ -180,6 +178,43 @@ export default {
         .catch((error) => {
           console.error("Error al obtener las actividades:", error);
         });
+    },
+    cargarActividadParaEditar(id) {
+      const actividadAEditar = this.actEjercicios.find(
+        (act) => act.idActEnsenanza == id
+      );
+      this.$store.dispatch("setActividadAEditar", actividadAEditar);
+    },
+    eliminarActividad(id) {
+      Swal.fire({
+        title: "¿Estás seguro de eliminar la actividad?",
+        text: "Esta acción no se puede revertir",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          apiEnsenanza
+            .eliminarActividad(id)
+            .then((response) => {
+              Swal.fire(
+                "Actividad eliminada",
+                "La actividad se eliminó correctamente",
+                "success"
+              );
+              this.obtenerData();
+            })
+            .catch((error) => {
+              console.error("Error al eliminar la actividad:", error);
+              Swal.fire(
+                "Error al eliminar la actividad",
+                "Ocurrió un error al eliminar la actividad",
+                "error"
+              );
+            });
+        }
+      });
     },
   },
 };

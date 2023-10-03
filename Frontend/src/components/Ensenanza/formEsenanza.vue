@@ -10,9 +10,9 @@
 
     <!-- Div que contiene el formulario -->
     <div v-if="mostrarFormulario" class="bg-white px-4">
-      <h2 class="text-lg mb-4 text-center font-semibold">Insertar</h2>
+      <h2 class="text-lg mb-4 text-center font-semibold">{{ formTitle }}</h2>
       <form class="w-full" @submit.prevent="submitForm">
-        <input type="text" id="idActEnsenanza" v-model="form.idActEnsenanza" />
+        <input type="hidden" id="idActEnsenanza" v-model="form.idActEnsenanza" />
         <div class="flex flex-wrap -mx-3 mb-6">
           <div class="w-full px-3">
             <label
@@ -86,14 +86,14 @@
           type="submit"
           class="w-full bg-blue-800 text-white p-2 rounded hover:bg-blue-900"
         >
-          Guardar
+        {{ nombreBtn }}
         </button>
       </form>
       <button
         @click="cerrarFormulario"
         class="w-full bg-red-500 text-white p-2 rounded hover:bg-red-600 mt-4"
       >
-        Cerrar
+       Cerrar
       </button>
     </div>
   </div>
@@ -103,6 +103,8 @@
 import VueMultiselect from "vue-multiselect";
 import apiEnsenanza from "../../services/apiEnsenanza";
 import Swal from "sweetalert2";
+import { mapState } from "vuex";
+import dayjs from "dayjs";
 
 export default {
   components: { VueMultiselect },
@@ -185,7 +187,7 @@ export default {
       if (!this.form.idActEnsenanza) {
         promise = apiEnsenanza.insertarActividad(data);
       } else {
-        promise = apiEnsenanza.actualizarActividad(data);
+        promise = apiEnsenanza.actualizarActividad(this.form.idActEnsenanza,data);
       }
 
       promise
@@ -205,7 +207,7 @@ export default {
           this.resetForm();
           this.cerrarFormulario();
           // Actualiza la tabla
-          this.$store.dispatch('cambiarBanderaActualizarTabla');
+          this.$store.dispatch("cambiarBanderaActualizarTabla");
         })
         .catch((err) => {
           Swal.fire({
@@ -217,6 +219,43 @@ export default {
             icon: "error",
           });
         });
+    },
+    mapeoActividad(data) {
+      return {
+        idActEnsenanza: data.idActEnsenanza,
+        nombreAct: data.nombreAct,
+        fechaAct: data.fecha,
+        descripcionAct: data.descripcionAct,
+        tipoAct: this.options.find(option => option.idtipoActividad === data.idtipoActividad),
+      };
+    },
+  },
+  computed: {
+    ...mapState(["actividadAEditar"]),
+    formTitle() {
+    return this.form.idActEnsenanza ? 'Editar Actividad' : 'Insertar Nueva Actividad';
+  },
+  nombreBtn() {
+    return this.form.idActEnsenanza ? 'Actualizar' : 'Guardar';
+  },
+  },
+  watch: {
+    actividadAEditar: {
+      handler(newValue) {
+        if (newValue) {
+          this.form = this.mapeoActividad(newValue); // Asigna las actividades al formulario
+          //formato de fecha
+          if (this.form.fechaAct) {
+            this.form.fechaAct = dayjs(this.form.fechaAct).format("YYYY-MM-DD");
+          }
+          this.mostrarFormulario = true; 
+        } else {
+
+          this.resetForm();
+          this.mostrarFormulario = false; 
+        }
+      },
+      immediate: true, 
     },
   },
   mounted() {
