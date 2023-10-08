@@ -19,7 +19,12 @@ export default {
   },
   eliminarActividad(id) {
     return axios.delete(`${API_URL}/ensenanza/eliminarActividad/${id}`);
-  }
+  },
+  obtenerEvidencias(idEvidencia){
+    return axios.get(`${API_URL}/ensenanza/evidencias/${idEvidencia}`);
+  },
+  insertarEvidencias(formData) {
+    return axios.post(`${API_URL}/ensenanza/insertarEvidencias`, formData);
+  },
 
-  // Agrega más funciones para otras peticiones si es necesario
 };
