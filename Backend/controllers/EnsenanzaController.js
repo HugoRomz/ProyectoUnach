@@ -1,5 +1,25 @@
 const EnsenanzaModel = require('../models/EnsenanzaModel.js');
 
+const multer = require('multer')
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'public/evidenciasEnsenanza')
+    },
+    filename: function (req, file, cb) {
+        const fileExtension = file.originalname.split('.').pop(); // Obtiene la extensión del archivo
+        const actividadId = req.body.idActEnsenanza;  // Suponiendo que el ID de la actividad se envía en el cuerpo de la solicitud
+
+        // Obtiene la fecha actual en formato YYYY-MM-DD
+        const currentDate = new Date().toISOString().slice(0, 10);
+        
+        cb(null, `Evidencia-${actividadId}-${currentDate}.${fileExtension}`);
+    },
+});
+
+const upload = multer({ storage: storage }).single('evidencias');
+
+
 function obtenerActividades(req, res) {
     const tipoActividad = req.params.id;
     EnsenanzaModel.obtenerActividades(tipoActividad,(error, rows) => {
@@ -71,5 +91,47 @@ function eliminarActividad(req,res){
     });
 }
 
+function obtenerEvidencias(req, res) {
+    const idEvidencia = req.params.idEvidencia;
 
-module.exports = { obtenerActividades,buscarTipoActividad, insertarActividad,editarActividad, eliminarActividad };
+    EnsenanzaModel.obtenerEvidencias(idEvidencia,(error, rows) => {
+        if (error) {
+            res.status(500).json({ error: 'Error al obtener las actividades.' });
+        } else {
+            res.json(rows);
+        }
+    });
+}
+
+
+function cargarEvidencia(req, res) {
+    
+    upload(req, res, function (err) {
+        if (err){
+            return res.status(500).json({ error: err.message });
+        }
+        const {originalname, filename} = req.file;
+
+        const urlArchivo = '/public/evidenciasEnsenanza/' + filename;
+
+        const {idActEnsenanza, nombreEvi,  descripcionEvi} = req.body;
+
+        const data = {
+            nombreEvi,
+            descripcionEvi,
+            urlEvi: urlArchivo,
+            idActividad: idActEnsenanza,
+        };
+
+        EnsenanzaModel.insertarEvidencias(data, (error, results) => {
+            if (error) {
+                res.status(500).json({ error: 'Error al insertar las actividades.' });
+            } else {
+                res.json(results);
+            }
+        });
+    });
+}
+
+
+module.exports = { obtenerActividades,buscarTipoActividad, insertarActividad,editarActividad, eliminarActividad, obtenerEvidencias, cargarEvidencia };
