@@ -8,7 +8,7 @@
       @click="$emit('close')"
     ></button>
     <div
-      class="relative bg-white rounded-xl w-2/3 shadow-xl max-h-screen overflow-y-auto"
+      class="relative bg-white rounded-xl w-2/4 shadow-xl max-h-screen overflow-y-auto"
     >
       <div
         class="modal-header bg-blue-500 flex justify-between items-center rounded-tl-lg rounded-tr-lg"
@@ -141,8 +141,8 @@ export default {
           data: null,
           render: (data, type, row) => {
             return `
-                        <button class="btn-editar-actividad bg-yellow-500 text-white p-2 pt-3 rounded" data-id="${data.idActEnsenanza}"><i class="pi pi-pencil pointer-events-none"></i></button>
-                        <button class="btn-eliminar-actividad bg-red-500 text-white  p-2 pt-3  rounded" data-id="${data.idActEnsenanza}"><i class="pi pi-trash pointer-events-none"></i></button>
+                        <button class="btn-editar-actividad bg-yellow-500 text-white p-2 pt-2 rounded" data-id="${data.idActEnsenanza}"><i class="pi pi-pencil pointer-events-none"></i></button>
+                        <button class="btn-eliminar-actividad bg-red-500 text-white  p-2 pt-2  rounded" data-id="${data.idActEnsenanza}"><i class="pi pi-trash pointer-events-none"></i></button>
                         <a href="http://localhost:3000${data.urlEvi}" target="_blank" class="btn-ver-archivo bg-green-500 text-white p-2 pt-3 rounded"><i class="pi pi-eye pointer-events-none"></i></a>
                       `;
           },
