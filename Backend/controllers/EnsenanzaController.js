@@ -13,7 +13,7 @@ const storage = multer.diskStorage({
         // Obtiene la fecha actual en formato YYYY-MM-DD
         const currentDate = new Date().toISOString().slice(0, 10);
         
-        cb(null, `Evidencia-${actividadId}-${currentDate}.${fileExtension}`);
+        cb(null, `Evidencia-Ensenanza-${actividadId}-${currentDate}.${fileExtension}`);
     },
 });
 

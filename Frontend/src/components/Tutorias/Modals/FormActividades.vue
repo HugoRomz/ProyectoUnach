@@ -8,6 +8,7 @@
     <div class="bg-white p-8 rounded-lg w-1/2">
       <h2 class="text-lg mb-4 text-center font-semibold">{{ modalTitle }}</h2>
       <form class="w-full" @submit.prevent="submitForm">
+        <input type="text" id="id_act" v-model="form.id_act" />
         <div class="flex flex-wrap -mx-3 mb-6">
           <div class="w-full px-3">
             <label
@@ -40,41 +41,25 @@
               type="date"
             />
           </div>
-          <div class="w-full md:w-1/2 px-3">
+         <div class="w-full md:w-1/2 px-3">
             <label
               class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              for="programa_academico"
+              for="prog_academico"
             >
-              Programa académico:
+              Tipo de Actividad:
             </label>
-            <VueMultiselect
-              id="programa_academico"
+            <vue-multiselect
+              id="prog_academico"
               v-model="form.prog_academico"
               :options="options"
-              placeholder="Elige un programa..."
-              label="name"
-              track-by="name"
-            >
-            </VueMultiselect>
-          </div>
-        </div>
-        <div class="flex flex-wrap -mx-3 mb-6">
-          <div class="w-full px-3">
-            <label
-              class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              for="evidencias"
-            >
-              Evidencias:
-            </label>
-            <input
-              class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600"
-              id="evidencias"
-              name="evidencias"
-              type="file"
-              placeholder="Simposio de tutorías"
-              ref="evidenciasInput"
-              @change="handleFileUpload"
-            />
+              :multiple="false"
+              label="nombreProg"
+              track-by="idprog_academicos"
+              :searchable="true"
+              :loading="isLoading"
+              :clear-on-select="true"
+              :append-to-body="true"
+            ></vue-multiselect>
           </div>
         </div>
         <div class="flex flex-wrap -mx-3 mb-6">
@@ -120,7 +105,6 @@ export default {
   components: { VueMultiselect },
   data() {
     return {
-      // Para el formulario y la ventana flotante
       form: {
         id_act: "",
         nombre: "",
@@ -128,11 +112,11 @@ export default {
         descripcion: "",
         prog_academico: "",
       },
-      archivo: null,
       modalTitle: "Insertar",
       dataLoaded: false,
       selected: null,
-      options: [{ name: "LIDTS" }, { name: "LC" }, { name: "AMBAS" }],
+      options: [],
+      isLoading: false
     };
   },
   watch: {
@@ -153,31 +137,42 @@ export default {
     },
   },
   methods: {
-    handleFileUpload() {
-      this.archivo = this.$refs.evidenciasInput.files[0];
+    buscarOpciones() {
+      if (!this.options.length) {
+        this.isLoading = true;
+        // Solo realiza la búsqueda si las opciones están vacías
+        apiTutorias
+          .buscarProgAcademico()
+          .then((res) => {
+            this.options = res.data;
+            this.isLoading = false;
+          })
+          .catch((err) => {
+            console.log("Error al buscar opciones", err);
+            this.isLoading = false;
+          });
+      }
     },
     async loadActivityData() {
       this.loading = true;
       try {
         const response = await apiTutorias.buscarActividad(this.id_act);
 
-        const fecha = new Date(response.data[0].fecha);
+        const fecha = new Date(response.data[0].fechaActTutorias);
         const formattedDate = `${fecha.getFullYear()}-${(fecha.getMonth() + 1)
           .toString()
           .padStart(2, "0")}-${fecha.getDate().toString().padStart(2, "0")}`;
 
-        this.form.id_act = response.data[0].id_act;
-        this.form.nombre = response.data[0].nombre;
+        this.form.id_act = response.data[0].idActTutorias;
+        this.form.nombre = response.data[0].nombreActTutorias;
         this.form.fecha = formattedDate;
-        this.form.descripcion = response.data[0].descripcion;
-        this.form.prog_academico = response.data[0].prog_academico;
+        this.form.descripcion = response.data[0].descripcionActTutorias;
 
         const prog_academico = response.data[0].prog_academico;
         this.form.prog_academico = this.options.find(
-          (option) => option.name === prog_academico
+          (option) => option.idprog_academicos === prog_academico
         );
 
-        this.form.id_act = response.data[0].id_act;
         this.dataLoaded = true;
       } catch (error) {
         Swal.fire({
@@ -207,13 +202,13 @@ export default {
 
     // Función para manejar el envío del formulario
     submitForm() {
-      // Crea un objeto FormData para enviar datos de formulario incluyendo el archivo
-      const formData = new FormData();
-      formData.append("nombre", this.form.nombre);
-      formData.append("fecha", this.form.fecha);
-      formData.append("descripcion", this.form.descripcion);
-      formData.append("prog_academico", this.form.prog_academico.name);
-      formData.append("evidencias", this.archivo); // Agrega el archivo al FormData
+      const data = {
+        idActTutorias: this.form.id_act,
+        nombreActTutorias: this.form.nombre,
+        descripcionActTutorias: this.form.descripcion,
+        fechaActTutorias: this.form.fecha,
+        prog_academico: this.form.prog_academico.idprog_academicos,
+      };
 
       // Verifica si los campos del formulario están vacíos
       if (
@@ -232,7 +227,7 @@ export default {
 
       if (this.form.id_act === null || this.form.id_act === "") {
         apiTutorias
-          .insertarActividad(formData) // Envía el FormData con el archivo
+          .insertarActividad(data) // Envía el FormData con el archivo
           .then((response) => {
             Swal.fire({
               title: "Actividad registrada",
@@ -252,7 +247,7 @@ export default {
           });
       } else if (this.form.id_act != null || this.form.id_act != "") {
         apiTutorias
-          .editarActividad(this.form.id_act, formData) // Envía el FormData con el archivo
+          .editarActividad(this.form.id_act, data) // Envía el FormData con el archivo
           .then((response) => {
             Swal.fire({
               title: "Actividad editada",
@@ -271,6 +266,10 @@ export default {
           });
       }
     },
+
+  },
+  mounted(){
+    this.buscarOpciones();
   },
 };
 </script>
