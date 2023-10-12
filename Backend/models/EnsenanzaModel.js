@@ -78,6 +78,41 @@ function insertarEvidencias(data, callback) {
   });
 }
 
+function actualizarEvidencias(id, data, callback) {
+
+  const query = "UPDATE evidenciasEnsenanza SET ? WHERE idevidenciasE = ?";
+  db.query(query, [data, id], (error, results) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, results);
+    }
+  });
+  
+}
+
+function eliminarEvidencia(id, callback) {
+  const query = "DELETE FROM evidenciasEnsenanza WHERE idevidenciasE = ?";
+  db.query(query, [id], (error, results) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, results);
+    }
+  });
+}
+
+function obtenerEvidenciaPorId(id, callback) {
+  const query = "SELECT * FROM evidenciasEnsenanza WHERE idevidenciasE = ?";
+  db.query(query, [id], (error, results) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, results);
+    }
+  });
+}
+
 module.exports = {
   obtenerActividades,
   buscarTipoActividad,
@@ -86,4 +121,8 @@ module.exports = {
   eliminarActividad,
   obtenerEvidencias,
   insertarEvidencias,
+  eliminarEvidencia,
+  obtenerEvidenciaPorId,
+  actualizarEvidencias 
 };
+
