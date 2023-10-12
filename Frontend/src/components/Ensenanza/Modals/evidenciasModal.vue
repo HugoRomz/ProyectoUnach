@@ -21,8 +21,8 @@
       <div class="modal-body p-4 max-h-96 overflow-y-auto">
         <div class="w-full p-6 shadow-lg rounded-md border border-gray-300">
           <form class="w-full" @submit.prevent="submitForm">
-            <input type="text" v-model="form.idEvidenciasE" />
-            <input type="text" v-model="form.idActEnsenanza" />
+            <input type="hidden" v-model="form.idEvidenciasE" />
+            <input type="hidden" v-model="form.idActEnsenanza" />
             <div class="flex flex-wrap -mx-3 mb-6">
               <div class="w-full px-3">
                 <label
@@ -36,7 +36,7 @@
                   id="nombreEvi"
                   v-model="form.nombreEvi"
                   type="text"
-                  placeholder="Simposio de tutorías"
+                  placeholder="Ingreso de Estudiantes 2023"
                 />
               </div>
             </div>
@@ -53,7 +53,6 @@
                   id="evidencias"
                   name="evidencias"
                   type="file"
-                  placeholder="Simposio de tutorías"
                   ref="evidenciasInput"
                   @change="handleFileUpload"
                 />
@@ -72,6 +71,7 @@
                   v-model="form.descripcionEvi"
                   rows="4"
                   class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                  placeholder="Describa brevemente la evidencia, incluyendo los objetivos, participantes y cualquier detalle relevante."
                 ></textarea>
               </div>
             </div>
@@ -82,6 +82,9 @@
               Guardar
             </button>
           </form>
+          <button @click="resetForm" class="w-full mt-4 bg-red-500 text-white p-2 rounded hover:bg-red-600">
+              Limpiar
+          </button>
         </div>
 
         <div
@@ -141,8 +144,8 @@ export default {
           data: null,
           render: (data, type, row) => {
             return `
-                        <button class="btn-editar-actividad bg-yellow-500 text-white p-2 pt-2 rounded" data-id="${data.idActEnsenanza}"><i class="pi pi-pencil pointer-events-none"></i></button>
-                        <button class="btn-eliminar-actividad bg-red-500 text-white  p-2 pt-2  rounded" data-id="${data.idActEnsenanza}"><i class="pi pi-trash pointer-events-none"></i></button>
+                        <button class="btn-editar-evidencia bg-yellow-500 text-white p-2 pt-2 rounded" data-id="${data.idevidenciasE}"><i class="pi pi-pencil pointer-events-none"></i></button>
+                        <button class="btn-eliminar-evidencia bg-red-500 text-white  p-2 pt-2  rounded" data-id="${data.idevidenciasE}"><i class="pi pi-trash pointer-events-none"></i></button>
                         <a href="http://localhost:3000${data.urlEvi}" target="_blank" class="btn-ver-archivo bg-green-500 text-white p-2 pt-3 rounded"><i class="pi pi-eye pointer-events-none"></i></a>
                       `;
           },
@@ -157,8 +160,28 @@ export default {
           this.obtenerData();
           this.form.idActEnsenanza = this.actividadId;
         });
+      } else {
+        this.resetForm(); 
       }
     },
+},
+
+  mounted() {
+    this.$nextTick(() => {
+      document.addEventListener("click", (event) => {
+        // Verificar si se hizo clic en el botón de editar
+        if (event.target.matches(".btn-editar-evidencia")) {
+          const id = event.target.getAttribute("data-id");
+          this.cargarEvidenciaParaEditar(id);
+        }
+
+        // Verificar si se hizo clic en el botón de eliminar
+        if (event.target.matches(".btn-eliminar-evidencia")) {
+          const id = event.target.getAttribute("data-id");
+          this.eliminarEvidencia(id);
+        }
+      });
+    });
   },
 
   methods: {
@@ -181,7 +204,7 @@ export default {
         idEvidenciasE: "",
         nombreEvi: "",
         descripcionEvi: "",
-        evidencias:""
+        evidencias: "",
       };
       this.archivo = null;
     },
@@ -191,12 +214,11 @@ export default {
       formData.append("idActEnsenanza", this.form.idActEnsenanza);
       formData.append("nombreEvi", this.form.nombreEvi);
       formData.append("descripcionEvi", this.form.descripcionEvi);
-      formData.append("evidencias", this.archivo); 
+      if (this.archivo) {
+      formData.append("evidencias", this.archivo);
+    }
 
-      if (
-        !this.form.nombreEvi ||
-        !this.form.descripcionEvi
-      ) {
+      if (!this.form.nombreEvi || !this.form.descripcionEvi) {
         Swal.fire({
           title: "Datos incompletos",
           text: "Por favor rellena todos los campos",
@@ -205,11 +227,14 @@ export default {
         return;
       }
 
-      let promise; 
+      let promise;
       if (!this.form.idEvidenciasE) {
         promise = apiEnsenanza.insertarEvidencias(formData);
       } else {
-        promise = apiEnsenanza.actualizarEvidencias(this.form.idEvidenciasE,data);
+        promise = apiEnsenanza.actualizarEvidencias(
+          this.form.idEvidenciasE,
+          formData
+        );
       }
       promise
         .then((res) => {
@@ -238,6 +263,52 @@ export default {
             icon: "error",
           });
         });
+    },
+    eliminarEvidencia(id) {
+      Swal.fire({
+        title: "¿Estás seguro de eliminar la evidencia?",
+        text: "No podrás revertir esta acción",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, borrar",
+        cancelButtonText: "Cancelar",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          apiEnsenanza
+            .eliminarEvidencia(id)
+            .then(() => {
+              Swal.fire(
+                "Eliminado",
+                "La evidencia ha sido eliminada.",
+                "success"
+              );
+              this.obtenerData();
+            })
+            .catch((err) => {
+              console.error(err);
+              Swal.fire("Error", "Error al eliminar la evidencia.", "error");
+            });
+        }
+      });
+    },
+    cargarEvidenciaParaEditar(id) {
+        // Buscar la evidencia con el id dado
+        const evidencia = this.evidencias.find(ev => ev.idevidenciasE == id);
+
+        // Si no se encuentra la evidencia, manejar el error apropiadamente
+        if (!evidencia) {
+            console.error("No se pudo encontrar la evidencia para editar");
+            Swal.fire("Error", "No se pudo encontrar la evidencia para editar.", "error");
+            return;
+        }
+
+        // Asignar los datos de la evidencia al formulario
+        this.form.idEvidenciasE = evidencia.idevidenciasE;
+        this.form.nombreEvi = evidencia.nombreEvi;
+        this.form.descripcionEvi = evidencia.descripcionEvi;
+        // (y cualquier otro campo que necesites)
     },
   },
 };
