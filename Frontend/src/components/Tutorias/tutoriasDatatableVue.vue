@@ -9,8 +9,8 @@
         <template #headers>
           <th>No_Actividad</th>
           <th>Nombre</th>
-          <th>Fecha</th>
           <th>Descripcion</th>
+          <th>Fecha</th>
           <th>Programa Academico</th>
           <th>Acciones</th>
         </template>
@@ -23,53 +23,60 @@
     @update:visible="closeModal"
     @activityChanged="obtenerActividades"
   />
+
+  <!-- Modal Component -->
+  <evidenciasModal
+        :show="isModalVisible"
+        :actividadId="modalData"
+        @close="isModalVisible = false"
+      ></evidenciasModal>
 </template>
 
 <script>
 import api from "../../services/apiTutorias";
 import DataTableComponent from "../Plantillas/DataTableComponent.vue"; // Asegúrate de ajustar la ruta
 import Swal from "sweetalert2";
+import dayjs from "dayjs";
 import ModalFormComponent from "../Tutorias/Modals/FormActividades.vue";
 
 import logoSuperior from "../../assets/LogoSuperior";
 import logoInferior from "../../assets/LogoInferior";
 
+import evidenciasModal from "./Modals/evidenciasModal.vue";
+
 export default {
   components: {
     DataTableComponent,
-    ModalFormComponent, // Cambiado a nuestro componente personalizado
+    ModalFormComponent,
+    evidenciasModal
   },
   data() {
     return {
+      isModalVisible: false,
+      modalData: "",
       actividades: [],
       columns: [
-        { data: "id_act" },
-        { data: "nombre" },
+        { data: "idActTutorias" },
+        { data: "nombreActTutorias" },
+        { data: "descripcionActTutorias" },
         {
-          data: "fecha",
+          data: "fechaActTutorias",
           render: function (data, type, row) {
             if (type === "display" || type === "filter") {
-              var fecha = new Date(data);
-              var dia = fecha.getDate();
-              var mes = fecha.getMonth() + 1;
-              var año = fecha.getFullYear();
-              return `${año}-${mes < 10 ? "0" + mes : mes}-${
-                dia < 10 ? "0" + dia : dia
-              }`;
+              return dayjs(data).format("YYYY-MM-DD"); // ajusta el formato como desees
             }
-            return data; // para otros tipos de datos, devuelves el valor original
+            return data;
           },
         },
-        { data: "descripcion" },
-        { data: "prog_academico" },
+        { data: "nombreProg" },
         {
           title: "Acciones",
           data: null,
           render: (data, type, row) => {
             return `
-                        <button class="btn-editar-actividad bg-yellow-500 text-white p-2 pt-3 rounded" data-id="${data.id_act}"><i class="pi pi-pencil pointer-events-none"></i></button>
-                        <button class="btn-eliminar-actividad bg-red-500 text-white  p-2 pt-3  rounded" data-id="${data.id_act}"><i class="pi pi-trash pointer-events-none"></i></button>
-                        <button class="bg-blue-500 text-white  p-2 pt-3  rounded" @click="detalleActividad(${data.id})"><i class="pi pi-info-circle pointer-events-none"></i></button>
+                        <button class="btn-editar-actividad bg-yellow-500 text-white p-2 pt-3 rounded" data-id="${data.idActTutorias}"><i class="pi pi-pencil pointer-events-none"></i></button>
+                        <button class="btn-eliminar-actividad bg-red-500 text-white  p-2 pt-3  rounded" data-id="${data.idActTutorias}"><i class="pi pi-trash pointer-events-none"></i></button>
+                        <button class="btn-detalle-actividad bg-blue-500 text-white p-2 pt-3 rounded" data-id="${data.idActTutorias}"><i class="pi pi-info-circle pointer-events-none"></i></button>
                       `;
           },
         },
@@ -175,6 +182,12 @@ export default {
         if (event.target.matches(".btn-eliminar-actividad")) {
           const id = event.target.getAttribute("data-id");
           this.eliminarActividad(id);
+        }
+
+        // Verificar si se hizo clic en el botón de detalle
+        if (event.target.matches(".btn-detalle-actividad")) {
+          const id = event.target.getAttribute("data-id");
+          this.mostrarDetalleActividad(id);
         }
       });
     });
@@ -288,6 +301,11 @@ export default {
           });
       }
     },
+    mostrarDetalleActividad(id) {
+      this.modalData = id; // Solo guarda el ID en lugar de todo el objeto de datos
+      this.isModalVisible = true;
+    },
   },
+  
 };
 </script>

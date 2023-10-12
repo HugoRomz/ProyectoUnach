@@ -26,7 +26,7 @@
               id="nombreAct"
               v-model="form.nombreAct"
               type="text"
-              placeholder="Simposio de tutorías"
+              placeholder="Ej. Taller de ciencias"
             />
           </div>
         </div>
@@ -63,6 +63,7 @@
               id="fecha"
               v-model="form.fechaAct"
               type="date"
+              placeholder="Ej. dd/mm/aaaa"
             />
           </div>
         </div>
@@ -79,6 +80,7 @@
               v-model="form.descripcionAct"
               rows="4"
               class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              placeholder="Ej. En este taller, los estudiantes aprenderán sobre los principios básicos de la física..."
             ></textarea>
           </div>
         </div>
