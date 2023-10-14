@@ -13,29 +13,37 @@
       </button>
       <TabProyectosInvestigacion ref="datatableComponent" />
     </div>
+    <ModalFormComponent
+      :visible="showModal"
+      @update:visible="handleClose"
+      @activityChanged="fetchProjects"
+    />
   </div>
 </template>
 
 <script>
 import HeaderComponent from "../components/HeaderModuleComponent.vue";
 import TabProyectosInvestigacion from "../components/Investigacion/TabProyectosInvestigacion.vue"
+import ModalFormComponent from "../components/Investigacion/Modals/FormProyectos.vue"
 
 export default{
     components:{
         HeaderComponent,
-        TabProyectosInvestigacion
+        TabProyectosInvestigacion,
+        ModalFormComponent
     },
     data(){
-
+        return {
+        showModal: false, // Controla si se muestra o no la ventana flotante
+      };
     },
     methods:{
         handleClose(value) {
             this.showModal = value;
         },
-        fetchActivities() {
+        fetchProjects() {
             this.$refs.datatableComponent.updateData();
         },
     }
 }
-
 </script>

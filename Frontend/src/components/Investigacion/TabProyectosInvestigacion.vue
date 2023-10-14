@@ -11,6 +11,7 @@
           <th>Nombre</th>
           <th>Fecha Inicio</th>
           <th>Fecha Fin</th>
+          <th>Linea de Investigacion</th>
           <th>Lider del Proyecto</th>
           <th>Status</th>
           <th>Acciones</th>
@@ -51,6 +52,7 @@ export default {
             return data;
           },
         },
+        { data: "lineaInvestigacion" },
         { data: "liderProyecto" },
         { data: "status" },
         {
@@ -81,13 +83,13 @@ export default {
         },
         buttons: [
           {
-            tittle: "Reporte de actividades PAT",
+            tittle: "Reporte de Proyectos de Investigacion",
             extend: "excelHtml5",
             text: "Excel",
             className: "bg-green-500 btn btn-success border-0",
           },
           {
-            tittle: "Reporte de actividades PAT",
+            tittle: "Reporte de Proyectos de Investigacion",
             extend: "pdfHtml5",
             text: '<i class="fa-regular fa-file"></i> PDF',
             className: "bg-red-500 btn btn-danger border-0",
@@ -126,13 +128,13 @@ export default {
           },
 
           {
-            tittle: "Reporte de actividades PAT",
+            tittle: "Reporte de Proyectos de Investigacion",
             extend: "print",
             text: "Imprimir",
             className: "bg-gray-500 btn btn-dark border-0",
           },
           {
-            tittle: "Reporte de actividades PAT",
+            tittle: "Reporte de Proyectos de Investigacion",
             extend: "copy",
             text: "Copiar Texto",
             className: "bg-slate-300 btn btn-light border-0",
