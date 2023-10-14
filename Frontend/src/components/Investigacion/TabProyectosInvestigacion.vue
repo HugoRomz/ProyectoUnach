@@ -94,7 +94,7 @@ export default {
             customize: function (doc) {
               // Personalizar el documento PDF aquí
 
-              // Añadir margen superior al título
+              // Añadir margen superior al títuloz
               if (doc.content[0].text) {
                 // Verifica si hay un título
                 doc.content[0].margin = [0, 10, 0, 0]; // 50 es el margen superior
