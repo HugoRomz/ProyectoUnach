@@ -1,8 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../views/HomeView.vue'; 
 import TutoriasView from '../views/TutoriaView.vue';
-import EnsenanzaView from '../views/EnsenanzaView.vue';
+import EnsenanzaView from '../views/Ensenanza/EnsenanzaView.vue';
+import loginEnsenanza from '../views/Ensenanza/loginEnsenanza.vue';
 import InvestigacionView from '../views/InvestigacionView.vue'
+
 // Ajusta la ruta según tu estructura
 
 const routes = [
@@ -26,6 +28,12 @@ const routes = [
     meta: { title: 'Enseñanza' }
   },
   {
+    path: '/loginEnsenanza',
+    name: 'LoginEnsenanza',
+    component: loginEnsenanza,
+    meta: { title: 'LoginEnsenanza' 
+   },
+
     path: '/investigacion',
     name: 'Investigacion',
     component: InvestigacionView,
