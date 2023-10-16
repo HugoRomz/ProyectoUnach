@@ -7,7 +7,7 @@
         :dtoptions="dtoptions"
       >
         <template #headers>
-          <th>No_Proyecto</th>
+          <th>ID</th>
           <th>Nombre</th>
           <th>Fecha Inicio</th>
           <th>Fecha Fin</th>
@@ -19,23 +19,35 @@
       </DataTableComponent>
     </div>
   </div>
+  <ModalFormComponent
+    :visible="showModal"
+    :idProyecto="editingId"
+    @update:visible="closeModal"
+    @projectsChanged="obtenerProyectos"
+  />
 </template>
 
 <script>
 import DataTableComponent from "../Plantillas/DataTableComponent.vue";
+import apiInvestigacion from "../../services/apiInvestigacion";
+import ModalFormComponent from "../Investigacion/Modals/FormProyectos.vue"
+import dayjs from "dayjs";
 
 export default {
   components: {
     DataTableComponent,
+    ModalFormComponent
   },
   data() {
     return {
       proyectos: [],
+      showModal: false,
+      editingId: null,
       columns: [
-        { data: "idProyecto" },
-        { data: "nombreProyecto" },
+        { data: "id" },
+        { data: "nombre" },
         {
-          data: "fechaInicio",
+          data: "fecha_inicio",
           render: function (data, type, row) {
             if (type === "display" || type === "filter") {
               return dayjs(data).format("YYYY-MM-DD"); // ajusta el formato como desees
@@ -44,7 +56,7 @@ export default {
           },
         },
         {
-          data: "fechaFin",
+          data: "fecha_final",
           render: function (data, type, row) {
             if (type === "display" || type === "filter") {
               return dayjs(data).format("YYYY-MM-DD"); // ajusta el formato como desees
@@ -52,9 +64,9 @@ export default {
             return data;
           },
         },
-        { data: "lineaInvestigacion" },
-        { data: "liderProyecto" },
-        { data: "status" },
+        { data: "linea_investigacion" },
+        { data: "lider_de_proyecto" },
+        { data: "estatus" },
         {
           title: "Acciones",
           data: null,
@@ -144,7 +156,25 @@ export default {
     };
   },
   mounted() {
-    
+    this.obtenerProyectos();
+  },
+  methods: {
+    closeModal() {
+      this.showModal = false;
+    },
+    obtenerProyectos() {
+      apiInvestigacion
+        .obtenerProyectos()
+        .then((response) => {
+          this.proyectos = response.data;
+        })
+        .catch((error) => {
+          console.error("Error al obtener los proyectos:", error);
+        });
+    },
+    updateData() {
+      this.obtenerProyectos(); // Esta función ya la tienes definida para obtener las actividades
+    },
   },
 };
 </script>

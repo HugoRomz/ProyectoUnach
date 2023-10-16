@@ -16,7 +16,7 @@
     <ModalFormComponent
       :visible="showModal"
       @update:visible="handleClose"
-      @activityChanged="fetchProjects"
+      @projectsChanged="fetchProjects"
     />
   </div>
 </template>
