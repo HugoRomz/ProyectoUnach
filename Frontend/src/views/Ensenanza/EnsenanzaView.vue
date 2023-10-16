@@ -11,9 +11,9 @@
 </template>
 
 <script>
-    import HeaderModule from '../components/HeaderModuleComponent.vue';
-    import TabComponentEnsenanza from '../components/Ensenanza/TabComponentEnsenanza.vue';
-    import formEsenanza from '../components/Ensenanza/formEsenanza.vue';
+    import HeaderModule from '../../components/HeaderModuleComponent.vue';
+    import TabComponentEnsenanza from '../../components/Ensenanza/TabComponentEnsenanza.vue';
+    import formEsenanza from '../../components/Ensenanza/formEsenanza.vue';
     export default {
         components: {
             HeaderModule,
