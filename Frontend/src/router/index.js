@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../views/HomeView.vue'; 
 import TutoriasView from '../views/TutoriaView.vue';
 import EnsenanzaView from '../views/EnsenanzaView.vue';
+import InvestigacionView from '../views/InvestigacionView.vue'
 // Ajusta la ruta según tu estructura
 
 const routes = [
@@ -23,6 +24,12 @@ const routes = [
     name: 'Enseñanza',
     component: EnsenanzaView,
     meta: { title: 'Enseñanza' }
+  },
+  {
+    path: '/investigacion',
+    name: 'Investigacion',
+    component: InvestigacionView,
+    meta: { title: 'Coordinacion de Investigacion' }
   }
   
   // Agrega más rutas aquí si es necesario

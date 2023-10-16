@@ -4,6 +4,7 @@ const path = require('path');
 const app = express();
 const tutoriasRoutes = require('./routes/TutoriasRoutes');
 const ensenanzaRoutes = require('./routes/EnsenanzaRoutes');
+const investigacionRoutes = require("./routes/InvestigacionRoutes");
 
 app.use(express.json());
 app.use(cors());
@@ -16,6 +17,7 @@ const puerto = process.env.PUERTO || 3000;
 
 app.use('/tutorias', tutoriasRoutes);
 app.use('/ensenanza', ensenanzaRoutes);
+app.use('/investigacion', investigacionRoutes);
 
 app.listen(puerto, () => {
     console.log(`Servidor OK en: http://localhost:${puerto}`);

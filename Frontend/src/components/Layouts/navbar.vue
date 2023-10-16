@@ -51,7 +51,7 @@ export default {
         { text: 'Home', route: '/' },
         { text: 'Tutorias', route: '/tutorias' },
         { text: 'Ensenanza', route: '/ensenanza' },
-        { text: 'Features', route: '#features4' },
+        { text: 'Coordinacion de Investigacion', route: '/investigacion' },
         { text: 'Features', route: '#features5' }
       ]
     };

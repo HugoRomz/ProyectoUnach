@@ -38,10 +38,8 @@ import DataTableComponent from "../Plantillas/DataTableComponent.vue"; // Asegú
 import Swal from "sweetalert2";
 import dayjs from "dayjs";
 import ModalFormComponent from "../Tutorias/Modals/FormActividades.vue";
-
 import logoSuperior from "../../assets/LogoSuperior";
 import logoInferior from "../../assets/LogoInferior";
-
 import evidenciasModal from "./Modals/evidenciasModal.vue";
 
 export default {
