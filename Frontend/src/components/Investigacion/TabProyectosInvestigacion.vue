@@ -39,7 +39,7 @@ import DataTableComponent from "../Plantillas/DataTableComponent.vue";
 import apiInvestigacion from "../../services/apiInvestigacion";
 import ModalFormComponent from "../Investigacion/Modals/FormProyectos.vue";
 import dayjs from "dayjs";
-import evidenciasModal from "../Investigacion/Modals/EvidenciasModal.vue"; 
+import evidenciasModal from "../Investigacion/Modals/evidenciasModal.vue"; 
 
 export default {
   components: {
