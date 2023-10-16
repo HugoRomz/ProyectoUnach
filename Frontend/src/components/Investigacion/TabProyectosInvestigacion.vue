@@ -25,24 +25,35 @@
     @update:visible="closeModal"
     @projectsChanged="obtenerProyectos"
   />
+
+  <!-- Modal Component -->
+  <evidenciasModal
+    :show="isModalVisible"
+    :projectId="modalData"
+    @close="isModalVisible = false"
+  ></evidenciasModal>
 </template>
 
 <script>
 import DataTableComponent from "../Plantillas/DataTableComponent.vue";
 import apiInvestigacion from "../../services/apiInvestigacion";
-import ModalFormComponent from "../Investigacion/Modals/FormProyectos.vue"
+import ModalFormComponent from "../Investigacion/Modals/FormProyectos.vue";
 import dayjs from "dayjs";
+import evidenciasModal from "../Investigacion/Modals/EvidenciasModal.vue"; 
 
 export default {
   components: {
     DataTableComponent,
-    ModalFormComponent
+    ModalFormComponent,
+    evidenciasModal
   },
   data() {
     return {
       proyectos: [],
       showModal: false,
       editingId: null,
+      modalData: "",
+      isModalVisible: false,
       columns: [
         { data: "id" },
         { data: "nombre" },
@@ -74,7 +85,7 @@ export default {
             return `
                         <button class="btn-editar-actividad bg-yellow-500 text-white p-2 pt-3 rounded" data-id="${data.idActTutorias}"><i class="pi pi-pencil pointer-events-none"></i></button>
                         <button class="btn-eliminar-actividad bg-red-500 text-white  p-2 pt-3  rounded" data-id="${data.idActTutorias}"><i class="pi pi-trash pointer-events-none"></i></button>
-                        <button class="btn-detalle-actividad bg-blue-500 text-white p-2 pt-3 rounded" data-id="${data.idActTutorias}"><i class="pi pi-info-circle pointer-events-none"></i></button>
+                        <button class="btn-detalle-proyecto bg-blue-500 text-white p-2 pt-3 rounded" data-id="${data.id}"><i class="pi pi-info-circle pointer-events-none"></i></button>
                       `;
           },
         },
@@ -157,6 +168,16 @@ export default {
   },
   mounted() {
     this.obtenerProyectos();
+
+    this.$nextTick(() => {
+      document.addEventListener("click", (event) => {
+        // Verificar si se hizo clic en el botón de detalle
+        if (event.target.matches(".btn-detalle-proyecto")) {
+          const id = event.target.getAttribute("data-id");
+          this.mostrarDetalleProyecto(id);
+        }
+      });
+    });
   },
   methods: {
     closeModal() {
@@ -174,6 +195,10 @@ export default {
     },
     updateData() {
       this.obtenerProyectos(); // Esta función ya la tienes definida para obtener las actividades
+    },
+    mostrarDetalleProyecto(id) {
+      this.modalData = id; // Solo guarda el ID en lugar de todo el objeto de datos
+      this.isModalVisible = true;
     },
   },
 };
