@@ -28,11 +28,11 @@
   />
 
   <!-- Modal Component -->
-  <evidenciasModal
+  <colaboradoresModal
     :show="isModalVisible"
     :projectId="modalData"
     @close="isModalVisible = false"
-  ></evidenciasModal>
+  ></colaboradoresModal>
 </template>
 
 <script>
@@ -40,13 +40,13 @@ import DataTableComponent from "../Plantillas/DataTableComponent.vue";
 import apiInvestigacion from "../../services/apiInvestigacion";
 import ModalFormComponent from "../Investigacion/Modals/FormProyectos.vue";
 import dayjs from "dayjs";
-import evidenciasModal from "../Investigacion/Modals/evidenciasModal.vue";
+import colaboradoresModal from "../Investigacion/Modals/ColaboradoresModal.vue";
 
 export default {
   components: {
     DataTableComponent,
     ModalFormComponent,
-    evidenciasModal,
+    colaboradoresModal,
   },
   data() {
     return {
@@ -84,7 +84,7 @@ export default {
           title: "Colaboradores",
           render: (data, type, row) => {
             return `
-                        <button class="btn-detalle-proyecto bg-blue-500 text-white p-2 pt-3 rounded" data-id="${data.id}">Añadir Colaborador</button>
+                        <button class="btn-colaboradores bg-blue-500 text-white p-2 pt-2 rounded" data-id="${data.id}">Colaboradores</button>
                       `;
           },
         },
@@ -93,9 +93,9 @@ export default {
           data: null,
           render: (data, type, row) => {
             return `
-                        <button class="btn-editar-actividad bg-yellow-500 text-white p-2 pt-3 rounded" data-id="${data.idActTutorias}"><i class="pi pi-pencil pointer-events-none"></i></button>
-                        <button class="btn-eliminar-actividad bg-red-500 text-white  p-2 pt-3  rounded" data-id="${data.idActTutorias}"><i class="pi pi-trash pointer-events-none"></i></button>
-                        
+                        <button class="btn-editar-actividad bg-yellow-500 text-white p-2 pt-3 rounded" data-id="${data.id}"><i class="pi pi-pencil pointer-events-none"></i></button>
+                        <button class="btn-eliminar-actividad bg-red-500 text-white  p-2 pt-3  rounded" data-id="${data.id}"><i class="pi pi-trash pointer-events-none"></i></button>
+                        <button class="btn-detalle-proyecto bg-blue-500 text-white p-2 pt-3 rounded" data-id="${data.id}"><i class="pi pi-info-circle pointer-events-none"></i></button>
                       `;
           },
         },
@@ -182,9 +182,9 @@ export default {
     this.$nextTick(() => {
       document.addEventListener("click", (event) => {
         // Verificar si se hizo clic en el botón de detalle
-        if (event.target.matches(".btn-detalle-proyecto")) {
+        if (event.target.matches(".btn-colaboradores")) {
           const id = event.target.getAttribute("data-id");
-          this.mostrarDetalleProyecto(id);
+          this.mostrarDetalleColaboradores(id);
         }
       });
     });
@@ -206,7 +206,7 @@ export default {
     updateData() {
       this.obtenerProyectos(); // Esta función ya la tienes definida para obtener las actividades
     },
-    mostrarDetalleProyecto(id) {
+    mostrarDetalleColaboradores(id) {
       this.modalData = id; // Solo guarda el ID en lugar de todo el objeto de datos
       this.isModalVisible = true;
     },

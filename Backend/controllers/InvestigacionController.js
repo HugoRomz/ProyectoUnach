@@ -40,6 +40,34 @@ function insertarColaborador(req, res) {
   });
 }
 
+function editarColaborador(req, res) {
+  const id = req.body.idColaborador;
+  const formData = {
+    nombre: req.body.nombreColaborador,
+    tipo: req.body.tipoColaborador,
+    id_proyecto: req.body.idProyecto
+  };
+
+  InvestigacionModel.editarColaborador(id, formData, (error, results) => {
+    if (error) {
+      res.status(500).json({ error: "Error al editar colaborador." });
+    } else {
+      res.json(results);
+    }
+  });
+}
+
+function eliminarColaborador(req, res) {
+  const id = req.params.idColaborador;
+  InvestigacionModel.eliminarColaborador(id, (error, results) => {
+    if (error) {
+      res.status(500).json({ error: "Error al eliminar colaborador." });
+    } else {
+      res.json(results);
+    }
+  });
+}
+
 function obtenerProyectos(req, res) {
   InvestigacionModel.obtenerProyectos((error, rows) => {
     if (error) {
@@ -66,5 +94,7 @@ module.exports = {
     insertarProyecto,
     obtenerProyectos,
     obtenerColaboradores,
-    insertarColaborador
+    insertarColaborador,
+    editarColaborador,
+    eliminarColaborador
 }
