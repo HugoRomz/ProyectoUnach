@@ -23,6 +23,23 @@ function insertarProyecto(req, res) {
   });
 }
 
+function insertarColaborador(req, res) {
+  const formData = {
+    nombre: req.body.nombreColaborador,
+    tipo: req.body.tipoColaborador,
+    id_proyecto: req.body.idProyecto
+  };
+
+  InvestigacionModel.insertarColaborador(formData, (error, resultado) => {
+    if (error) {
+      console.log("Error al insertar en la base de datos:", error);
+      res.status(500).json({ error: "Error al registrar al colaborador." });
+    } else {
+      res.json(resultado);
+    }
+  });
+}
+
 function obtenerProyectos(req, res) {
   InvestigacionModel.obtenerProyectos((error, rows) => {
     if (error) {
@@ -33,7 +50,21 @@ function obtenerProyectos(req, res) {
   });
 }
 
+function obtenerColaboradores(req, res) {
+  const idColaborador= req.params.idColaborador;
+
+  InvestigacionModel.obtenerColaboradores(idColaborador, (error, rows) => {
+    if (error) {
+      res.status(500).json({ error: "Error al obtener los colaboradores." });
+    } else {
+      res.json(rows);
+    }
+  });
+}
+
 module.exports = {
     insertarProyecto,
-    obtenerProyectos
+    obtenerProyectos,
+    obtenerColaboradores,
+    insertarColaborador
 }
