@@ -14,6 +14,7 @@
           <th>Linea de Investigacion</th>
           <th>Lider del Proyecto</th>
           <th>Status</th>
+          <th>Colaboradores</th>
           <th>Acciones</th>
         </template>
       </DataTableComponent>
@@ -39,13 +40,13 @@ import DataTableComponent from "../Plantillas/DataTableComponent.vue";
 import apiInvestigacion from "../../services/apiInvestigacion";
 import ModalFormComponent from "../Investigacion/Modals/FormProyectos.vue";
 import dayjs from "dayjs";
-import evidenciasModal from "../Investigacion/Modals/evidenciasModal.vue"; 
+import evidenciasModal from "../Investigacion/Modals/evidenciasModal.vue";
 
 export default {
   components: {
     DataTableComponent,
     ModalFormComponent,
-    evidenciasModal
+    evidenciasModal,
   },
   data() {
     return {
@@ -79,13 +80,22 @@ export default {
         { data: "lider_de_proyecto" },
         { data: "estatus" },
         {
+          data: null,
+          title: "Colaboradores",
+          render: (data, type, row) => {
+            return `
+                        <button class="btn-detalle-proyecto bg-blue-500 text-white p-2 pt-3 rounded" data-id="${data.id}">Añadir Colaborador</button>
+                      `;
+          },
+        },
+        {
           title: "Acciones",
           data: null,
           render: (data, type, row) => {
             return `
                         <button class="btn-editar-actividad bg-yellow-500 text-white p-2 pt-3 rounded" data-id="${data.idActTutorias}"><i class="pi pi-pencil pointer-events-none"></i></button>
                         <button class="btn-eliminar-actividad bg-red-500 text-white  p-2 pt-3  rounded" data-id="${data.idActTutorias}"><i class="pi pi-trash pointer-events-none"></i></button>
-                        <button class="btn-detalle-proyecto bg-blue-500 text-white p-2 pt-3 rounded" data-id="${data.id}"><i class="pi pi-info-circle pointer-events-none"></i></button>
+                        
                       `;
           },
         },
