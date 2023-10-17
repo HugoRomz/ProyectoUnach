@@ -1,28 +1,38 @@
-//crear una store para el manejo de la bandera de actualizar tabla
 import { createStore } from 'vuex'
 
-// nueva store para el manejo de la bandera de actualizar tabla
 const store = createStore({
     state: {
-      actualizarTabla: false,
-      actividadEditar: null,
+        sideBarOpen: false,
+        actualizarTabla: false,
+        actividadEditar: null
+    },
+    getters: {
+        sideBarOpen: state => state.sideBarOpen,
+        // puedes agregar más getters si los necesitas
     },
     mutations: {
-      CAMBIAR_BANDERA_ACTUALIZAR_TABLA(state) {
-        state.actualizarTabla = !state.actualizarTabla;
-      },
-      SET_ACTIVIDAD_A_EDITAR(state, actividad) { 
-        state.actividadAEditar = actividad;
-      }
+        toggleSidebar(state) {
+            state.sideBarOpen = !state.sideBarOpen;
+        },
+        CAMBIAR_BANDERA_ACTUALIZAR_TABLA(state) {
+            state.actualizarTabla = !state.actualizarTabla;
+        },
+        SET_ACTIVIDAD_A_EDITAR(state, actividad) {
+            state.actividadEditar = actividad;
+        }
     },
     actions: {
-      cambiarBanderaActualizarTabla({ commit }) {
-        commit('CAMBIAR_BANDERA_ACTUALIZAR_TABLA');
-      },
-      setActividadAEditar({commit}, actividad) { // Nueva acción
-        commit('SET_ACTIVIDAD_A_EDITAR', actividad);
-      }
+        toggleSidebar({ commit }) {
+            commit('toggleSidebar');
+        },
+        cambiarBanderaActualizarTabla({ commit }) {
+            commit('CAMBIAR_BANDERA_ACTUALIZAR_TABLA');
+        },
+        setActividadAEditar({ commit }, actividad) {
+            commit('SET_ACTIVIDAD_A_EDITAR', actividad);
+        }
+        // puedes agregar más acciones si las necesitas
     }
-  });
+});
 
-  export default store;
+export default store;
