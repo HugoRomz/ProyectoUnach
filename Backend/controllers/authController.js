@@ -1,29 +1,29 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const Docente = require("../models/authModel.js");
+const Usuario = require("../models/authModel.js");
 
 exports.login = async (req, res) => {
   const { rfc, password } = req.body;
 
   try {
-    const docente = await Docente.findByRFC(rfc);
+    const usuario = await Usuario.findByRFC(rfc);
 
-    if (!docente) {
-      return res.status(400).send("Docente no encontrado");
+    if (!usuario) {
+      return res.status(400).send("Usuario no encontrado");
     }
 
-    const validPassword = await bcrypt.compare(password, docente.password);
+    const validPassword = await bcrypt.compare(password, usuario.password);
 
-    if (!password) {
+    if (!validPassword) {
       return res.status(400).send("Contraseña incorrecta");
     }
 
     const token = jwt.sign(
-      { id: docente.id, rfc: docente.rfc },
-      "TU_SECRETO_AQUI",
+      { id: usuario.id, rfc: usuario.rfc },
+      "1234",
       { expiresIn: "1h" }
     );
-    res.send({ token, docente });
+    res.send({ token, usuario });
   } catch (error) {
     // Maneja errores
     res.status(500).send("Error del servidor");
