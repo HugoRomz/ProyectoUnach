@@ -1,67 +1,94 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "../views/HomeView.vue";
+import ModulosView from "../views/ModulosView.vue";
+import Home from "../views/Home.vue";
 import TutoriasView from "../views/TutoriaView.vue";
-import EnsenanzaView from "../views/Ensenanza/EnsenanzaView.vue";
-import loginEnsenanza from "../views/Ensenanza/loginEnsenanza.vue";
+import EnsenanzaView from "../views/EnsenanzaView.vue";
+import Login from "../views/Login.vue";
 import InvestigacionView from "../views/InvestigacionView.vue";
-import Dashboard from "../views/Dashboard.vue";
-import DashboardHome from "../views/Home.vue";
+import NotFound from "../views/404.vue";
 
 const routes = [
   {
     path: "/",
-    component: Dashboard,
+    component: Home,
+    meta: { requiresAuth: true }, // Aquí
     children: [
-      { path: "", redirect: { name: "DashboardHome" } },
-      { path: "home", name: "DashboardHome", component: DashboardHome },
+      { path: "", redirect: { name: "home" } },
       {
-        path: "/tutorias",
+        path: "home",
+        name: "home",
+        component: ModulosView,
+        meta: { title: "Sistema de Gestión de Actividades" },
+      },
+      {
+        path: "tutorias",
         name: "Tutorias",
         component: TutoriasView,
         meta: { title: "Tutorias" },
       },
+      {
+        path: "ensenanza",
+        name: "Enseñanza",
+        component: EnsenanzaView,
+        meta: { title: "Enseñanza" },
+      },
+      {
+        path: "/investigacion",
+        name: "Investigacion",
+        component: InvestigacionView,
+        meta: { title: "Coordinacion de Investigacion" },
+      },
     ],
   },
   {
-    path: "/home",
-    name: "Home",
-    component: Home,
-    meta: { title: "Sistema de Gestión de Actividades" },
-  },
-
-  {
-    path: "/ensenanza",
-    name: "Enseñanza",
-    component: EnsenanzaView,
-    meta: { title: "Enseñanza" },
+    path: "/Login",
+    name: "Login",
+    component: Login,
+    meta: { title: "Login" },
   },
   {
-    path: "/loginEnsenanza",
-    name: "LoginEnsenanza",
-    component: loginEnsenanza,
-    meta: { title: "LoginEnsenanza" },
+    path: "/404",
+    name: "NotFound",
+    component: NotFound,
+    meta: { title: "404 Not Found" },
   },
   {
-    path: "/investigacion",
-    name: "Investigacion",
-    component: InvestigacionView,
-    meta: { title: "Coordinacion de Investigacion" },
-  },
+    path: "/:pathMatch(.*)*",
+    redirect: { name: "NotFound" }
+  }
 ];
+
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
 });
 
+function isAuthenticated() {
+    return !!localStorage.getItem('user');
+}
+
 router.beforeEach((to, from, next) => {
+
   // Set the document title based on route metadata
   if (to.meta && to.meta.title) {
     document.title = to.meta.title;
   } else {
     document.title = "Mi aplicación Vue";
   }
+
+  if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated()) {
+    next('/Login');
+    return;
+  }
+
+  if (to.path.toLowerCase() === '/login' && isAuthenticated()) {
+    next('/home');
+    return;
+  }
   next();
 });
+
+
 
 export default router;
