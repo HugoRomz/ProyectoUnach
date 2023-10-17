@@ -11,6 +11,17 @@ function insertarProyecto(data, callback) {
   });
 }
 
+function insertarColaborador(data, callback) {
+  const query = "INSERT INTO colaboradores SET ?";
+  db.query(query, data, (error, results) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, results);
+    }
+  });
+}
+
 function obtenerProyectos(callback) {
   const query =
     "SELECT id, nombre, fecha_inicio, fecha_final, linea_investigacion, lider_de_proyecto, estatus FROM proyectos_investigacion;";
@@ -24,7 +35,21 @@ function obtenerProyectos(callback) {
   });
 }
 
+function obtenerColaboradores(id_proyecto, callback) {
+  const query =
+    "select col.id_colaborador, col.nombre, col.tipo, col.id_proyecto from colaboradores as col WHERE col.id_proyecto = ?"
+  db.query(query, [id_proyecto], (error, rows) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, rows);
+    }
+  });
+}
+
 module.exports = {
   insertarProyecto,
-  obtenerProyectos
+  obtenerProyectos,
+  obtenerColaboradores,
+  insertarColaborador
 };

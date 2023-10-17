@@ -25,8 +25,8 @@
       <div class="modal-body p-4 overflow-y-auto">
         <div class="w-full p-6 shadow-lg rounded-md border border-gray-300">
           <form class="w-full" @submit.prevent="submitForm">
-            <input type="text" v-model="form.idColaborador" />
-            <input type="text" v-model="form.idProyecto" />
+            <input type="hidden" v-model="form.idColaborador" />
+            <input type="hidden" v-model="form.idProyecto" />
 
             <!-- Nombre del colaborador -->
             <div class="flex flex-wrap -mx-3 mb-6">
@@ -120,11 +120,12 @@ export default {
       form: {
         idColaborador: "",
         idProyecto: "",
-        nombreColaborador: ""
+        nombreColaborador: "",
+        tipoColaborador: ""
       },
 
       columns: [
-        { data: "idColaborador" },
+        { data: "id_colaborador" },
         { data: "nombre" },
         { data: "tipo" },
         {
@@ -144,14 +145,73 @@ export default {
     show(newVal) {
       if (newVal) {
         this.$nextTick(() => {
-          //this.obtenerData();
+          this.obtenerColaboradores();
           this.form.idProyecto = this.projectId;
         });
       }
     },
   },
   methods: {
+    resetForm(){
+      this.form = {
+        ...this.form,
+        nombreColaborador: "",
+        tipoColaborador: "",
+      }
+    },
+    obtenerColaboradores() {
+      apiInvestigacion
+        .obtenerColaboradores(this.projectId)
+        .then((response) => {
+          this.colaboradores = response.data;
+        })
+        .catch((error) => {
+          console.error("Error al obtener los colaboradores:", error);
+        });
+    },
+    submitForm() {
+      const data = {
+        idColaborador: this.form.idColaborador,
+        idProyecto: this.form.idProyecto,
+        nombreColaborador: this.form.nombreColaborador,
+        tipoColaborador: this.form.tipoColaborador
+      };
 
+      // Verifica si los campos del formulario están vacíos
+      if (
+        !this.form.nombreColaborador ||
+        !this.form.tipoColaborador ||
+        !this.form.idProyecto
+      ) {
+        Swal.fire({
+          title: "Datos incompletos",
+          text: "Por favor rellena todos los campos",
+          icon: "warning",
+        });
+        return;
+      }
+
+      if (this.form.idColaborador === null || this.form.idColaborador === "") {
+        apiInvestigacion
+          .insertarColaborador(data)
+          .then((response) => {
+            Swal.fire({
+              title: "Colaborador agregado",
+              text: "El colaborador se ha agregado exitosamente",
+              icon: "success",
+            });
+            this.resetForm();
+           this.obtenerColaboradores();
+          })
+          .catch((error) => {
+            Swal.fire({
+              title: "Error",
+              text: "Hubo un error enviando el formulario",
+              icon: "error",
+            });
+          });
+      }
+    },
   }
 }
 
