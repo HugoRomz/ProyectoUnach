@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "seed": "node db.js",
+    "setup": "md public\\evidenciasEnsenanza & md public\\evidenciasTutoria",
+    "setuplinux": "mkdir -p public/evidenciasEnsenanza && mkdir -p public/evidenciasTutoria"
   },
   "author": "",
   "license": "ISC",
@@ -15,6 +18,8 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "mysql": "^2.18.1",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "sequelize": "^6.33.0",
+    "faker": "^5.5.3"
   }
 }

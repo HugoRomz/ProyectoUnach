@@ -15,4 +15,5 @@ export const login = (rfc, password) => {
 
 export const logout = () => {
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
 };
