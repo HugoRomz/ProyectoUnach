@@ -59,37 +59,28 @@
               >
                 Evidencia:
               </label>
-              <!-- <input
-                class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600"
-                id="evidencias"
-                name="evidencias"
-                type="file"
-                ref="evidenciasInput"
-                @change="handleFileUpload"
-              /> -->
             </div>
 
-            <div
-              class="h-96 flex justify-center items-center bg-purple-700"
-            >
+            <div class="h-96 flex justify-center items-center bg-gray-200">
               <div
-                class="bg-white p-10 rounded-xl shadow-lg space-y-4 flex flex-col items-center justify-center"
+                class="bg-white p-5 rounded-xl shadow-lg space-y-4 flex flex-col items-center justify-center"
               >
                 <div
                   @click="openFilePicker"
-                  class="border-2 border-dashed border-purple-500 p-10 rounded-xl text-center cursor-pointer hover:bg-purple-100"
+                  class="border-2 border-dashed border-SecundaryGold p-10 rounded-xl text-center cursor-pointer hover:bg-yellow-100"
                 >
-                  <span class="material-icons-outlined text-4xl text-purple-500"
-                    ><i class="pi pi-upload pointer-events-none"></i></span
-                  >
+                  <span
+                    class="material-icons-outlined text-4xl text-SecundaryGold"
+                    ><i class="pi pi-upload pointer-events-none"></i
+                  ></span>
                   <h3 class="text-xl mt-4">Drag & drop any file here</h3>
-                  <p class="mt-2 text-purple-500 cursor-pointer">
+                  <p class="mt-2 text-SecundaryGold cursor-pointer">
                     or browse file from device
                   </p>
                 </div>
                 <div
                   v-if="showErrorMessage"
-                  class="flex items-center space-x-4 bg-red-200 text-red-700 p-3 rounded"
+                  class="flex items-center space-x-4 bg-yellow-200 text-red-700 p-3 rounded"
                 >
                   <span class="material-icons-outlined">error</span>
                   <span>Please select a file first</span>
@@ -101,33 +92,29 @@
                 </div>
                 <div
                   v-if="file"
-                  class="flex justify-between items-center bg-purple-500 p-3 rounded-xl text-white w-full"
+                  class="flex justify-between items-center border border-SecundaryGold p-3 rounded-xl text-primaryBlue w-full"
                 >
                   <div class="flex items-center">
-                    <span class="material-icons-outlined mr-3"
-                      >description</span
+                    <span class="material-icons-outlined mr-3 text-black"
+                      >Descripción:</span
                     >
-                    <span>{{ file.name }} | {{ fileSize }}</span>
+                    <span>{{ file.name }} | {{ fileSize }} | </span>
                   </div>
-                  <span
-                    @click="removeFile"
-                    class="material-icons cursor-pointer"
-                    >delete</span
-                  >
+                  <span @click="removeFile"
+                    ><i
+                      class="pi pi-trash text-red-700 mx-1 cursor-pointer"
+                    ></i>
+                  </span>
                 </div>
-                <button
-                  @click="uploadFile"
-                  class="bg-purple-500 text-white py-2 px-10 rounded-full hover:bg-purple-600"
-                >
-                  Upload
-                </button>
               </div>
-              <!-- <input
+              <input
+                style="display: none"
+                id="evidencias"
+                name="evidencias"
                 type="file"
-                class="hidden"
                 ref="fileInput"
                 @change="handleFileChange"
-              /> -->
+              />
             </div>
 
             <button
@@ -180,7 +167,7 @@ export default {
   },
   data() {
     return {
-        file: null,
+      file: null,
       showErrorMessage: false,
       evidencias: [],
       form: {
@@ -208,7 +195,7 @@ export default {
   computed: {
     fileSize() {
       return this.file ? (this.file.size / 1024).toFixed(1) + " KB" : "";
-    }
+    },
   },
   watch: {},
 
@@ -244,12 +231,7 @@ export default {
       };
       this.archivo = null;
     },
-    submitForm() {
-
-    },
+    submitForm() {},
   },
-
-
-  
 };
 </script>
