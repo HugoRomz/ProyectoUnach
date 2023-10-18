@@ -15,6 +15,7 @@
           <th>Lider del Proyecto</th>
           <th>Status</th>
           <th>Colaboradores</th>
+          <th>Evidencias</th>
           <th>Acciones</th>
         </template>
       </DataTableComponent>
@@ -33,6 +34,13 @@
     :projectId="modalData"
     @close="isModalVisible = false"
   ></colaboradoresModal>
+
+  <!-- Modal Component -->
+  <evidenciasModal
+    :show="isModalEvidenciaVisible"
+    :projectId="modalData"
+    @close="isModalEvidenciaVisible = false"
+  ></evidenciasModal>
 </template>
 
 <script>
@@ -41,12 +49,14 @@ import apiInvestigacion from "../../services/apiInvestigacion";
 import ModalFormComponent from "../Investigacion/Modals/FormProyectos.vue";
 import dayjs from "dayjs";
 import colaboradoresModal from "../Investigacion/Modals/ColaboradoresModal.vue";
+import evidenciasModal from "../Investigacion/Modals/evidenciasModal.vue";
 
 export default {
   components: {
     DataTableComponent,
     ModalFormComponent,
     colaboradoresModal,
+    evidenciasModal
   },
   data() {
     return {
@@ -55,6 +65,7 @@ export default {
       editingId: null,
       modalData: "",
       isModalVisible: false,
+      isModalEvidenciaVisible: false,
       columns: [
         { data: "id" },
         { data: "nombre" },
@@ -87,6 +98,15 @@ export default {
                         <button class="btn-colaboradores bg-blue-500 text-white p-2 pt-2 rounded" data-id="${data.id}">Colaboradores</button>
                       `;
           },
+        },
+        {
+          data: null,
+          title: "Evidencias",
+          render: (data, type, row) => {
+            return `
+                        <button class="btn-evidencias bg-gray-500 text-white p-2 pt-2 rounded" data-id="${data.id}">Evidencias</button>
+                      `;
+          }
         },
         {
           title: "Acciones",
@@ -187,6 +207,14 @@ export default {
           this.mostrarDetalleColaboradores(id);
         }
       });
+
+      document.addEventListener("click", (event) => {
+        // Verificar si se hizo clic en el botón de detalle
+        if (event.target.matches(".btn-evidencias")) {
+          const id = event.target.getAttribute("data-id");
+          this.mostrarDetalleEvidencias(id);
+        }
+      });
     });
   },
   methods: {
@@ -204,11 +232,15 @@ export default {
         });
     },
     updateData() {
-      this.obtenerProyectos(); // Esta función ya la tienes definida para obtener las actividades
+      this.obtenerProyectos(); // Esta función ya esta definida para obtener las actividades
     },
     mostrarDetalleColaboradores(id) {
       this.modalData = id; // Solo guarda el ID en lugar de todo el objeto de datos
       this.isModalVisible = true;
+    },
+    mostrarDetalleEvidencias(id) {
+      this.modalData = id; // Solo guarda el ID en lugar de todo el objeto de datos
+      this.isModalEvidenciaVisible = true;
     },
   },
 };

@@ -5,9 +5,11 @@
     class="fixed top-0 left-0 w-full h-full bg-gray-700 bg-opacity-50 flex justify-center items-center"
   >
     <div class="bg-white p-8 rounded-lg w-3/4">
-      <h2 class="text-lg mb-4 text-center font-semibold">
-        {{ modalTitle }} Proyecto de Investigación
-      </h2>
+      <h1
+        class="text-xl mt-5 font-bold text-center py-4 bg-slate-500 text-white rounded"
+      >
+        {{ modalTitle }} Proyecto de Investigacion
+      </h1>
       <!-- Formulario de registro de proyectos -->
       <form class="w-full" @submit.prevent="submitForm">
         <input type="text" id="idProyecto" v-model="form.idProyecto" />

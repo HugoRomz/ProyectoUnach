@@ -13,7 +13,7 @@
       <div
         class="modal-header bg-blue-500 flex justify-between items-center rounded-tl-lg rounded-tr-lg"
       >
-        <h1 class="text-white font-bold py-3 px-4">Añadir Colaborador</h1>
+        <h1 class="text-white font-bold py-3 px-4">Colaboradores</h1>
         <button @click="$emit('close')" class="mx-4">
           <span class="text-white font-bold text-lg">x</span>
         </button>
@@ -22,6 +22,11 @@
         class="relative bg-white rounded-xl w-3/4 shadow-xl max-h-4/5-screen overflow-y-auto"
       ></div>
       <div class="modal-body p-4 overflow-y-auto">
+        <h1
+          class="text-xl mt-3 mb-5 font-bold text-center py-4 bg-slate-500 text-white rounded"
+        >
+          Añadir un Colaborador
+        </h1>
         <div class="w-full p-6 shadow-lg rounded-md border border-gray-300">
           <form class="w-full" @submit.prevent="submitForm">
             <input type="hidden" v-model="form.idColaborador" />
