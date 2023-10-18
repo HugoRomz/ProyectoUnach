@@ -1,10 +1,22 @@
 <template>
-  <img src="../assets/wave.png" alt="wavelogin" class="fixed hidden lg:block inset-0 h-full -z-10" />
-  <div class="w-screen h-screen flex flex-col justify-center items-center lg:grid lg:grid-cols-2">
-    <img src="../assets/teacher.svg" alt="teacherlogin" class="hidden lg:block w-1/2 hover:scale-150 transition-all duration-500 transform mx-auto" />
+  <img
+    src="../assets/wave.png"
+    alt="wavelogin"
+    class="fixed hidden lg:block inset-0 h-full -z-10"
+  />
+  <div
+    class="w-screen h-screen flex flex-col justify-center items-center lg:grid lg:grid-cols-2"
+  >
+    <img
+      src="../assets/teacher.svg"
+      alt="teacherlogin"
+      class="hidden lg:block w-1/2 hover:scale-150 transition-all duration-500 transform mx-auto"
+    />
     <form class="flex flex-col justify-center items-center w-1/2">
       <img src="../assets/profile.svg" alt="profilelogin" class="w-32" />
-      <h2 class="my-8 font-bold text-3xl text-gray-500 text-center tracking-wider">
+      <h2
+        class="my-8 font-bold text-3xl text-gray-500 text-center tracking-wider"
+      >
         Bienvenido
       </h2>
       <div class="relative">
@@ -25,7 +37,8 @@
           placeholder="*******"
         />
       </div>
-      <button @click.prevent="login"
+      <button
+        @click.prevent="login"
         class="mt-8 py-3 px-20 bg-amber-500 text-white rounded-full font-bold text-lg uppercase transform hover:translate-y-1 transition-all duration-500"
       >
         Iniciar sesión
@@ -38,6 +51,7 @@
 import { login } from "../services/authServices";
 import Swal from "sweetalert2";
 
+
 export default {
   data() {
     return {
@@ -48,7 +62,7 @@ export default {
   watch: {
     rfc(value) {
       this.rfc = value.toUpperCase();
-    }
+    },
   },
   methods: {
     isValidRFC(rfc) {
@@ -61,9 +75,9 @@ export default {
       // Validación: RFC no debe estar vacío y debe ser válido
       if (!this.rfc || !this.isValidRFC(this.rfc)) {
         Swal.fire({
-          icon: 'warning',
-          title: 'Atención',
-          text: 'Por favor, introduce un RFC válido.',
+          icon: "warning",
+          title: "Atención",
+          text: "Por favor, introduce un RFC válido.",
         });
         return;
       }
@@ -71,16 +85,16 @@ export default {
       // Validación: Contraseña no debe estar vacía
       if (!this.password) {
         Swal.fire({
-          icon: 'warning',
-          title: 'Atención',
-          text: 'Por favor, introduce tu contraseña.',
+          icon: "warning",
+          title: "Atención",
+          text: "Por favor, introduce tu contraseña.",
         });
         return;
       }
 
       try {
         const user = await login(this.rfc, this.password);
-        
+
         // Swal.fire({
         //   icon: 'success',
         //   title: '¡Bienvenido!',
@@ -88,20 +102,26 @@ export default {
         //   timer: 1500,
         //   showConfirmButton: false
         // });
-        localStorage.setItem('token', user.token);
-        localStorage.setItem('role', user.usuario.rol);
-       this.$router.push("/");
+
+        // Guardar token y usuario en Vuex
+        this.$store.dispatch("setToken", user.token);
+        this.$store.dispatch("setUser", user.usuario); 
+
+        // guardarlos en localStorage, 
+        localStorage.setItem("token", user.token);
+        localStorage.setItem("user", JSON.stringify(user.usuario)); 
+
+        this.$router.push("/");
       } catch (error) {
         console.error("Error al iniciar sesión:", error);
 
         Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Hubo un problema al iniciar sesión. Por favor intenta de nuevo.',
+          icon: "error",
+          title: "Error",
+          text: "Hubo un problema al iniciar sesión. Por favor intenta de nuevo.",
         });
       }
     },
   },
 };
 </script>
-
