@@ -18,4 +18,12 @@ export default {
   insertarColaborador(data) {
     return axios.post(`${API_URL}/investigacion/colaboradores`, data);
   },
+
+  editarColaborador(id, data) {
+    return axios.put(`${API_URL}/investigacion/colaboradores/${id}`, data);
+  },
+
+  eliminarColaborador(id) {
+    return axios.delete(`${API_URL}/investigacion/colaboradores/${id}`);
+  },
 };

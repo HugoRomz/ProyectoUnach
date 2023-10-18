@@ -10,5 +10,7 @@ router.get("/proyectos_investigacion", InvestigacionController.obtenerProyectos)
 router.post("/proyectos_investigacion", InvestigacionController.insertarProyecto);
 router.get("/colaboradores/:idColaborador", InvestigacionController.obtenerColaboradores);
 router.post("/colaboradores", InvestigacionController.insertarColaborador);
+router.put("/colaboradores/:id", InvestigacionController.editarColaborador);
+router.delete("/colaboradores/:idColaborador", InvestigacionController.eliminarColaborador);
 
 module.exports = router;

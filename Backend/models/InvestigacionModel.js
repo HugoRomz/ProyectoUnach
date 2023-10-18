@@ -22,6 +22,29 @@ function insertarColaborador(data, callback) {
   });
 }
 
+function editarColaborador(id, newData, callback) {
+  const query = "UPDATE colaboradores SET ? WHERE id_colaborador = ?";
+  db.query(query, [newData, id], (error, results) => {
+    if (error) {
+      console.error("Error al editar colaborador:", error);
+      callback(error, null);
+    } else {
+      callback(null, results);
+    }
+  });
+}
+
+function eliminarColaborador(id, callback) {
+  const query = "DELETE FROM colaboradores WHERE id_colaborador = ?";
+  db.query(query, [id], (error, results) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, results);
+    }
+  });
+}
+
 function obtenerProyectos(callback) {
   const query =
     "SELECT id, nombre, fecha_inicio, fecha_final, linea_investigacion, lider_de_proyecto, estatus FROM proyectos_investigacion;";
@@ -51,5 +74,7 @@ module.exports = {
   insertarProyecto,
   obtenerProyectos,
   obtenerColaboradores,
-  insertarColaborador
+  insertarColaborador,
+  editarColaborador,
+  eliminarColaborador
 };
