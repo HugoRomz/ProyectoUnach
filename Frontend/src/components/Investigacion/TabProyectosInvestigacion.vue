@@ -38,7 +38,7 @@
   <!-- Modal Component -->
   <evidenciasModal
     :show="isModalEvidenciaVisible"
-    :projectId="modalData"
+    :IdProject="modalData"
     @close="isModalEvidenciaVisible = false"
   ></evidenciasModal>
 </template>

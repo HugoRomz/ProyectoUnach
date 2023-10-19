@@ -26,4 +26,12 @@ export default {
   eliminarColaborador(id) {
     return axios.delete(`${API_URL}/investigacion/colaboradores/${id}`);
   },
+
+  insertarEvidencias(formData) {
+    return axios.post(`${API_URL}/investigacion/insertarEvidencias`, formData);
+  },
+
+  obtenerEvidencias(idProyecto) {
+    return axios.get(`${API_URL}/investigacion/evidencias/${idProyecto}`);
+  },
 };

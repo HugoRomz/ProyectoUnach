@@ -70,11 +70,36 @@ function obtenerColaboradores(id_proyecto, callback) {
   });
 }
 
+function insertarEvidencias(data, callback) {
+  const query = "INSERT INTO evidencias_investigacion SET ?";
+  db.query(query, data, (error, results) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, results);
+    }
+  });
+}
+
+function obtenerEvidencias(idProyecto, callback) {
+  const query =
+    "SELECT id_evidencia, nombreEvi FROM evidencias_investigacion WHERE id_proyecto = ?;";
+  db.query(query, [idProyecto], (error, rows) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, rows);
+    }
+  });
+}
+
 module.exports = {
   insertarProyecto,
   obtenerProyectos,
   obtenerColaboradores,
   insertarColaborador,
   editarColaborador,
-  eliminarColaborador
+  eliminarColaborador,
+  insertarEvidencias,
+  obtenerEvidencias
 };

@@ -13,4 +13,7 @@ router.post("/colaboradores", InvestigacionController.insertarColaborador);
 router.put("/colaboradores/:id", InvestigacionController.editarColaborador);
 router.delete("/colaboradores/:idColaborador", InvestigacionController.eliminarColaborador);
 
+router.post("/insertarEvidencias",InvestigacionController.cargarEvidencia);
+router.get("/evidencias/:idProyecto", InvestigacionController.obtenerEvidencias);
+
 module.exports = router;

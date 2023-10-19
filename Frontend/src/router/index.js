@@ -32,13 +32,15 @@ const routes = [
         component: EnsenanzaView,
         meta: { title: "Enseñanza" },
       },
-      {
-        path: "/investigacion",
-        name: "Investigacion",
-        component: InvestigacionView,
-        meta: { title: "Coordinacion de Investigacion" },
-      },
+     
     ],
+
+  },
+  {
+    path: "/investigacion",
+    name: "Investigacion",
+    component: InvestigacionView,
+    meta: { title: "Coordinacion de Investigacion" },
   },
   {
     path: "/Login",
