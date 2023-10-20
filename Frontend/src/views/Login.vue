@@ -48,9 +48,8 @@
 </template>
 
 <script>
-import { login } from "../services/authServices";
+import { login,getPermisos } from "../services/authServices";
 import Swal from "sweetalert2";
-
 
 export default {
   data() {
@@ -94,23 +93,20 @@ export default {
 
       try {
         const user = await login(this.rfc, this.password);
-
-        // Swal.fire({
-        //   icon: 'success',
-        //   title: '¡Bienvenido!',
-        //   text: 'Inicio de sesión exitoso.',
-        //   timer: 1500,
-        //   showConfirmButton: false
-        // });
-
-        // Guardar token y usuario en Vuex
+        
+        // Guardar permisos en Vuex
         this.$store.dispatch("setToken", user.token);
-        this.$store.dispatch("setUser", user.usuario); 
-
-        // guardarlos en localStorage, 
+        this.$store.dispatch("setUser", user.usuario);
+        
+        // guardarlos en localStorage,
         localStorage.setItem("token", user.token);
-        localStorage.setItem("user", JSON.stringify(user.usuario)); 
+        localStorage.setItem("user", JSON.stringify(user.usuario));
 
+        
+        const permisos = await getPermisos(this.rfc);
+        localStorage.setItem("permisos", JSON.stringify(permisos));
+        this.$store.dispatch("setPermisos", permisos);
+        
         this.$router.push("/");
       } catch (error) {
         console.error("Error al iniciar sesión:", error);

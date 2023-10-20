@@ -7,9 +7,14 @@ const store = createStore({
     actividadEditar: null,
     token: null,
     user: {},
+    permisos: [],
   },
   getters: {
     sideBarOpen: (state) => state.sideBarOpen,
+  tienePermiso: (state) => (permiso) => {
+  return state.permisos.some(p => p.Permiso === permiso);
+}
+
   },
   mutations: {
     toggleSidebar(state) {
@@ -25,7 +30,10 @@ const store = createStore({
       state.token = token;
     },
     SET_USER(state, userData) {
-      state.user = userData; 
+      state.user = userData;
+    },
+    SET_PERMISOS(state, permisos) {
+      state.permisos = permisos;
     },
   },
   actions: {
@@ -39,12 +47,14 @@ const store = createStore({
       commit("SET_ACTIVIDAD_A_EDITAR", actividad);
     },
     setToken({ commit }, token) {
-      commit('SET_TOKEN', token);
+      commit("SET_TOKEN", token);
     },
     setUser({ commit }, userData) {
-      commit('SET_USER', userData);  
-    }
-
+      commit("SET_USER", userData);
+    },
+    setPermisos({ commit }, response) {
+      commit("SET_PERMISOS", response.data.permisos);
+    },
   },
 });
 
