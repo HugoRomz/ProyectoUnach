@@ -29,8 +29,8 @@
         </h1>
         <div class="w-full p-6 shadow-lg rounded-md border border-gray-300">
           <form class="w-full" @submit.prevent="submitForm">
-            <input type="text" v-model="form.idEvidencia" />
-            <input type="text" v-model="form.idProyecto" />
+            <input type="hidden" v-model="form.idEvidencia" />
+            <input type="hidden" v-model="form.idProyecto" />
 
             <!-- Nombre de la evidencia -->
             <div class="flex flex-wrap -mx-3 mb-6">

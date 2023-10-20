@@ -8,6 +8,8 @@ router.get("/", (req, res) => {
 
 router.get("/proyectos_investigacion", InvestigacionController.obtenerProyectos);
 router.post("/proyectos_investigacion", InvestigacionController.insertarProyecto);
+router.get("/proyectos_investigacion/:idProyecto", InvestigacionController.obtenerProyectoPorId);
+
 router.get("/colaboradores/:idColaborador", InvestigacionController.obtenerColaboradores);
 router.post("/colaboradores", InvestigacionController.insertarColaborador);
 router.put("/colaboradores/:id", InvestigacionController.editarColaborador);

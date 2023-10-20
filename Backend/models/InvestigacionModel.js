@@ -47,13 +47,24 @@ function eliminarColaborador(id, callback) {
 
 function obtenerProyectos(callback) {
   const query =
-    "SELECT id, nombre, fecha_inicio, fecha_final, linea_investigacion, lider_de_proyecto, estatus FROM proyectos_investigacion;";
+    "SELECT * FROM proyectos_investigacion;";
   db.query(query, (error, rows) => {
     if (error) {
       callback(error, null);
       console.log("error");
     } else {
       callback(null, rows);
+    }
+  });
+}
+
+function obtenerProyectoPorId(idProyecto, callback) {
+  const query = "SELECT * FROM proyectos_investigacion WHERE id = ?";
+  db.query(query, [idProyecto], (error, results) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, results);
     }
   });
 }
@@ -125,5 +136,6 @@ module.exports = {
   insertarEvidencias,
   obtenerEvidencias,
   eliminarEvidencia,
-  obtenerEvidenciaPorId
+  obtenerEvidenciaPorId,
+  obtenerProyectoPorId
 };

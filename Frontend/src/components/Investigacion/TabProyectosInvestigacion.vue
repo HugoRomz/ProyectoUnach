@@ -41,6 +41,13 @@
     :IdProject="modalData"
     @close="isModalEvidenciaVisible = false"
   ></evidenciasModal>
+
+  <ProyectoDetallesModal
+    :show="isProyectoDetallesVisible"
+    :projectData="selectedProject"
+    :collaboratorsData="selectedProjectCollaborators"
+    @close="isProyectoDetallesVisible = false"
+  />
 </template>
 
 <script>
@@ -49,14 +56,16 @@ import apiInvestigacion from "../../services/apiInvestigacion";
 import ModalFormComponent from "../Investigacion/Modals/FormProyectos.vue";
 import dayjs from "dayjs";
 import colaboradoresModal from "../Investigacion/Modals/ColaboradoresModal.vue";
-import evidenciasModal from "../Investigacion/Modals/EvidenciasModal.vue";
+import evidenciasModal from "../Investigacion/Modals/evidenciasModal.vue";
+import ProyectoDetallesModal from "./Modals/ProyectoDetallesModal.vue";
 
 export default {
   components: {
     DataTableComponent,
     ModalFormComponent,
     colaboradoresModal,
-    evidenciasModal
+    evidenciasModal,
+    ProyectoDetallesModal,
   },
   data() {
     return {
@@ -66,6 +75,11 @@ export default {
       modalData: "",
       isModalVisible: false,
       isModalEvidenciaVisible: false,
+
+      isProyectoDetallesVisible: false,
+      selectedProject: {},
+      selectedProjectCollaborators: [],
+
       columns: [
         { data: "id" },
         { data: "nombre" },
@@ -106,7 +120,7 @@ export default {
             return `
                         <button class="btn-evidencias bg-gray-500 text-white p-2 pt-2 rounded" data-id="${data.id}">Evidencias</button>
                       `;
-          }
+          },
         },
         {
           title: "Acciones",
@@ -215,6 +229,13 @@ export default {
           this.mostrarDetalleEvidencias(id);
         }
       });
+
+      document.addEventListener("click", (event) => {
+        if (event.target.matches(".btn-detalle-proyecto")) {
+          const id = parseInt(event.target.getAttribute("data-id"));
+          this.mostrarDetalleProyecto(id);
+        }
+      });
     });
   },
   methods: {
@@ -241,6 +262,21 @@ export default {
     mostrarDetalleEvidencias(id) {
       this.modalData = id; // Solo guarda el ID en lugar de todo el objeto de datos
       this.isModalEvidenciaVisible = true;
+    },
+    mostrarDetalleProyecto(id) {
+      const proyecto = this.proyectos.find((p) => p.id === id);
+      this.selectedProject = proyecto;
+
+      // Obtener colaboradores para el proyecto específico
+      apiInvestigacion
+        .obtenerColaboradores(id)
+        .then((response) => {
+          this.selectedProjectCollaborators = response.data;
+          this.isProyectoDetallesVisible = true;
+        })
+        .catch((error) => {
+          console.error("Error al obtener los colaboradores:", error);
+        });
     },
   },
 };

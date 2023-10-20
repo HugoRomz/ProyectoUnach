@@ -11,6 +11,10 @@ export default {
     return axios.get(`${API_URL}/investigacion/proyectos_investigacion`);
   },
 
+  obtenerProyectoPorId(idProyecto){
+    return axios.get(`${API_URL}/investigacion/proyectos_investigacion/${idProyecto}`);
+  },
+
   obtenerColaboradores(idColaborador) {
     return axios.get(`${API_URL}/investigacion/colaboradores/${idColaborador}`);
   },
