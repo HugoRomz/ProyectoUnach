@@ -20,12 +20,28 @@ exports.login = async (req, res) => {
 
     const token = jwt.sign(
       { id: usuario.id, rfc: usuario.rfc },
-      "1234",
+      "TU_SECRETO_AQUI",
       { expiresIn: "1h" }
     );
     res.send({ token, usuario });
   } catch (error) {
     // Maneja errores
     res.status(500).send("Error del servidor");
+  }
+};
+
+
+exports.getPermisos = async (req, res) => {
+  const { rfc } = req.params;
+
+  try {
+      const permisos = await Usuario.findPermisosByRFC(rfc);
+      if (!permisos) {
+          return res.status(400).send("Permisos no encontrados");
+      }
+      res.send({ permisos });
+  } catch (error) {
+      // Maneja errores
+      res.status(500).send("Error del servidor");
   }
 };
