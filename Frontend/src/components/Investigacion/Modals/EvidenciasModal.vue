@@ -211,7 +211,18 @@ export default {
     },
   },
 
-  mounted() {},
+  mounted() {
+    this.$nextTick(() => {
+      document.addEventListener("click", (event) => {
+
+        // Verificar si se hizo clic en el botón de eliminar
+        if (event.target.matches(".btn-eliminar-evidencia")) {
+          const id = event.target.getAttribute("data-id");
+          this.eliminarEvidencia(id);
+        }
+      });
+    });
+  },
 
   methods: {
     openFilePicker() {
@@ -251,7 +262,7 @@ export default {
         formData.append("evidencias", this.archivo);
       }
 
-      if (!this.form.nombreEvidencia) {
+      if (!this.form.nombreEvidencia || this.archivo == null) {
         Swal.fire({
           title: "Datos incompletos",
           text: "Por favor rellena todos los campos",
@@ -296,6 +307,36 @@ export default {
             icon: "error",
           });
         });
+    },
+
+    eliminarEvidencia(id) {
+      Swal.fire({
+        title: "¿Estás seguro de eliminar la evidencia?",
+        text: "No podrás revertir esta acción",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, borrar",
+        cancelButtonText: "Cancelar",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          apiInvestigacion
+            .eliminarEvidencia(id)
+            .then(() => {
+              Swal.fire(
+                "Eliminado",
+                "La evidencia ha sido eliminada.",
+                "success"
+              );
+              this.obtenerData();
+            })
+            .catch((err) => {
+              console.error(err);
+              Swal.fire("Error", "Error al eliminar la evidencia.", "error");
+            });
+        }
+      });
     },
   },
 };

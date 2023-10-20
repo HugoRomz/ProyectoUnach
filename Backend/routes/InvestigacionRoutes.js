@@ -15,5 +15,7 @@ router.delete("/colaboradores/:idColaborador", InvestigacionController.eliminarC
 
 router.post("/insertarEvidencias",InvestigacionController.cargarEvidencia);
 router.get("/evidencias/:idProyecto", InvestigacionController.obtenerEvidencias);
+router.delete('/evidencias/:id', InvestigacionController.eliminarEvidencia);
+
 
 module.exports = router;

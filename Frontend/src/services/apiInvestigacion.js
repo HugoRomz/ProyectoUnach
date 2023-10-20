@@ -34,4 +34,8 @@ export default {
   obtenerEvidencias(idProyecto) {
     return axios.get(`${API_URL}/investigacion/evidencias/${idProyecto}`);
   },
+
+  eliminarEvidencia(id) {
+    return axios.delete(`${API_URL}/investigacion/evidencias/${id}`);
+  },
 };

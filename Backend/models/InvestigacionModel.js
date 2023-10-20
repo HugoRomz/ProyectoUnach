@@ -93,6 +93,28 @@ function obtenerEvidencias(idProyecto, callback) {
   });
 }
 
+function eliminarEvidencia(id, callback) {
+  const query = "DELETE FROM evidencias_investigacion WHERE id_evidencia = ?";
+  db.query(query, [id], (error, results) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, results);
+    }
+  });
+}
+
+function obtenerEvidenciaPorId(id, callback) {
+  const query = "SELECT * FROM evidencias_investigacion WHERE id_evidencia = ?";
+  db.query(query, [id], (error, results) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, results);
+    }
+  });
+}
+
 module.exports = {
   insertarProyecto,
   obtenerProyectos,
@@ -101,5 +123,7 @@ module.exports = {
   editarColaborador,
   eliminarColaborador,
   insertarEvidencias,
-  obtenerEvidencias
+  obtenerEvidencias,
+  eliminarEvidencia,
+  obtenerEvidenciaPorId
 };

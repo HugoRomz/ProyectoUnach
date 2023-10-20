@@ -151,6 +151,35 @@ function obtenerEvidencias(req, res) {
   });
 }
 
+function eliminarEvidencia(req, res) {
+  const id = req.params.id;
+
+  InvestigacionModel.obtenerEvidenciaPorId(id, (error, results) => {
+    if (error) {
+      return res.status(500).json({ error: 'Error al obtener la evidencia.' });
+    }
+
+    if (!results || results.length === 0) {
+      return res.status(404).json({ error: 'Evidencia no encontrada.' });
+    }
+
+    const filePath = results[0].urlEvi;
+
+    fs.unlink(path.join(__dirname, '..', filePath), (error) => {
+      if (error) {
+        return res.status(500).json({ error: 'Error al eliminar el archivo.' });
+      }
+
+      InvestigacionModel.eliminarEvidencia(id, (error, results) => {
+        if (error) {
+          return res.status(500).json({ error: 'Error al eliminar la evidencia.' });
+        }
+        res.json(results);
+      });
+    });
+  });
+}
+
 module.exports = {
     insertarProyecto,
     obtenerProyectos,
@@ -159,5 +188,6 @@ module.exports = {
     editarColaborador,
     eliminarColaborador,
     cargarEvidencia,
-    obtenerEvidencias
+    obtenerEvidencias,
+    eliminarEvidencia
 }
