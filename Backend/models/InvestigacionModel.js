@@ -47,13 +47,24 @@ function eliminarColaborador(id, callback) {
 
 function obtenerProyectos(callback) {
   const query =
-    "SELECT id, nombre, fecha_inicio, fecha_final, linea_investigacion, lider_de_proyecto, estatus FROM proyectos_investigacion;";
+    "SELECT * FROM proyectos_investigacion;";
   db.query(query, (error, rows) => {
     if (error) {
       callback(error, null);
       console.log("error");
     } else {
       callback(null, rows);
+    }
+  });
+}
+
+function obtenerProyectoPorId(idProyecto, callback) {
+  const query = "SELECT * FROM proyectos_investigacion WHERE id = ?";
+  db.query(query, [idProyecto], (error, results) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, results);
     }
   });
 }
@@ -70,11 +81,61 @@ function obtenerColaboradores(id_proyecto, callback) {
   });
 }
 
+function insertarEvidencias(data, callback) {
+  const query = "INSERT INTO evidencias_investigacion SET ?";
+  db.query(query, data, (error, results) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, results);
+    }
+  });
+}
+
+function obtenerEvidencias(idProyecto, callback) {
+  const query =
+    "SELECT id_evidencia, nombreEvi FROM evidencias_investigacion WHERE id_proyecto = ?;";
+  db.query(query, [idProyecto], (error, rows) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, rows);
+    }
+  });
+}
+
+function eliminarEvidencia(id, callback) {
+  const query = "DELETE FROM evidencias_investigacion WHERE id_evidencia = ?";
+  db.query(query, [id], (error, results) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, results);
+    }
+  });
+}
+
+function obtenerEvidenciaPorId(id, callback) {
+  const query = "SELECT * FROM evidencias_investigacion WHERE id_evidencia = ?";
+  db.query(query, [id], (error, results) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, results);
+    }
+  });
+}
+
 module.exports = {
   insertarProyecto,
   obtenerProyectos,
   obtenerColaboradores,
   insertarColaborador,
   editarColaborador,
-  eliminarColaborador
+  eliminarColaborador,
+  insertarEvidencias,
+  obtenerEvidencias,
+  eliminarEvidencia,
+  obtenerEvidenciaPorId,
+  obtenerProyectoPorId
 };

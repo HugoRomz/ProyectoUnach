@@ -91,14 +91,14 @@
                   >
                 </div>
                 <div
-                  v-if="file"
+                  v-if="archivo"
                   class="flex justify-between items-center border border-SecundaryGold p-3 rounded-xl text-primaryBlue w-full"
                 >
                   <div class="flex items-center">
                     <span class="material-icons-outlined mr-3 text-black"
                       >Descripción:</span
                     >
-                    <span>{{ file.name }} | {{ fileSize }} | </span>
+                    <span>{{ archivo.name }} | {{ fileSize }} | </span>
                   </div>
                   <span @click="removeFile"
                     ><i
@@ -112,8 +112,8 @@
                 id="evidencias"
                 name="evidencias"
                 type="file"
-                ref="fileInput"
-                @change="handleFileChange"
+                ref="evidenciasInput"
+                @change="handleFileUpload"
               />
             </div>
 
@@ -160,14 +160,13 @@ export default {
       type: Boolean,
       default: false,
     },
-    projectId: {
+    IdProject: {
       type: [Number, String],
       default: "",
     },
   },
   data() {
     return {
-      file: null,
       showErrorMessage: false,
       evidencias: [],
       form: {
@@ -178,60 +177,167 @@ export default {
       archivo: null,
       columns: [
         { data: "id_evidencia" },
-        { data: "nombre" },
+        { data: "nombreEvi" },
         {
           title: "Acciones",
           data: null,
           render: (data, type, row) => {
             return `
-                        <button class="btn-editar-evidencia bg-yellow-500 text-white p-2 pt-2 rounded" data-id="${data.id_evidencia}"><i class="pi pi-pencil pointer-events-none"></i></button>
                         <button class="btn-eliminar-evidencia bg-red-500 text-white  p-2 pt-2  rounded" data-id="${data.id_evidencia}"><i class="pi pi-trash pointer-events-none"></i></button>
+                        <a href="http://localhost:3000${data.urlEvi}" target="_blank" class="btn-ver-archivo bg-green-500 text-white p-2 pt-3 rounded"><i class="pi pi-eye pointer-events-none"></i></a>
                       `;
           },
         },
       ],
     };
   },
-  computed: {
-    fileSize() {
-      return this.file ? (this.file.size / 1024).toFixed(1) + " KB" : "";
+
+  watch: {
+    show(newVal) {
+      if (newVal) {
+        this.$nextTick(() => {
+          this.obtenerData();
+          this.form.idProyecto = this.IdProject;
+        });
+      } else {
+        this.resetForm();
+      }
     },
   },
-  watch: {},
 
-  mounted() {},
+  computed: {
+    fileSize() {
+      return this.archivo ? (this.archivo.size / 1024).toFixed(1) + " KB" : "";
+    },
+  },
+
+  mounted() {
+    this.$nextTick(() => {
+      document.addEventListener("click", (event) => {
+
+        // Verificar si se hizo clic en el botón de eliminar
+        if (event.target.matches(".btn-eliminar-evidencia")) {
+          const id = event.target.getAttribute("data-id");
+          this.eliminarEvidencia(id);
+        }
+      });
+    });
+  },
 
   methods: {
     openFilePicker() {
-      this.$refs.fileInput.click();
+      this.$refs.evidenciasInput.click();
     },
-    handleFileChange(event) {
-      const files = event.target.files;
-      if (files.length > 0) {
-        this.file = files[0];
-        this.showErrorMessage = false;
-      }
-    },
-    uploadFile() {
-      if (this.file) {
-        // Handle the upload logic here
-        console.log("Uploading file:", this.file.name);
-      } else {
-        this.showErrorMessage = true;
-      }
+    handleFileUpload() {
+      this.archivo = this.$refs.evidenciasInput.files[0];
     },
     removeFile() {
-      this.file = null;
+      this.archivo = null;
+    },
+    obtenerData() {
+      apiInvestigacion
+        .obtenerEvidencias(this.IdProject)
+        .then((response) => {
+          this.evidencias = response.data;
+        })
+        .catch((error) => {
+          console.error("Error al obtener las evidencias:", error);
+        });
     },
     resetForm() {
       this.form = {
         ...this.form,
         idEvidencia: "",
         nombreEvidencia: "",
+        evidencias: "",
       };
       this.archivo = null;
     },
-    submitForm() {},
+    submitForm() {
+      const formData = new FormData();
+      formData.append("idEvidencia", this.form.idEvidencia);
+      formData.append("idProyecto", this.form.idProyecto);
+      formData.append("nombreEvidencia", this.form.nombreEvidencia);
+      if (this.archivo) {
+        formData.append("evidencias", this.archivo);
+      }
+
+      if (!this.form.nombreEvidencia || this.archivo == null) {
+        Swal.fire({
+          title: "Datos incompletos",
+          text: "Por favor rellena todos los campos",
+          icon: "warning",
+        });
+        return;
+      }
+
+      let promise;
+      if (!this.form.idEvidencia) {
+        promise = apiInvestigacion.insertarEvidencias(formData);
+      } else {
+        //   promise = apiInvestigacion.actualizarEvidencias(
+        //   this.form.idEvidencia,
+        //   formData
+        // );
+      }
+      promise
+        .then((res) => {
+          const message = this.form.idEvidencia
+            ? "La evidencia se ha actualizado correctamente"
+            : "La evidencia se ha insertado correctamente";
+
+          Swal.fire({
+            title: this.form.idEvidencia
+              ? "Evidencia actualizada"
+              : "Evidencia insertada",
+            text: message,
+            icon: "success",
+          });
+
+          this.resetForm();
+          this.obtenerData();
+        })
+        .catch((err) => {
+          Swal.fire({
+            title: "Error",
+            text:
+              "Hubo un error al " +
+              (this.form.idActEnsenanza ? "actualizar" : "insertar") +
+              " la evidencia",
+            icon: "error",
+          });
+        });
+    },
+
+    eliminarEvidencia(id) {
+      Swal.fire({
+        title: "¿Estás seguro de eliminar la evidencia?",
+        text: "No podrás revertir esta acción",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, borrar",
+        cancelButtonText: "Cancelar",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          apiInvestigacion
+            .eliminarEvidencia(id)
+            .then(() => {
+              Swal.fire(
+                "Eliminado",
+                "La evidencia ha sido eliminada.",
+                "success"
+              );
+              this.obtenerData();
+            })
+            .catch((err) => {
+              console.error(err);
+              Swal.fire("Error", "Error al eliminar la evidencia.", "error");
+            });
+        }
+      });
+    },
   },
 };
 </script>

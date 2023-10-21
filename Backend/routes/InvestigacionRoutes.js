@@ -8,9 +8,16 @@ router.get("/", (req, res) => {
 
 router.get("/proyectos_investigacion", InvestigacionController.obtenerProyectos);
 router.post("/proyectos_investigacion", InvestigacionController.insertarProyecto);
+router.get("/proyectos_investigacion/:idProyecto", InvestigacionController.obtenerProyectoPorId);
+
 router.get("/colaboradores/:idColaborador", InvestigacionController.obtenerColaboradores);
 router.post("/colaboradores", InvestigacionController.insertarColaborador);
 router.put("/colaboradores/:id", InvestigacionController.editarColaborador);
 router.delete("/colaboradores/:idColaborador", InvestigacionController.eliminarColaborador);
+
+router.post("/insertarEvidencias",InvestigacionController.cargarEvidencia);
+router.get("/evidencias/:idProyecto", InvestigacionController.obtenerEvidencias);
+router.delete('/evidencias/:id', InvestigacionController.eliminarEvidencia);
+
 
 module.exports = router;

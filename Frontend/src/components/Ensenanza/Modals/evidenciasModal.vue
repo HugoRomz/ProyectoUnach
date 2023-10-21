@@ -22,7 +22,7 @@
         <div class="w-full p-6 shadow-lg rounded-md border border-gray-300">
           <form class="w-full" @submit.prevent="submitForm">
             <input type="hidden" v-model="form.idEvidenciasE" />
-            <input type="hidden" v-model="form.idActEnsenanza" />
+            <input type="text" v-model="form.idActEnsenanza" />
             <div class="flex flex-wrap -mx-3 mb-6">
               <div class="w-full px-3">
                 <label
