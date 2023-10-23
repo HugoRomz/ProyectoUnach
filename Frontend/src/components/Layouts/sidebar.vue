@@ -20,12 +20,12 @@
           <span class="text-white">Actividades</span>
         </div>
       </router-link>
-      <router-link to="/ensenanza" v-if="tienePermiso('Enseñanza-Admin')">
+      <router-link to="/asignarMateria" v-if="tienePermiso('Enseñanza-Admin')">
         <div
           class="w-full flex items-center text-SecundaryGold h-10 pl-4 hover:bg-SecundaryGold rounded-lg cursor-pointer hover:text-white"
         >
           <i class="pi pi-book text-2xl fill-current mr-2"></i>
-          <span class="text-white">Docentes</span>
+          <span class="text-white">Asignar Materias</span>
         </div>
       </router-link>
     </div>

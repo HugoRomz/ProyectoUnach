@@ -2,28 +2,27 @@ const EnsenanzaModel = require("../models/EnsenanzaModel.js");
 
 const multer = require("multer");
 
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, "public/evidenciasEnsenanza");
-    },
-    filename: function (req, file, cb) {
-      const fileExtension = file.originalname.split(".").pop();
-      const actividadId = req.body.idActEnsenanza;
-      const currentDate = new Date().toISOString().slice(0, 10);
-      const uuidv4 = require('uuid').v4;  // Asegúrate de instalar la librería UUID si no la tienes
-  
-      cb(
-        null,
-        `Evi-Ens-${actividadId}-${currentDate}-${uuidv4()}.${fileExtension}`
-      );
-    },
-  });
-  
-  const upload = multer({ storage: storage }).single("evidencias");
-  
+  destination: function (req, file, cb) {
+    cb(null, "public/evidenciasEnsenanza");
+  },
+  filename: function (req, file, cb) {
+    const fileExtension = file.originalname.split(".").pop();
+    const actividadId = req.body.idActEnsenanza;
+    const currentDate = new Date().toISOString().slice(0, 10);
+    const uuidv4 = require("uuid").v4; // Asegúrate de instalar la librería UUID si no la tienes
+
+    cb(
+      null,
+      `Evi-Ens-${actividadId}-${currentDate}-${uuidv4()}.${fileExtension}`
+    );
+  },
+});
+
+const upload = multer({ storage: storage }).single("evidencias");
 
 function obtenerActividades(req, res) {
   const tipoActividad = req.params.id;
@@ -137,92 +136,193 @@ function cargarEvidencia(req, res) {
   });
 }
 const actualizarEvidencias = (req, res) => {
-    upload(req, res, (err) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
+  upload(req, res, (err) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+
+    const { idEvidenciasE, nombreEvi, descripcionEvi } = req.body;
+    let data = {
+      nombreEvi,
+      descripcionEvi,
+    };
+
+    if (req.file) {
+      const { filename } = req.file;
+      const urlArchivo = "/public/evidenciasEnsenanza/" + filename;
+      data.urlEvi = urlArchivo;
+    }
+
+    // Primero obtenemos la información del archivo antiguo.
+    EnsenanzaModel.obtenerEvidenciaPorId(idEvidenciasE, (err, prevEvi) => {
+      if (err || !prevEvi || prevEvi.length === 0) {
+        console.error(
+          "Error obteniendo la evidencia previa:",
+          err || "No hay datos previos."
+        );
+        return res
+          .status(500)
+          .json({ error: "Error al obtener las evidencias previas." });
       }
-  
-      const { idEvidenciasE, nombreEvi, descripcionEvi } = req.body;
-      let data = {
-        nombreEvi,
-        descripcionEvi,
-      };
-  
-      if (req.file) {
-        const { filename } = req.file;
-        const urlArchivo = "/public/evidenciasEnsenanza/" + filename;
-        data.urlEvi = urlArchivo;
-      }
-  
-      // Primero obtenemos la información del archivo antiguo.
-      EnsenanzaModel.obtenerEvidenciaPorId(idEvidenciasE, (err, prevEvi) => {
-        if (err || !prevEvi || prevEvi.length === 0) {
-          console.error('Error obteniendo la evidencia previa:', err || 'No hay datos previos.');
-          return res.status(500).json({ error: "Error al obtener las evidencias previas." });
-        } 
-        
-        const oldFilePath = prevEvi[0].urlEvi;
-  
-        // Luego actualizamos la información en la base de datos.
-        EnsenanzaModel.actualizarEvidencias(idEvidenciasE, data, (error, results) => {
+
+      const oldFilePath = prevEvi[0].urlEvi;
+
+      // Luego actualizamos la información en la base de datos.
+      EnsenanzaModel.actualizarEvidencias(
+        idEvidenciasE,
+        data,
+        (error, results) => {
           if (error) {
             if (data.urlEvi) {
-              fs.unlink(path.join(__dirname, "..", data.urlEvi), (unlinkError) => {
-                if (unlinkError) {
-                  console.error('Error eliminando el nuevo archivo después de un error de base de datos:', unlinkError);
+              fs.unlink(
+                path.join(__dirname, "..", data.urlEvi),
+                (unlinkError) => {
+                  if (unlinkError) {
+                    console.error(
+                      "Error eliminando el nuevo archivo después de un error de base de datos:",
+                      unlinkError
+                    );
+                  }
                 }
-              });
+              );
             }
-            return res.status(500).json({ error: "Error al actualizar las evidencias." });
+            return res
+              .status(500)
+              .json({ error: "Error al actualizar las evidencias." });
           } else {
             // Si se actualizó correctamente y hemos subido un nuevo archivo, eliminamos el antiguo.
-            if (data.urlEvi && oldFilePath !== data.urlEvi) { 
-              fs.unlink(path.join(__dirname, "..", oldFilePath), (unlinkError) => {
-                if (unlinkError) {
-                  console.error('Error eliminando el archivo antiguo:', unlinkError);
+            if (data.urlEvi && oldFilePath !== data.urlEvi) {
+              fs.unlink(
+                path.join(__dirname, "..", oldFilePath),
+                (unlinkError) => {
+                  if (unlinkError) {
+                    console.error(
+                      "Error eliminando el archivo antiguo:",
+                      unlinkError
+                    );
+                  }
                 }
-              });
+              );
             }
             res.json({
               message: "Evidencia actualizada correctamente",
-              data: results
+              data: results,
             });
           }
-        });
-      });
+        }
+      );
     });
-  };
-  
-  
+  });
+};
 
 function eliminarEvidencia(req, res) {
-    const id = req.params.id;
-  
-    EnsenanzaModel.obtenerEvidenciaPorId(id, (error, results) => {
+  const id = req.params.id;
+
+  EnsenanzaModel.obtenerEvidenciaPorId(id, (error, results) => {
+    if (error) {
+      return res.status(500).json({ error: "Error al obtener la evidencia." });
+    }
+
+    if (!results || results.length === 0) {
+      return res.status(404).json({ error: "Evidencia no encontrada." });
+    }
+
+    const filePath = results[0].urlEvi;
+
+    fs.unlink(path.join(__dirname, "..", filePath), (error) => {
       if (error) {
-        return res.status(500).json({ error: 'Error al obtener la evidencia.' });
+        return res.status(500).json({ error: "Error al eliminar el archivo." });
       }
-  
-      if (!results || results.length === 0) {
-        return res.status(404).json({ error: 'Evidencia no encontrada.' });
-      }
-  
-      const filePath = results[0].urlEvi;
-  
-      fs.unlink(path.join(__dirname, '..', filePath), (error) => {
+
+      EnsenanzaModel.eliminarEvidencia(id, (error, results) => {
         if (error) {
-          return res.status(500).json({ error: 'Error al eliminar el archivo.' });
+          return res
+            .status(500)
+            .json({ error: "Error al eliminar la evidencia." });
         }
-  
-        EnsenanzaModel.eliminarEvidencia(id, (error, results) => {
-          if (error) {
-            return res.status(500).json({ error: 'Error al eliminar la evidencia.' });
-          }
-          res.json(results);
-        });
+        res.json(results);
       });
     });
-  }
+  });
+}
+function getUsuarios(req, res) {
+  EnsenanzaModel.getAllUsuarios((error, usuarios) => {
+    if (error) {
+      res.status(500).send("Error al obtener usuarios");
+    } else {
+      res.json(usuarios);
+    }
+  });
+}
+
+function getMaterias(req, res) {
+  EnsenanzaModel.getAllMaterias((error, materias) => {
+    if (error) {
+      res.status(500).send("Error al obtener materias");
+    } else {
+      res.json(materias);
+    }
+  });
+}
+
+function getDetalleD(req, res) {
+  EnsenanzaModel.getDetalleD((error, data) => {
+    if (error) {
+      res.status(500).send("Error al obtener data");
+    } else {
+      res.json(data);
+    }
+  });
+}
+
+function asignarMateriaDocente(req, res) {
+  const formData = {
+    docente: req.body.docente,
+    materia: req.body.materias,
+  };
+
+  EnsenanzaModel.asignarMateriaDocente(formData, (error, resultado) => {
+    if (error) {
+      console.log("Error al insertar en la base de datos:", error);
+      res.status(500).json({ error: "Error al insertar la actividad." });
+    } else {
+      res.json(resultado);
+    }
+  });
+}
+
+function editarMateriaDocente(req, res) {
+  const id = req.params.id;
+  const formData = {
+    docente: req.body.docente,
+    materia: req.body.materias,
+  };
+  EnsenanzaModel.editarMateriaDocente(id, formData, (error, resultado) => {
+    if (error) {
+      console.log("Error al editar en la base de datos:", error);
+      res.status(500).json({ error: "Error al editar la actividad." });
+    } else {
+      res.json(resultado);
+    }
+  });
+}
+
+function eliminarDetalleDocente(req, res) {
+  const id = req.params.id;
+  EnsenanzaModel.eliminarDetalleDocente(id, (error, resultado) => {
+    if (error) {
+      console.log("Error al eliminar en la base de datos:", error);
+      res.status(500).json({ error: "Error al eliminar la actividad." });
+    } else {
+      res.json(resultado);
+    }
+  });
+}
+
+
+
+
+
 module.exports = {
   obtenerActividades,
   buscarTipoActividad,
@@ -232,5 +332,11 @@ module.exports = {
   obtenerEvidencias,
   cargarEvidencia,
   actualizarEvidencias,
-  eliminarEvidencia
+  eliminarEvidencia,
+  getUsuarios,
+  getMaterias,
+  getDetalleD,
+  asignarMateriaDocente,
+  editarMateriaDocente,
+  eliminarDetalleDocente
 };

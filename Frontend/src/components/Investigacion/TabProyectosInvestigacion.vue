@@ -56,7 +56,7 @@ import apiInvestigacion from "../../services/apiInvestigacion";
 import ModalFormComponent from "../Investigacion/Modals/FormProyectos.vue";
 import dayjs from "dayjs";
 import colaboradoresModal from "../Investigacion/Modals/ColaboradoresModal.vue";
-import evidenciasModal from "../Investigacion/Modals/evidenciasModal.vue";
+import evidenciasModal from "../Investigacion/Modals/EvidenciasModal.vue";
 import ProyectoDetallesModal from "./Modals/ProyectoDetallesModal.vue";
 
 export default {
