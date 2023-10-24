@@ -122,7 +122,7 @@ function getAllUsuarios(callback) {
 }
 
 function getAllMaterias(callback) {
-  db.query("SELECT * FROM materia;", (error, rows) => {
+  db.query("SELECT m.*, s.semestre as nombresemestre,s.grupo,  p.nombreProg FROM materia m JOIN semestre_grupo s ON m.semestre = s.is_SG JOIN prog_academicos p ON m.prog_academico = p.idprog_academicos;", (error, rows) => {
     if (error) {
       callback(error, null);
     } else {
@@ -130,14 +130,38 @@ function getAllMaterias(callback) {
     }
   });
 }
-function getDetalleD(callback) {
-  db.query("SELECT d.id_Det_d,d.docente,d.materia, m.nombreMateria FROM detalle_docente d JOIN materia m ON d.materia = m.idMateria;", (error, rows) => {
+
+function getSemestre(callback) {
+  db.query("SELECT * FROM semestre_grupo;", (error, rows) => {
     if (error) {
       callback(error, null);
     } else {
       callback(null, rows);
     }
   });
+}
+
+function getProg(callback) {
+  db.query("SELECT * FROM prog_academicos;", (error, rows) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, rows);
+    }
+  });
+}
+
+function getDetalleD(callback) {
+  db.query(
+    "SELECT d.id_Det_d,d.docente,d.materia, m.nombreMateria FROM detalle_docente d JOIN materia m ON d.materia = m.idMateria;",
+    (error, rows) => {
+      if (error) {
+        callback(error, null);
+      } else {
+        callback(null, rows);
+      }
+    }
+  );
 }
 
 function asignarMateriaDocente(formData, callback) {
@@ -173,6 +197,37 @@ function eliminarDetalleDocente(id, callback) {
   });
 }
 
+function insertarMateria(formData, callback) {
+  const query = "INSERT INTO materia SET ?";
+  db.query(query, formData, (error, results) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, results);
+    }
+  });
+}
+function editarMateria(id, formData, callback) {
+  const query = "UPDATE materia SET ? WHERE idMateria = ?";
+  db.query(query, [formData, id], (error, results) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, results);
+    }
+  });
+}
+
+function eliminarMateria(id, callback) {
+  const query = "DELETE FROM materia WHERE idMateria = ?";
+  db.query(query, [id], (error, results) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, results);
+    }
+  });
+}
 
 
 module.exports = {
@@ -191,5 +246,10 @@ module.exports = {
   getDetalleD,
   asignarMateriaDocente,
   editarMateriaDocente,
-  eliminarDetalleDocente
+  eliminarDetalleDocente,
+  getSemestre,
+  getProg,
+  insertarMateria,
+  editarMateria,
+  eliminarMateria,
 };

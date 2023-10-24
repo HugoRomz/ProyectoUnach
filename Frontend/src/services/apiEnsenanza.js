@@ -42,6 +42,16 @@ export default {
   getMaterias() {
     return axios.get(`${API_URL}/ensenanza/getMaterias`);
   },
+  getSemestre() {
+    return axios.get(`${API_URL}/ensenanza/getSemestre`);
+  },
+  getProg() {
+    return axios.get(`${API_URL}/ensenanza/getProg`);
+  },
+
+
+
+
   obtenerDetalleDocente() {
     return axios.get(`${API_URL}/ensenanza/getDetalleD`);
   },
@@ -57,4 +67,20 @@ export default {
   eliminarDetalleDocente(id) {
     return axios.delete(`${API_URL}/ensenanza/eliminarDetalleDocente/${id}`);
   },
+
+
+
+  obtenerMaterias() {
+    return axios.get(`${API_URL}/ensenanza/obtenerMaterias`);
+  },
+  insertarMateria(formData) {
+    return axios.post(`${API_URL}/ensenanza/insertarMateria`, formData);
+  },
+  actualizarMateria(id, formData) {
+    return axios.put(`${API_URL}/ensenanza/editarMateria/${id}`, formData);
+  },
+  eliminarMateria(id) {
+    return axios.delete(`${API_URL}/ensenanza/eliminarMateria/${id}`);
+  },
+
 };

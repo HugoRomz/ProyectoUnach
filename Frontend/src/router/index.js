@@ -4,10 +4,11 @@ import Home from "../views/Home.vue";
 import TutoriasView from "../views/TutoriaView.vue";
 import EnsenanzaView from "../views/EnsenanzaView.vue";
 import asignarMateria from "../views/asignarMateria.vue"
-import materia from "../views/materia.vue"
 import Login from "../views/Login.vue";
 import InvestigacionView from "../views/InvestigacionView.vue";
 import NotFound from "../views/404.vue";
+
+import agregarMateria from "../components/Ensenanza/agregarMateria.vue"
 
 const routes = [
   {
@@ -40,11 +41,17 @@ const routes = [
         component: asignarMateria,
         meta: { title: "Asignacion de Materia" },
       },
+      // {
+      //   path: "/agregarDocente",
+      //   name: "Agregar Docente",
+      //   component: agregarDocente,
+      //   meta: { title: "Agregar Docente" },
+      // },
       {
-        path: "/materia",
-        name: "Materia",
-        component: materia,
-        meta: { title: "Materias" },
+        path: "/agregarMateria",
+        name: "Agregar Materia",
+        component: agregarMateria,
+        meta: { title: "Agregar Materia" },
       },
     ],
   },

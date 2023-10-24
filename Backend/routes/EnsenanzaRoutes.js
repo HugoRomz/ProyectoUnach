@@ -18,11 +18,19 @@ router.delete('/eliminarEvidencias/:id', EnsenanzaController.eliminarEvidencia);
 
 router.get('/getUsuarios', EnsenanzaController.getUsuarios);
 router.get('/getMaterias', EnsenanzaController.getMaterias);
+router.get('/getSemestre', EnsenanzaController.getSemestre);
+router.get('/getProg', EnsenanzaController.getProg);
+
+
 router.get('/getDetalleD', EnsenanzaController.getDetalleD);
 router.post('/asignarMateriaDocente', EnsenanzaController.asignarMateriaDocente)
 router.put('/editarMateriaDocente/:id',EnsenanzaController.editarMateriaDocente)
 router.delete('/eliminarDetalleDocente/:id', EnsenanzaController.eliminarDetalleDocente);
 
+router.get('/obtenerMaterias', EnsenanzaController.getMaterias);
+router.post("/insertarMateria", EnsenanzaController.insertarMateria);
+router.put("/editarMateria/:id", EnsenanzaController.editarMateria);
+router.delete("/eliminarMateria/:id", EnsenanzaController.eliminarMateria);
 
 
 module.exports = router;

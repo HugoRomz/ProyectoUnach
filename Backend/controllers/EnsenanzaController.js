@@ -264,6 +264,24 @@ function getMaterias(req, res) {
     }
   });
 }
+function getSemestre(req, res) {
+  EnsenanzaModel.getSemestre((error, materias) => {
+    if (error) {
+      res.status(500).send("Error al obtener materias");
+    } else {
+      res.json(materias);
+    }
+  });
+}
+function getProg(req, res) {
+  EnsenanzaModel.getProg((error, materias) => {
+    if (error) {
+      res.status(500).send("Error al obtener materias");
+    } else {
+      res.json(materias);
+    }
+  });
+}
 
 function getDetalleD(req, res) {
   EnsenanzaModel.getDetalleD((error, data) => {
@@ -319,6 +337,50 @@ function eliminarDetalleDocente(req, res) {
   });
 }
 
+function insertarMateria(req, res) {
+  const formData = {
+    nombreMateria: req.body.nombreMateria,
+    semestre: req.body.semestre,
+    prog_academico: req.body.prog_academicos,
+  };
+
+  EnsenanzaModel.insertarMateria(formData, (error, resultado) => {
+    if (error) {
+      console.log("Error al insertar en la base de datos:", error);
+      res.status(500).json({ error: "Error al insertar la materia." });
+    } else {
+      res.json(resultado);
+    }
+  });
+}
+function editarMateria(req, res) {
+  const id = req.params.id;
+  const formData = {
+    nombreMateria: req.body.nombreMateria,
+    semestre: req.body.semestre,
+    prog_academico: req.body.prog_academicos,
+  };
+
+  EnsenanzaModel.editarMateria(id, formData, (error, resultado) => {
+    if (error) {
+      console.log("Error al editar en la base de datos:", error);
+      res.status(500).json({ error: "Error al editar la materia." });
+    } else {
+      res.json(resultado);
+    }
+  });
+}
+function eliminarMateria(req, res) {
+  const id = req.params.id;
+  EnsenanzaModel.eliminarMateria(id, (error, resultado) => {
+    if (error) {
+      console.log("Error al eliminar en la base de datos:", error);
+      res.status(500).json({ error: "Error al eliminar la actividad." });
+    } else {
+      res.json(resultado);
+    }
+  });
+}
 
 
 
@@ -338,5 +400,10 @@ module.exports = {
   getDetalleD,
   asignarMateriaDocente,
   editarMateriaDocente,
-  eliminarDetalleDocente
+  eliminarDetalleDocente,
+  getSemestre,
+  getProg,
+  insertarMateria,
+  editarMateria,
+  eliminarMateria,
 };
