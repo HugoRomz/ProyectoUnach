@@ -3,9 +3,12 @@ import ModulosView from "../views/ModulosView.vue";
 import Home from "../views/Home.vue";
 import TutoriasView from "../views/TutoriaView.vue";
 import EnsenanzaView from "../views/EnsenanzaView.vue";
+import asignarMateria from "../views/asignarMateria.vue"
 import Login from "../views/Login.vue";
 import InvestigacionView from "../views/InvestigacionView.vue";
 import NotFound from "../views/404.vue";
+
+import agregarMateria from "../components/Ensenanza/agregarMateria.vue"
 
 const routes = [
   {
@@ -32,9 +35,25 @@ const routes = [
         component: EnsenanzaView,
         meta: { title: "Enseñanza" },
       },
-     
+      {
+        path: "/asignarMateria",
+        name: "Asignar Materia",
+        component: asignarMateria,
+        meta: { title: "Asignacion de Materia" },
+      },
+      // {
+      //   path: "/agregarDocente",
+      //   name: "Agregar Docente",
+      //   component: agregarDocente,
+      //   meta: { title: "Agregar Docente" },
+      // },
+      {
+        path: "/agregarMateria",
+        name: "Agregar Materia",
+        component: agregarMateria,
+        meta: { title: "Agregar Materia" },
+      },
     ],
-
   },
   {
     path: "/investigacion",
@@ -56,10 +75,9 @@ const routes = [
   },
   {
     path: "/:pathMatch(.*)*",
-    redirect: { name: "NotFound" }
-  }
+    redirect: { name: "NotFound" },
+  },
 ];
-
 
 const router = createRouter({
   history: createWebHistory(),
@@ -67,11 +85,10 @@ const router = createRouter({
 });
 
 function isAuthenticated() {
-    return !!localStorage.getItem('user');
+  return !!localStorage.getItem("user");
 }
 
 router.beforeEach((to, from, next) => {
-
   // Set the document title based on route metadata
   if (to.meta && to.meta.title) {
     document.title = to.meta.title;
@@ -79,18 +96,19 @@ router.beforeEach((to, from, next) => {
     document.title = "Mi aplicación Vue";
   }
 
-  if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated()) {
-    next('/Login');
+  if (
+    to.matched.some((record) => record.meta.requiresAuth) &&
+    !isAuthenticated()
+  ) {
+    next("/Login");
     return;
   }
 
-  if (to.path.toLowerCase() === '/login' && isAuthenticated()) {
-    next('/home');
+  if (to.path.toLowerCase() === "/login" && isAuthenticated()) {
+    next("/home");
     return;
   }
   next();
 });
-
-
 
 export default router;
