@@ -34,6 +34,18 @@ function editarColaborador(id, newData, callback) {
   });
 }
 
+function editarProyecto(id, newData, callback) {
+  const query = "UPDATE proyectos_investigacion SET ? WHERE id = ?";
+  db.query(query, [newData, id], (error, results) => {
+    if (error) {
+      console.error("Error al editar proyecto:", error);
+      callback(error, null);
+    } else {
+      callback(null, results);
+    }
+  });
+}
+
 function eliminarColaborador(id, callback) {
   const query = "DELETE FROM colaboradores WHERE id_colaborador = ?";
   db.query(query, [id], (error, results) => {
@@ -94,7 +106,7 @@ function insertarEvidencias(data, callback) {
 
 function obtenerEvidencias(idProyecto, callback) {
   const query =
-    "SELECT id_evidencia, nombreEvi FROM evidencias_investigacion WHERE id_proyecto = ?;";
+    "SELECT id_evidencia, nombreEvi, urlEvi FROM evidencias_investigacion WHERE id_proyecto = ?;";
   db.query(query, [idProyecto], (error, rows) => {
     if (error) {
       callback(error, null);
@@ -137,5 +149,6 @@ module.exports = {
   obtenerEvidencias,
   eliminarEvidencia,
   obtenerEvidenciaPorId,
-  obtenerProyectoPorId
+  obtenerProyectoPorId,
+  editarProyecto
 };

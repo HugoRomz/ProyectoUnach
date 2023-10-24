@@ -15,6 +15,10 @@ export default {
     return axios.get(`${API_URL}/investigacion/proyectos_investigacion/${idProyecto}`);
   },
 
+  editarProyecto(id, data) {
+    return axios.put(`${API_URL}/investigacion/proyectos_investigacion/${id}`, data);
+  },
+
   obtenerColaboradores(idColaborador) {
     return axios.get(`${API_URL}/investigacion/colaboradores/${idColaborador}`);
   },

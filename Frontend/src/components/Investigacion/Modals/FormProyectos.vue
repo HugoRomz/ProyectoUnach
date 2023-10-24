@@ -1,7 +1,7 @@
 <template>
   <!-- Ventana flotante con formulario -->
   <div
-    v-if="visible"
+    v-if="visible && dataLoaded"
     class="fixed top-0 left-0 w-full h-full bg-gray-700 bg-opacity-50 flex justify-center items-center"
   >
     <div class="bg-white p-8 rounded-lg w-3/4">
@@ -220,11 +220,76 @@ export default {
         tipoRecurso: "",
       },
       modalTitle: "Registrar",
+      dataLoaded: false,
     };
   },
+
+  watch: {
+    // Este watcher se mantendrá para reaccionar a cambios de `visible`
+    async visible(newVal) {
+      if (newVal) {
+        if (this.idProyecto) {
+          (this.modalTitle = "Editar"), await this.loadActivityData();
+        } else {
+          this.modalTitle = "Registrar";
+          this.dataLoaded = true;
+          this.resetForm();
+        }
+      } else {
+        this.dataLoaded = false;
+        this.resetForm();
+      }
+    },
+  },
+
   methods: {
+    async loadActivityData() {
+      try {
+        const response = await apiInvestigacion.obtenerProyectoPorId(
+          this.idProyecto
+        );
+
+        const fechaInicio = new Date(response.data[0].fecha_inicio);
+        const formattedDateInicio = `${fechaInicio.getFullYear()}-${(
+          fechaInicio.getMonth() + 1
+        )
+          .toString()
+          .padStart(2, "0")}-${fechaInicio
+          .getDate()
+          .toString()
+          .padStart(2, "0")}`;
+
+        const fechaFin = new Date(response.data[0].fecha_final);
+        const formattedDateFinal = `${fechaFin.getFullYear()}-${(
+          fechaFin.getMonth() + 1
+        )
+          .toString()
+          .padStart(2, "0")}-${fechaFin.getDate().toString().padStart(2, "0")}`;
+
+        this.form.idProyecto = response.data[0].id;
+        this.form.nombreProyecto = response.data[0].nombre;
+        this.form.cicloEscolar = response.data[0].ciclo_escolar;
+        this.form.fechaInicio = formattedDateInicio;
+        this.form.fechaFin = formattedDateFinal;
+        this.form.lineaInvestigacion = response.data[0].linea_investigacion;
+        this.form.liderProyecto = response.data[0].lider_de_proyecto;
+        this.form.status = response.data[0].estatus;
+        this.form.recursosUtilizados = response.data[0].recursos_utilizados;
+        this.form.tipoRecurso = response.data[0].tipo_de_recurso;
+
+        this.dataLoaded = true;
+      } catch (error) {
+        Swal.fire({
+          title: "Error",
+          text: "Hubo un error obteniendo los datos del proyecto",
+          icon: "error",
+        });
+      } 
+    },
+
     closeModal() {
       this.$emit("update:visible", false);
+      this.dataLoaded = false;
       this.resetForm();
     },
     resetForm() {
@@ -294,6 +359,25 @@ export default {
             Swal.fire({
               title: "Error",
               text: "Hubo un error enviando el formulario",
+              icon: "error",
+            });
+          });
+      }else if (this.form.idProyecto != null || this.form.idProyecto != "") {
+        apiInvestigacion
+          .editarProyecto(this.form.idProyecto, data) // Envía el FormData con el archivo
+          .then((response) => {
+            Swal.fire({
+              title: "Proyecto actualizado",
+              text: "Los datos del proyecto se han editado exitosamente",
+              icon: "success",
+            });
+            this.closeModal();
+            this.$emit("projectsChanged");
+          })
+          .catch((error) => {
+            Swal.fire({
+              title: "Error",
+              text: "Hubo un error editando los datos del proyecto",
               icon: "error",
             });
           });

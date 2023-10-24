@@ -79,6 +79,29 @@ function editarColaborador(req, res) {
   });
 }
 
+function editarProyecto(req, res) {
+  const id = req.body.idProyecto;
+  const formData = {
+    nombre: req.body.nombreProyecto,
+    ciclo_escolar: req.body.cicloEscolar,
+    fecha_inicio: req.body.fechaInicio,
+    fecha_final: req.body.fechaFin,
+    linea_investigacion: req.body.lineaInvestigacion,
+    lider_de_proyecto: req.body.liderProyecto,
+    estatus: req.body.status,
+    recursos_utilizados: req.body.recursosUtilizados,
+    tipo_de_recurso: req.body.tipoRecurso,
+  };
+
+  InvestigacionModel.editarProyecto(id, formData, (error, results) => {
+    if (error) {
+      res.status(500).json({ error: "Error al editar colaborador." });
+    } else {
+      res.json(results);
+    }
+  });
+}
+
 function eliminarColaborador(req, res) {
   const id = req.params.idColaborador;
   InvestigacionModel.eliminarColaborador(id, (error, results) => {
@@ -202,5 +225,6 @@ module.exports = {
     cargarEvidencia,
     obtenerEvidencias,
     eliminarEvidencia,
-    obtenerProyectoPorId
+    obtenerProyectoPorId,
+    editarProyecto
 }
