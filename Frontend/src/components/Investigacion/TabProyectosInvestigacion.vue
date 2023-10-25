@@ -127,8 +127,8 @@ export default {
           data: null,
           render: (data, type, row) => {
             return `
-                        <button class="btn-editar-actividad bg-yellow-500 text-white p-2 pt-3 rounded" data-id="${data.id}"><i class="pi pi-pencil pointer-events-none"></i></button>
-                        <button class="btn-eliminar-actividad bg-red-500 text-white  p-2 pt-3  rounded" data-id="${data.id}"><i class="pi pi-trash pointer-events-none"></i></button>
+                        <button class="btn-editar-proyecto bg-yellow-500 text-white p-2 pt-3 rounded" data-id="${data.id}"><i class="pi pi-pencil pointer-events-none"></i></button>
+                        <button class="btn-eliminar-proyecto bg-red-500 text-white  p-2 pt-3  rounded" data-id="${data.id}"><i class="pi pi-trash pointer-events-none"></i></button>
                         <button class="btn-detalle-proyecto bg-blue-500 text-white p-2 pt-3 rounded" data-id="${data.id}"><i class="pi pi-info-circle pointer-events-none"></i></button>
                       `;
           },
@@ -236,6 +236,15 @@ export default {
           this.mostrarDetalleProyecto(id);
         }
       });
+
+      document.addEventListener("click", (event) => {
+        // Verificar si se hizo clic en el botón de editar
+        if (event.target.matches(".btn-editar-proyecto")) {
+          const id = event.target.getAttribute("data-id");
+          this.cargarDatosParaEditar(id);
+        }
+      });
+
     });
   },
   methods: {
@@ -254,6 +263,10 @@ export default {
     },
     updateData() {
       this.obtenerProyectos(); // Esta función ya esta definida para obtener las actividades
+    },
+    cargarDatosParaEditar(id) {
+      this.editingId = id; // Asigna el ID a editar
+      this.showModal = true;
     },
     mostrarDetalleColaboradores(id) {
       this.modalData = id; // Solo guarda el ID en lugar de todo el objeto de datos
