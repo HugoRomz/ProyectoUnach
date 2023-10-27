@@ -5,6 +5,10 @@ const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
 
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "public/evidenciasEnsenanza");
@@ -383,6 +387,76 @@ function eliminarMateria(req, res) {
 }
 
 
+function obtenerDocentes(req, res) {
+  const idEvidencia = req.params.idEvidencia;
+
+  EnsenanzaModel.obtenerDocentes(idEvidencia, (error, rows) => {
+    if (error) {
+      res.status(500).json({ error: "Error al obtener las actividades." });
+    } else {
+      res.json(rows);
+    }
+  });
+}
+
+
+function insertarDocente(req, res) {
+  const formData = async () => {
+    const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
+  
+    return {
+      rfc: req.body.rfc,
+      n_plaza: req.body.n_plaza,
+      password: hashedPassword,
+      nombre_Doce: req.body.nombre_Doce,
+      apellido_paterno: req.body.apellido_paterno,
+      apellido_materno: req.body.apellido_materno,
+    };
+  };
+formData().then(data => {
+  EnsenanzaModel.insertarDocente(data, (error, resultado) => {
+    if (error) {
+      console.log("Error al insertar en la base de datos:", error);
+      res.status(500).json({ error: "Error al insertar la materia." });
+    } else {
+      res.json(resultado);
+    }
+  });
+}).catch(error => {
+  console.error(error);
+});
+
+
+ 
+}
+function editarDocente(req, res) {
+  const id = req.params.id;
+  const formData = {
+    nombreMateria: req.body.nombreMateria,
+    semestre: req.body.semestre,
+    prog_academico: req.body.prog_academicos,
+  };
+
+  EnsenanzaModel.editarDocente(id, formData, (error, resultado) => {
+    if (error) {
+      console.log("Error al editar en la base de datos:", error);
+      res.status(500).json({ error: "Error al editar la materia." });
+    } else {
+      res.json(resultado);
+    }
+  });
+}
+function eliminarDocente(req, res) {
+  const id = req.params.id;
+  EnsenanzaModel.eliminarDocente(id, (error, resultado) => {
+    if (error) {
+      console.log("Error al eliminar en la base de datos:", error);
+      res.status(500).json({ error: "Error al eliminar la actividad." });
+    } else {
+      res.json(resultado);
+    }
+  });
+}
 
 
 module.exports = {
@@ -406,4 +480,8 @@ module.exports = {
   insertarMateria,
   editarMateria,
   eliminarMateria,
+  obtenerDocentes,
+  insertarDocente,
+  editarDocente,
+  eliminarDocente,
 };

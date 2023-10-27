@@ -11,9 +11,9 @@ const store = createStore({
   },
   getters: {
     sideBarOpen: (state) => state.sideBarOpen,
-  tienePermiso: (state) => (permiso) => {
-  return state.permisos.some(p => p.Permiso === permiso);
-}
+    tienePermiso: (state) => (permiso) => {
+      return state.permisos.some(p => p.Permiso === permiso) || state.permisos.some(p => p.Permiso === "Super-Admin");
+    }
 
   },
   mutations: {

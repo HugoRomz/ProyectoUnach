@@ -83,4 +83,19 @@ export default {
     return axios.delete(`${API_URL}/ensenanza/eliminarMateria/${id}`);
   },
 
+
+
+  obtenerDocentes() {
+    return axios.get(`${API_URL}/ensenanza/obtenerDocentes`);
+  },
+  insertarDocente(formData) {
+    return axios.post(`${API_URL}/ensenanza/insertarDocente`, formData);
+  },
+  actualizarDocente(id, formData) {
+    return axios.put(`${API_URL}/ensenanza/editarDocente/${id}`, formData);
+  },
+  eliminarDocente(id) {
+    return axios.delete(`${API_URL}/ensenanza/eliminarDocente/${id}`);
+  },
+
 };
