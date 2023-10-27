@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed": "node db.js",
     "setup": "md public\\evidenciasEnsenanza & md public\\evidenciasTutoria",
-    "setuplinux": "mkdir -p public/evidenciasEnsenanza && mkdir -p public/evidenciasTutoria"
+    "setuplinux": "mkdir -p public/evidenciasEnsenanza && mkdir -p public/evidenciasTutoria && mkdir -p public/evidenciasInvestigacion"
   },
   "author": "",
   "license": "ISC",

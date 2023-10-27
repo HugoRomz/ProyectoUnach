@@ -32,5 +32,10 @@ router.post("/insertarMateria", EnsenanzaController.insertarMateria);
 router.put("/editarMateria/:id", EnsenanzaController.editarMateria);
 router.delete("/eliminarMateria/:id", EnsenanzaController.eliminarMateria);
 
+router.get('/obtenerDocentes', EnsenanzaController.obtenerDocentes);
+router.post("/insertarDocente", EnsenanzaController.insertarDocente);
+router.put("/editarDocente/:id", EnsenanzaController.editarDocente);
+router.delete("/eliminarDocente/:id", EnsenanzaController.eliminarDocente);
+
 
 module.exports = router;

@@ -1,7 +1,7 @@
 <template>
   <div class="container mx-auto">
     <HeaderModule
-      titulo="Enseñanza - Agregar Materia"
+      titulo="Enseñanza - Agregar Docente"
       ciclo="AGTO - NOV 2023"
     />
     <div
@@ -9,19 +9,65 @@
     >
       <div class="m-3">
         <form @submit.prevent="submitForm" class="w-full mt-5">
-          <input type="hidden" v-model="form.idMateria" />
+          <input type="text" v-model="form.editRFC" />
+          <div class="flex flex-wrap -mx-3">
+            <div class="w-full lg:w-1/3 px-3">
+              <label
+                class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                for="rfc"
+              >
+                RFC:
+              </label>
+              <input
+                class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id="rfc"
+                v-model="form.rfc"
+                type="text"
+                placeholder="Ej. RFCJ121212ABC"
+              />
+            </div>
+
+            <div class="w-full lg:w-1/3 px-3">
+              <label
+                class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+              >
+                Numero de Plaza:
+              </label>
+              <input
+                class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id="n_plaza"
+                v-model="form.n_plaza"
+                type="text"
+                placeholder="Ej. Taller de elaboración del informe de investigación"
+              />
+            </div>
+            <div class="w-full lg:w-1/3 px-3">
+              <label
+                class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+              >
+                Password:
+              </label>
+              <input
+                class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id="password"
+                v-model="form.password"
+                type="text"
+                placeholder="Ej. Taller de elaboración del informe de investigación"
+              />
+            </div>
+          </div>
           <div class="flex flex-wrap -mx-3 mb-6">
             <div class="w-full lg:w-1/3 px-3">
               <label
                 class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                for="nombreMateria"
+                for="nombre_Doce"
               >
-                Nombre de la Materia:
+                Nombre:
               </label>
               <input
                 class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                id="nombreMateria"
-                v-model="form.nombreMateria"
+                id="nombre_Doce"
+                v-model="form.nombre_Doce"
                 type="text"
                 placeholder="Ej. Taller de elaboración del informe de investigación"
               />
@@ -31,33 +77,29 @@
               <label
                 class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
               >
-                Semestre:
+                Apellido Paterno:
               </label>
-              <multiselect
-                id="semestre"
-                v-model="form.semestre"
-                :options="semestre"
-                label="nombresemestre"
-                track-by="is_SG"
-                placeholder="Selecciona un semestre"
-                class="flex-grow"
-              ></multiselect>
+              <input
+                class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id="apellido_paterno"
+                v-model="form.apellido_paterno"
+                type="text"
+                placeholder="Ej. Taller de elaboración del informe de investigación"
+              />
             </div>
             <div class="w-full lg:w-1/3 px-3">
               <label
                 class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
               >
-                Programa academico:
+                Apellido Materno:
               </label>
-              <multiselect
-                id="programa_academico"
-                v-model="form.prog_academicos"
-                :options="prog_academicos"
-                label="nombreProg"
-                track-by="idprog_academicos"
-                placeholder="Selecciona un programa academico"
-                class="flex-grow"
-              ></multiselect>
+              <input
+                class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id="apellido_materno"
+                v-model="form.apellido_materno"
+                type="text"
+                placeholder="Ej. Taller de elaboración del informe de investigación"
+              />
             </div>
           </div>
 
@@ -76,16 +118,18 @@
     <div class="w-full bg-white shadow-xl border rounded-lg border-gray-300">
       <div class="w-full p-4">
         <DataTableComponent
-          :data="dataMaterias"
+          :data="dataDocentes"
           :columns="columns"
           :dtoptions="dtoptions"
         >
           <template #headers>
-            <th>ID</th>
+            <th>RFC</th>
             <th>Nombre</th>
-            <th>Semestre</th>
-            <th>Grupo</th>
-            <th>Programa Academico</th>
+            <th>Apellido Paterno</th>
+            <th>Apellido Materno</th>
+            <th>N_Plaza</th>
+            <th>Password</th>
+            <th>Status</th>
             <th>Acciones</th>
           </template>
         </DataTableComponent>
@@ -109,28 +153,45 @@ export default {
   },
   data() {
     return {
-      dataMaterias: [],
-      semestre: [],
-      prog_academicos: [],
+      dataDocentes: [],
       form: {
-        idMateria: "",
-        nombreMateria: "",
-        semestre: "",
-        prog_academicos: "",
+        rfc: "",
+        n_plaza: "",
+        password: "",
+        nombre_Doce: "",
+        apellido_paterno: "",
+        apellido_materno: "",
       },
       columns: [
-        { data: "idMateria" },
-        { data: "nombreMateria" },
-        { data: "nombresemestre" },
-        { data: "grupo" },
-        { data: "nombreProg" },
+        { data: "rfc" },
+        { data: "nombre_Doce" },
+        { data: "apellido_paterno" },
+        { data: "apellido_materno" },
+        { data: "n_plaza" },
+        {
+          data: "password",
+          render: () => {
+            return "••••••••••• "; // Independientemente de lo que sea la contraseña, mostrará asteriscos
+          },
+        },
+        {
+          data: "status",
+          render: (data, type, row) => {
+            if (data === 1) {
+              // O cualquier otro número o condición que decidas
+              return '<span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">Activo</span>';
+            } else {
+              return '<span class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">Inactivo</span>';
+            }
+          },
+        },
         {
           title: "Acciones",
           data: null,
           render: (data, type, row) => {
             return `
-                          <button class="btn-editar bg-yellow-500 text-white p-2 pt-3 rounded" data-id="${data.idMateria}"><i class="pi pi-pencil pointer-events-none"></i></button>
-                          <button class="btn-eliminar bg-red-500 text-white  p-2 pt-3  rounded" data-id="${data.idMateria}"><i class="pi pi-trash pointer-events-none"></i></button>
+                          <button class="btn-editar bg-yellow-500 text-white p-2 pt-3 rounded" data-id="${data.rfc}"><i class="pi pi-pencil pointer-events-none"></i></button>
+                          <button class="btn-eliminar bg-red-500 text-white  p-2 pt-3  rounded" data-id="${data.rfc}"><i class="pi pi-trash pointer-events-none"></i></button>
                         `;
           },
         },
@@ -210,10 +271,6 @@ export default {
       },
     };
   },
-  created() {
-    this.fetchSemestre();
-    this.fetchProg();
-  },
   mounted() {
     this.obtenerData();
     this.$nextTick(() => {
@@ -235,52 +292,24 @@ export default {
   methods: {
     obtenerData() {
       apiEnsenanza
-        .obtenerMaterias()
+        .obtenerDocentes()
         .then((response) => {
-          this.dataMaterias = response.data;
+          this.dataDocentes = response.data;
         })
         .catch((error) => {
           console.error("Error al obtener las actividades:", error);
         });
     },
-    async fetchSemestre() {
-      try {
-        const response = await apiEnsenanza.getSemestre();
-        this.semestre = response.data.map((semestre) => ({
-          ...semestre,
-          nombresemestre: `${semestre.semestre} - ${semestre.grupo}`,
-        }));
-      } catch (error) {
-        console.error("Erro al conseguir la data", error);
-      }
-    },
-
-    async fetchProg() {
-      try {
-        const response = await apiEnsenanza.getProg();
-        this.prog_academicos = response.data;
-      } catch (error) {
-        console.error("Erro al conseguir la data", error);
-      }
-    },
     cargarParaEditar(id) {
-      const materias = this.dataMaterias.find((item) => item.idMateria == id);
-      if (materias) {
-        this.form.idMateria = materias.idMateria;
-        this.form.nombreMateria = materias.nombreMateria;
-
-        const semestreSelected = this.semestre.find(
-          (semestre) => semestre.is_SG == materias.semestre
-        );
-        this.form.semestre = semestreSelected ? semestreSelected : null;
-
-        const progAcademicoSelected = this.prog_academicos.find(
-          (prog_academico) =>
-            prog_academico.idprog_academicos == materias.prog_academico
-        );
-        this.form.prog_academicos = progAcademicoSelected
-          ? progAcademicoSelected
-          : null;
+      const docentes = this.dataDocentes.find((item) => item.rfc == id);
+      if (docentes) {
+        this.form.editRFC = docentes.rfc;
+        this.form.rfc = docentes.rfc;
+        this.form.n_plaza = docentes.n_plaza;
+        this.form.password = docentes.password;
+        this.form.nombre_Doce = docentes.nombre_Doce;
+        this.form.apellido_paterno = docentes.apellido_paterno;
+        this.form.apellido_materno = docentes.apellido_materno;
       }
     },
     eliminarMateria(id) {
@@ -315,11 +344,23 @@ export default {
         }
       });
     },
+    resetForm() {
+      this.form.editRFC = "";
+      this.form.rfc = "";
+      this.form.n_plaza = "";
+      this.form.password = "";
+      this.form.nombre_Doce = "";
+      this.form.apellido_paterno = "";
+      this.form.apellido_materno = "";
+    },
     submitForm() {
       if (
-        !this.form.nombreMateria ||
-        !this.form.semestre ||
-        !this.form.prog_academicos
+        !this.form.rfc ||
+        !this.form.n_plaza ||
+        !this.form.password ||
+        !this.form.nombre_Doce ||
+        !this.form.apellido_paterno ||
+        !this.form.apellido_materno
       ) {
         Swal.fire({
           title: "Datos incompletos",
@@ -329,33 +370,33 @@ export default {
         return;
       }
       const data = {
-        idMateria: this.form.idMateria,
-        nombreMateria: this.form.nombreMateria,
-        semestre: this.form.semestre.is_SG,
-        prog_academicos: this.form.prog_academicos.idprog_academicos,
+        editRFC: this.form.editRFC,
+        rfc: this.form.rfc,
+        n_plaza: this.form.n_plaza,
+        password: this.form.password,
+        nombre_Doce: this.form.nombre_Doce,
+        apellido_paterno: this.form.apellido_paterno,
+        apellido_materno: this.form.apellido_materno,
       };
 
       let promise;
 
-      if (this.form.idMateria) {
-        promise = apiEnsenanza.actualizarMateria(this.form.idMateria, data);
+      if (this.form.editRFC) {
+        promise = apiEnsenanza.actualizarDocente(this.form.editRFC, data);
       } else {
-        promise = apiEnsenanza.insertarMateria(data);
+        promise = apiEnsenanza.insertarDocente(data);
       }
 
       promise
         .then((res) => {
           Swal.fire({
             title: "Operación exitosa",
-            text: this.form.idMateria
+            text: this.form.editRFC
               ? "La materia ha sido editado correctamente"
               : "La materia ha sido asignado correctamente",
             icon: "success",
           });
-          this.form.idMateria = "";
-          this.form.nombreMateria = "";
-          this.form.semestre = null;
-          this.form.prog_academicos = null;
+          this.resetForm();
           this.obtenerData();
         })
         .catch((err) => {
@@ -364,10 +405,7 @@ export default {
             text: "Hubo un error al realizar la operación",
             icon: "error",
           });
-          this.form.idMateria = "";
-          this.form.nombreMateria = "";
-          this.form.semestre = null;
-          this.form.prog_academicos = null;
+          this.resetForm();
         });
     },
   },

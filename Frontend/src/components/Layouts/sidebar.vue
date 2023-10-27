@@ -20,18 +20,34 @@
           <span class="text-white">Actividades</span>
         </div>
       </router-link>
-      <router-link to="/asignarMateria" v-if="tienePermiso('Enseñanza-Admin')">
+      <router-link to="/agregarMateria" v-if="tienePermiso('Enseñanza-Admin')">
         <div
-          class="w-full flex items-center text-SecundaryGold h-10 pl-4 hover:bg-SecundaryGold rounded-lg cursor-pointer hover:text-white"
+        class="w-full flex items-center text-SecundaryGold h-10 pl-4 hover:bg-SecundaryGold rounded-lg cursor-pointer hover:text-white"
         >
-          <i class="pi pi-book text-2xl fill-current mr-2"></i>
-          <span class="text-white">Asignar Materias</span>
-        </div>
-      </router-link>
+        <i class="pi pi-book text-2xl fill-current mr-2"></i>
+        <span class="text-white">Materias</span>
+      </div>
+    </router-link>
+    <router-link to="/agregarDocente" v-if="tienePermiso('Enseñanza-Admin')">
+      <div
+      class="w-full flex items-center text-SecundaryGold h-10 pl-4 hover:bg-SecundaryGold rounded-lg cursor-pointer hover:text-white"
+      >
+      <i class="pi pi-user text-2xl fill-current mr-2"></i>
+      <span class="text-white">Docentes</span>
+    </div>
+  </router-link>
+  <router-link to="/asignarMateria" v-if="tienePermiso('Enseñanza-Admin')">
+    <div
+      class="w-full flex items-center text-SecundaryGold h-10 pl-4 hover:bg-SecundaryGold rounded-lg cursor-pointer hover:text-white"
+    >
+      <i class="pi pi-id-card text-2xl fill-current mr-2"></i>
+      <span class="text-white">Asignar Materias</span>
+    </div>
+  </router-link>
     </div>
     <div class="mb-4 px-4">
       <p class="pl-4 text-sm font-semibold mb-1 uppercase text-white tracking-widest border-b border-gray-600" v-if="tienePermiso('Tutorias')">Tutorias</p>
-      <router-link to="/ensenanza" v-if="tienePermiso('Tutorias')">
+      <router-link to="/tutorias" v-if="tienePermiso('Tutorias')">
         <div
           class="w-full flex items-center text-SecundaryGold h-10 pl-4 hover:bg-SecundaryGold rounded-lg cursor-pointer hover:text-white"
         >
@@ -50,7 +66,7 @@
     </div>
     <div class="mb-4 px-4">
       <p class="pl-4 text-sm font-semibold mb-1 uppercase text-white tracking-widest border-b border-gray-600" v-if="tienePermiso('Investigacion')">Investigación</p>
-      <router-link to="/ensenanza" v-if="tienePermiso('Investigacion')">
+      <router-link to="/investigacion" v-if="tienePermiso('Investigacion')">
         <div
           class="w-full flex items-center text-SecundaryGold h-10 pl-4 hover:bg-SecundaryGold rounded-lg cursor-pointer hover:text-white"
         >

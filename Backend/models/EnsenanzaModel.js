@@ -230,6 +230,52 @@ function eliminarMateria(id, callback) {
 }
 
 
+
+function obtenerDocentes(idActividad, callback) {
+  const query =
+    "SELECT * FROM usuarios";
+  db.query(query, [idActividad], (error, rows) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, rows);
+    }
+  });
+}
+
+function insertarDocente(formData, callback) {
+  const query = "INSERT INTO usuarios SET ?";
+  db.query(query, formData, (error, results) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, results);
+    }
+  });
+}
+function editarDocente(id, formData, callback) {
+  const query = "UPDATE materia SET ? WHERE idMateria = ?";
+  db.query(query, [formData, id], (error, results) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, results);
+    }
+  });
+}
+
+function eliminarDocente(id, callback) {
+  const query = "DELETE FROM materia WHERE idMateria = ?";
+  db.query(query, [id], (error, results) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, results);
+    }
+  });
+}
+
+
 module.exports = {
   obtenerActividades,
   buscarTipoActividad,
@@ -252,4 +298,8 @@ module.exports = {
   insertarMateria,
   editarMateria,
   eliminarMateria,
+  obtenerDocentes,
+  insertarDocente,
+  editarDocente,
+  eliminarDocente,
 };
