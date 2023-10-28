@@ -48,13 +48,26 @@ function buscarTipoActividad(req, res) {
     }
   });
 }
+function materiasByRfc(req, res) {
+  const rfc = req.params.id;
+
+  EnsenanzaModel.materiasByRfcidades(rfc, (error, rows) => {
+    if (error) {
+      res
+        .status(500)
+        .json({ error: "Error al obtener los tipos de actividades." });
+    } else {
+      res.json(rows);
+    }
+  });
+}
 
 function insertarActividad(req, res) {
   const formData = {
     nombreAct: req.body.nombreAct,
     descripcionAct: req.body.descripcionAct,
     tipoAct: req.body.tipoAct,
-    materia: 5,
+    materia: req.body.idMateria,
     cicloEscolar: "2020-2021",
     fecha: req.body.fecha,
   };
@@ -74,7 +87,7 @@ function editarActividad(req, res) {
     nombreAct: req.body.nombreAct,
     descripcionAct: req.body.descripcionAct,
     tipoAct: req.body.tipoAct,
-    materia: 5,
+    materia: req.body.idMateria,
     cicloEscolar: "2020-2021",
     fecha: req.body.fecha,
   };
@@ -471,6 +484,7 @@ function eliminarDocente(req, res) {
 module.exports = {
   obtenerActividades,
   buscarTipoActividad,
+  materiasByRfc,
   insertarActividad,
   editarActividad,
   eliminarActividad,
