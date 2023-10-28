@@ -5,9 +5,8 @@ const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
 
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 const saltRounds = 10;
-
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -386,7 +385,6 @@ function eliminarMateria(req, res) {
   });
 }
 
-
 function obtenerDocentes(req, res) {
   const idEvidencia = req.params.idEvidencia;
 
@@ -399,11 +397,10 @@ function obtenerDocentes(req, res) {
   });
 }
 
-
 function insertarDocente(req, res) {
   const formData = async () => {
     const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
-  
+
     return {
       rfc: req.body.rfc,
       n_plaza: req.body.n_plaza,
@@ -413,38 +410,51 @@ function insertarDocente(req, res) {
       apellido_materno: req.body.apellido_materno,
     };
   };
-formData().then(data => {
-  EnsenanzaModel.insertarDocente(data, (error, resultado) => {
-    if (error) {
-      console.log("Error al insertar en la base de datos:", error);
-      res.status(500).json({ error: "Error al insertar la materia." });
-    } else {
-      res.json(resultado);
-    }
-  });
-}).catch(error => {
-  console.error(error);
-});
-
-
- 
+  formData()
+    .then((data) => {
+      EnsenanzaModel.insertarDocente(data, (error, resultado) => {
+        if (error) {
+          console.log("Error al insertar en la base de datos:", error);
+          res.status(500).json({ error: "Error al insertar la materia." });
+        } else {
+          res.json(resultado);
+        }
+      });
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 }
+
 function editarDocente(req, res) {
   const id = req.params.id;
-  const formData = {
-    nombreMateria: req.body.nombreMateria,
-    semestre: req.body.semestre,
-    prog_academico: req.body.prog_academicos,
+  const formData = async () => {
+    const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
+
+    return {
+      rfc: req.body.rfc,
+      n_plaza: req.body.n_plaza,
+      password: hashedPassword,
+      nombre_Doce: req.body.nombre_Doce,
+      apellido_paterno: req.body.apellido_paterno,
+      apellido_materno: req.body.apellido_materno,
+    };
   };
 
-  EnsenanzaModel.editarDocente(id, formData, (error, resultado) => {
-    if (error) {
-      console.log("Error al editar en la base de datos:", error);
-      res.status(500).json({ error: "Error al editar la materia." });
-    } else {
-      res.json(resultado);
-    }
-  });
+  formData()
+    .then((data) => {
+      EnsenanzaModel.editarDocente(id, data, (error, resultado) => {
+        if (error) {
+          console.log("Error al editar en la base de datos:", error);
+          res.status(500).json({ error: "Error al editar la materia." });
+        } else {
+          res.json(resultado);
+        }
+      });
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 }
 function eliminarDocente(req, res) {
   const id = req.params.id;
@@ -457,7 +467,6 @@ function eliminarDocente(req, res) {
     }
   });
 }
-
 
 module.exports = {
   obtenerActividades,

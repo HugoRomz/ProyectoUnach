@@ -38,7 +38,7 @@
                 id="n_plaza"
                 v-model="form.n_plaza"
                 type="text"
-                placeholder="Ej. Taller de elaboración del informe de investigación"
+                placeholder="Ej. E0363040000120"
               />
             </div>
             <div class="w-full lg:w-1/3 px-3">
@@ -52,7 +52,7 @@
                 id="password"
                 v-model="form.password"
                 type="text"
-                placeholder="Ej. Taller de elaboración del informe de investigación"
+                placeholder="Ej. Debe tener al menos 6 caracteres"
               />
             </div>
           </div>
@@ -69,7 +69,7 @@
                 id="nombre_Doce"
                 v-model="form.nombre_Doce"
                 type="text"
-                placeholder="Ej. Taller de elaboración del informe de investigación"
+                placeholder="Ej. Juan Jose"
               />
             </div>
 
@@ -84,7 +84,7 @@
                 id="apellido_paterno"
                 v-model="form.apellido_paterno"
                 type="text"
-                placeholder="Ej. Taller de elaboración del informe de investigación"
+                placeholder="Ej. Herrera"
               />
             </div>
             <div class="w-full lg:w-1/3 px-3">
@@ -98,7 +98,7 @@
                 id="apellido_materno"
                 v-model="form.apellido_materno"
                 type="text"
-                placeholder="Ej. Taller de elaboración del informe de investigación"
+                placeholder="Ej. Hernandez"
               />
             </div>
           </div>
@@ -306,7 +306,7 @@ export default {
         this.form.editRFC = docentes.rfc;
         this.form.rfc = docentes.rfc;
         this.form.n_plaza = docentes.n_plaza;
-        this.form.password = docentes.password;
+        this.form.password = '•••••••••••';
         this.form.nombre_Doce = docentes.nombre_Doce;
         this.form.apellido_paterno = docentes.apellido_paterno;
         this.form.apellido_materno = docentes.apellido_materno;
@@ -325,7 +325,7 @@ export default {
       }).then((result) => {
         if (result.isConfirmed) {
           apiEnsenanza
-            .eliminarMateria(id) // Asumiendo que tienes un método así en tu API
+            .eliminarDocente(id) // Asumiendo que tienes un método así en tu API
             .then((res) => {
               Swal.fire(
                 "Eliminado",
