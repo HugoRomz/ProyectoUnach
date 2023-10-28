@@ -12,7 +12,11 @@
     <div v-if="mostrarFormulario" class="bg-white px-4">
       <h2 class="text-lg mb-4 text-center font-semibold">{{ formTitle }}</h2>
       <form class="w-full" @submit.prevent="submitForm">
-        <input type="hidden" id="idActEnsenanza" v-model="form.idActEnsenanza" />
+        <input
+          type="hidden"
+          id="idActEnsenanza"
+          v-model="form.idActEnsenanza"
+        />
         <div class="flex flex-wrap -mx-3 mb-6">
           <div class="w-full px-3">
             <label
@@ -31,7 +35,27 @@
           </div>
         </div>
         <div class="flex flex-wrap -mx-3 mb-6">
-          <div class="w-full md:w-1/2 px-3">
+          <div class="w-full md:w-1/3 px-3">
+            <label
+              class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+              for="materia"
+            >
+              Materia:
+            </label>
+            <vue-multiselect
+              id="materia"
+              v-model="form.materia"
+              :options="materias"
+              :multiple="false"
+              label="nombreMateria"
+              track-by="materia"
+              :searchable="true"
+              :loading="isLoading"
+              :clear-on-select="true"
+              :append-to-body="true"
+            ></vue-multiselect>
+          </div>
+          <div class="w-full md:w-1/3 px-3">
             <label
               class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
               for="tipoActividad"
@@ -51,7 +75,7 @@
               :append-to-body="true"
             ></vue-multiselect>
           </div>
-          <div class="w-full md:w-1/2 px-3">
+          <div class="w-full md:w-1/3 px-3">
             <label
               class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
               for="fecha"
@@ -88,14 +112,14 @@
           type="submit"
           class="w-full bg-blue-800 text-white p-2 rounded hover:bg-blue-900"
         >
-        {{ nombreBtn }}
+          {{ nombreBtn }}
         </button>
       </form>
       <button
         @click="cerrarFormulario"
         class="w-full bg-red-500 text-white p-2 rounded hover:bg-red-600 mt-4"
       >
-       Cerrar
+        Cerrar
       </button>
     </div>
   </div>
@@ -114,6 +138,7 @@ export default {
     return {
       // Opciones para el multiselect
       options: [],
+      materias: [],
       selectedOption: null,
       isLoading: false,
       // Para el formulario y la ventana flotante
@@ -125,6 +150,7 @@ export default {
         fechaAct: "",
         descripcionAct: "",
         tipoAct: "",
+        materia: "",
       },
     };
   },
@@ -145,6 +171,23 @@ export default {
           });
       }
     },
+    buscarMaterias() {
+      const userData = JSON.parse(localStorage.getItem("user"));
+      if (!this.materias.length) {
+        // Solo realiza la búsqueda si las materias están vacías
+        this.isLoading = true;
+        apiEnsenanza
+          .buscarMaterias(userData.rfc) // Debes tener un método similar en tu servicio API
+          .then((res) => {
+            this.materias = res.data;
+            this.isLoading = false;
+          })
+          .catch((err) => {
+            console.log("Error al buscar materias", err);
+            this.isLoading = false;
+          });
+      }
+    },
     toggleFormulario() {
       this.mostrarFormulario = !this.mostrarFormulario;
     },
@@ -159,6 +202,7 @@ export default {
         fechaAct: "",
         descripcionAct: "",
         tipoAct: "",
+        materia: "",
       };
     },
     submitForm() {
@@ -169,13 +213,15 @@ export default {
         fecha: this.form.fechaAct,
         descripcionAct: this.form.descripcionAct,
         tipoAct: this.form.tipoAct.idtipoActividad,
+        idMateria: this.form.materia.materia,
       };
 
       if (
         !this.form.nombreAct ||
         !this.form.fechaAct ||
         !this.form.descripcionAct ||
-        !this.form.tipoAct
+        !this.form.tipoAct ||
+        !this.form.materia
       ) {
         Swal.fire({
           title: "Datos incompletos",
@@ -189,7 +235,10 @@ export default {
       if (!this.form.idActEnsenanza) {
         promise = apiEnsenanza.insertarActividad(data);
       } else {
-        promise = apiEnsenanza.actualizarActividad(this.form.idActEnsenanza,data);
+        promise = apiEnsenanza.actualizarActividad(
+          this.form.idActEnsenanza,
+          data
+        );
       }
 
       promise
@@ -228,21 +277,28 @@ export default {
         nombreAct: data.nombreAct,
         fechaAct: data.fecha,
         descripcionAct: data.descripcionAct,
-        tipoAct: this.options.find(option => option.idtipoActividad === data.idtipoActividad),
+        tipoAct: this.options.find(
+          (option) => option.idtipoActividad === data.idtipoActividad
+        ),
+        materia: this.materias.find(
+          (materia) => materia.materia === data.idMateria
+        ),
       };
     },
   },
   computed: {
-    ...mapState(["actividadAEditar"]),
+    ...mapState(["actividadEditar"]),
     formTitle() {
-    return this.form.idActEnsenanza ? 'Editar Actividad' : 'Insertar Nueva Actividad';
-  },
-  nombreBtn() {
-    return this.form.idActEnsenanza ? 'Actualizar' : 'Guardar';
-  },
+      return this.form.idActEnsenanza
+        ? "Editar Actividad"
+        : "Insertar Nueva Actividad";
+    },
+    nombreBtn() {
+      return this.form.idActEnsenanza ? "Actualizar" : "Guardar";
+    },
   },
   watch: {
-    actividadAEditar: {
+    actividadEditar: {
       handler(newValue) {
         if (newValue) {
           this.form = this.mapeoActividad(newValue); // Asigna las actividades al formulario
@@ -250,18 +306,18 @@ export default {
           if (this.form.fechaAct) {
             this.form.fechaAct = dayjs(this.form.fechaAct).format("YYYY-MM-DD");
           }
-          this.mostrarFormulario = true; 
+          this.mostrarFormulario = true;
         } else {
-
           this.resetForm();
-          this.mostrarFormulario = false; 
+          this.mostrarFormulario = false;
         }
       },
-      immediate: true, 
+      immediate: true,
     },
   },
   mounted() {
     this.buscarOpciones();
+    this.buscarMaterias();
   },
 };
 </script>

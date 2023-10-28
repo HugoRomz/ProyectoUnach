@@ -9,7 +9,10 @@ export default {
   buscarTipoActividad() {
     return axios.get(`${API_URL}/ensenanza/buscarTipoActividad`);
   },
-
+  buscarMaterias(rfc) {
+    return axios.get(`${API_URL}/ensenanza/showMateriasByRfc/${rfc}`);
+  },
+  
   insertarActividad(formData) {
     return axios.post(`${API_URL}/ensenanza/insertarActividad`, formData);
   },

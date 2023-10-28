@@ -17,6 +17,12 @@
           <th>Acciones</th>
         </template>
       </DataTableComponent>
+      <!-- Modal Component -->
+      <evidenciasModal
+        :show="isModalVisible"
+        :actividadId="modalData"
+        @close="isModalVisible = false"
+      ></evidenciasModal>
     </div>
   </div>
 </template>
@@ -27,15 +33,20 @@ import DataTableComponent from "../Plantillas/DataTableComponent.vue";
 import Swal from "sweetalert2";
 import dayjs from "dayjs";
 
+import evidenciasModal from "./Modals/evidenciasModal.vue";
+
 import logoSuperior from "../../assets/LogoSuperior";
 import logoInferior from "../../assets/LogoInferior";
 
 export default {
   components: {
     DataTableComponent,
+    evidenciasModal,
   },
   data() {
     return {
+      isModalVisible: false,
+      modalData: "",
       actEjercicios: [],
       columns: [
         { data: "idActEnsenanza" },
@@ -60,7 +71,7 @@ export default {
             return `
                         <button class="btn-editar-actividad bg-yellow-500 text-white p-2 pt-3 rounded" data-id="${data.idActEnsenanza}"><i class="pi pi-pencil pointer-events-none"></i></button>
                         <button class="btn-eliminar-actividad bg-red-500 text-white  p-2 pt-3  rounded" data-id="${data.idActEnsenanza}"><i class="pi pi-trash pointer-events-none"></i></button>
-                        <button class="bg-blue-500 text-white  p-2 pt-3  rounded" @click="detalleActividad(${data.idActEnsenanza})"><i class="pi pi-info-circle pointer-events-none"></i></button>
+                        <button class="btn-detalle-actividad bg-blue-500 text-white p-2 pt-3 rounded" data-id="${data.idActEnsenanza}"><i class="pi pi-info-circle pointer-events-none"></i></button>
                       `;
           },
         },
@@ -159,11 +170,15 @@ export default {
           const id = event.target.getAttribute("data-id");
           this.cargarActividadParaEditar(id);
         }
-
         // Verificar si se hizo clic en el botón de eliminar
         if (event.target.matches(".btn-eliminar-actividad")) {
           const id = event.target.getAttribute("data-id");
           this.eliminarActividad(id);
+        }
+        // Verificar si se hizo clic en el botón de detalle
+        if (event.target.matches(".btn-detalle-actividad")) {
+          const id = event.target.getAttribute("data-id");
+          this.mostrarDetalleActividad(id);
         }
       });
     });
@@ -215,6 +230,10 @@ export default {
             });
         }
       });
+    },
+    mostrarDetalleActividad(id) {
+      this.modalData = id; // Solo guarda el ID en lugar de todo el objeto de datos
+      this.isModalVisible = true;
     },
   },
 };

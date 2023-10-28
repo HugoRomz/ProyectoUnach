@@ -5,6 +5,7 @@ const EnsenanzaController = require("../controllers/EnsenanzaController");
 
 router.post("/insertarActividad", EnsenanzaController.insertarActividad);
 router.get("/showall/:id", EnsenanzaController.obtenerActividades);
+router.get("/showMateriasByRfc/:id", EnsenanzaController.materiasByRfc);
 router.get("/buscarTipoActividad", EnsenanzaController.buscarTipoActividad);
 router.put("/editarActividad/:id", EnsenanzaController.editarActividad);
 router.delete("/eliminarActividad/:id", EnsenanzaController.eliminarActividad);

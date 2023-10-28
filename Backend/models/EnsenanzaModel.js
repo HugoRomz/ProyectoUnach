@@ -2,8 +2,20 @@ const db = require("../config/db.config");
 
 function obtenerActividades(tipoActividad, callback) {
   const query =
-    "SELECT actE.idActEnsenanza,actE.nombreAct,actE.descripcionAct,tipAc.idtipoActividad ,tipAc.nombretipoAct,ma.nombreMateria,actE.cicloEscolar,actE.fecha FROM actividadesEnsenanza as actE, tipoActividad as tipAc, materia as ma WHERE actE.tipoAct = tipAc.idtipoActividad AND actE.materia = ma.idMateria AND actE.tipoAct = ?;";
+    "SELECT actE.idActEnsenanza,actE.nombreAct,actE.descripcionAct,tipAc.idtipoActividad ,tipAc.nombretipoAct,ma.idMateria,ma.nombreMateria,actE.cicloEscolar,actE.fecha FROM actividadesEnsenanza as actE, tipoActividad as tipAc, materia as ma WHERE actE.tipoAct = tipAc.idtipoActividad AND actE.materia = ma.idMateria AND actE.tipoAct = ?;";
   db.query(query, [tipoActividad], (error, rows) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, rows);
+    }
+  });
+}
+
+function materiasByRfcidades(rfc, callback) {
+  const query =
+    "SELECT detD.docente,detD.materia, m.nombreMateria FROM detalle_docente as detD, materia as m WHERE m.idMateria = detD.materia AND detD.Docente = ?;";
+  db.query(query, [rfc], (error, rows) => {
     if (error) {
       callback(error, null);
     } else {
@@ -367,6 +379,7 @@ function eliminarDocente(id, callback) {
 
 module.exports = {
   obtenerActividades,
+  materiasByRfcidades,
   buscarTipoActividad,
   insertarActividad,
   editarActividad,
