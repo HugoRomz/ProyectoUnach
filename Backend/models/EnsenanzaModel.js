@@ -163,17 +163,68 @@ function getDetalleD(callback) {
     }
   );
 }
-
 function asignarMateriaDocente(formData, callback) {
-  const query = "INSERT INTO detalle_docente SET ?";
-  db.query(query, formData, (error, results) => {
-    if (error) {
-      callback(error, null);
-    } else {
-      callback(null, results);
+  db.beginTransaction((err) => {
+    if (err) {
+      callback(err, null);
+      return;
     }
+
+    const detalleQuery = "INSERT INTO detalle_docente SET ?";
+    db.query(detalleQuery, formData, (error, detalleResults) => {
+      if (error) {
+        return db.rollback(() => {
+          callback(error, null);
+        });
+      }
+
+      const usuariosPermisosQuery = "SELECT idUsuario FROM usuarios_permisos WHERE idPermiso = ? AND idUsuario = ?";
+      const usuariosPermisosValues = [3, formData.docente];
+
+      db.query(usuariosPermisosQuery, usuariosPermisosValues, (usuariosPermisosError, usuariosPermisosResults) => {
+        if (usuariosPermisosError) {
+          return db.rollback(() => {
+            callback(usuariosPermisosError, null);
+          });
+        }
+
+        if (usuariosPermisosResults.length > 0) {
+          // Ya existe una entrada en usuarios_permisos, no es necesario insertar de nuevo
+          db.commit((commitError) => {
+            if (commitError) {
+              return db.rollback(() => {
+                callback(commitError, null);
+              });
+            }
+
+            callback(null, { detalle: detalleResults, mensaje: 'El usuario_permiso ya existe, no se ha realizado una nueva inserción.' });
+          });
+        } else {
+          // No existe una entrada en usuarios_permisos, proceder con la inserción
+          const insertarUsuariosPermisosQuery = "INSERT INTO usuarios_permisos (idPermiso, idUsuario) VALUES (?, ?)";
+          db.query(insertarUsuariosPermisosQuery, usuariosPermisosValues, (insertarUsuariosPermisosError, insertarUsuariosPermisosResults) => {
+            if (insertarUsuariosPermisosError) {
+              return db.rollback(() => {
+                callback(insertarUsuariosPermisosError, null);
+              });
+            }
+
+            db.commit((commitError) => {
+              if (commitError) {
+                return db.rollback(() => {
+                  callback(commitError, null);
+                });
+              }
+
+              callback(null, { detalle: detalleResults, usuariosPermisos: insertarUsuariosPermisosResults });
+            });
+          });
+        }
+      });
+    });
   });
 }
+
 
 function editarMateriaDocente(id, formData, callback) {
   const query = "UPDATE detalle_docente SET ? WHERE id_Det_d = ?";
@@ -187,13 +238,51 @@ function editarMateriaDocente(id, formData, callback) {
 }
 
 function eliminarDetalleDocente(id, callback) {
-  const query = "DELETE FROM detalle_docente WHERE id_Det_d = ?";
-  db.query(query, [id], (error, results) => {
-    if (error) {
-      callback(error, null);
-    } else {
-      callback(null, results);
+  db.beginTransaction((err) => {
+    if (err) {
+      callback(err, null);
+      return;
     }
+
+    // Consulta para obtener el valor de rfc a partir del id
+    const obtenerRfcQuery = "SELECT docente FROM detalle_docente WHERE id_Det_d = ?";
+    db.query(obtenerRfcQuery, [id], (obtenerRfcError, obtenerRfcResults) => {
+      if (obtenerRfcError) {
+        return db.rollback(() => {
+          callback(obtenerRfcError, null);
+        });
+      }
+
+      const rfc = obtenerRfcResults[0].docente;
+
+      const detalleQuery = "DELETE FROM detalle_docente WHERE id_Det_d = ?";
+      db.query(detalleQuery, [id], (error, detalleResults) => {
+        if (error) {
+          return db.rollback(() => {
+            callback(error, null);
+          });
+        }
+
+        const usuariosPermisosQuery = "DELETE FROM usuarios_permisos WHERE idUsuario = ?";
+        db.query(usuariosPermisosQuery, [rfc], (usuariosPermisosError, usuariosPermisosResults) => {
+          if (usuariosPermisosError) {
+            return db.rollback(() => {
+              callback(usuariosPermisosError, null);
+            });
+          }
+
+          db.commit((commitError) => {
+            if (commitError) {
+              return db.rollback(() => {
+                callback(commitError, null);
+              });
+            }
+
+            callback(null, { detalle: detalleResults, usuariosPermisos: usuariosPermisosResults });
+          });
+        });
+      });
+    });
   });
 }
 
@@ -254,7 +343,7 @@ function insertarDocente(formData, callback) {
   });
 }
 function editarDocente(id, formData, callback) {
-  const query = "UPDATE materia SET ? WHERE idMateria = ?";
+  const query = "UPDATE usuarios SET ? WHERE rfc = ?";
   db.query(query, [formData, id], (error, results) => {
     if (error) {
       callback(error, null);
@@ -265,7 +354,7 @@ function editarDocente(id, formData, callback) {
 }
 
 function eliminarDocente(id, callback) {
-  const query = "DELETE FROM materia WHERE idMateria = ?";
+  const query = "DELETE FROM usuarios WHERE rfc = ?";
   db.query(query, [id], (error, results) => {
     if (error) {
       callback(error, null);

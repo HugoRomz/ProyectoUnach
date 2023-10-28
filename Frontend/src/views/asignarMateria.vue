@@ -307,10 +307,7 @@ export default {
 
       let promise;
 
-      if (this.form.id_Det_d) {
-        promise = apiEnsenanza.editarMateriaDocente(this.form.id_Det_d, data);
-      } else {
-        const asignacionExistente = this.dataDetalleDocente.find(
+      const asignacionExistente = this.dataDetalleDocente.find(
           (detalle) => detalle.materia === this.form.materias.idMateria
         );
 
@@ -322,6 +319,11 @@ export default {
           });
           return;
         }
+
+
+      if (this.form.id_Det_d) {
+        promise = apiEnsenanza.editarMateriaDocente(this.form.id_Det_d, data);
+      } else {
 
         promise = apiEnsenanza.asignarMateriaDocente(data);
       }
