@@ -32,6 +32,7 @@ import apiEnsenanza from "../../services/apiEnsenanza";
 import DataTableComponent from "../Plantillas/DataTableComponent.vue";
 import Swal from "sweetalert2";
 import dayjs from "dayjs";
+import { mapGetters } from "vuex";
 
 import evidenciasModal from "./Modals/evidenciasModal.vue";
 
@@ -152,6 +153,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(["getSelectedMateria"]),
     actualizarTabla() {
       return this.$store.state.actualizarTabla;
     },
@@ -185,14 +187,15 @@ export default {
   },
   methods: {
     obtenerData() {
-      apiEnsenanza
-        .obtenerActividades(2)
-        .then((response) => {
-          this.actEjercicios = response.data;
-        })
-        .catch((error) => {
-          console.error("Error al obtener las actividades:", error);
-        });
+      apiEnsenanza.obtenerActividades(2).then((response) => {
+        if (this.getSelectedMateria) {
+          this.actEjercicios = response.data.filter(
+            (act) => act.idMateria === this.getSelectedMateria
+          );
+        } else {
+          this.actEjercicios = [];
+        }
+      });
     },
     cargarActividadParaEditar(id) {
       const actividadAEditar = this.actEjercicios.find(

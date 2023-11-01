@@ -8,13 +8,14 @@ const store = createStore({
     token: null,
     user: {},
     permisos: [],
+    selectedMateria: null,
   },
   getters: {
     sideBarOpen: (state) => state.sideBarOpen,
     tienePermiso: (state) => (permiso) => {
       return state.permisos.some(p => p.Permiso === permiso) || state.permisos.some(p => p.Permiso === "Super-Admin");
-    }
-
+    },
+    getSelectedMateria: state => state.selectedMateria
   },
   mutations: {
     toggleSidebar(state) {
@@ -35,6 +36,9 @@ const store = createStore({
     SET_PERMISOS(state, permisos) {
       state.permisos = permisos;
     },
+    setSelectedMateria(state, materia) {
+      state.selectedMateria = materia;
+  }
   },
   actions: {
     toggleSidebar({ commit }) {

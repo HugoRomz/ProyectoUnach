@@ -12,7 +12,7 @@ function obtenerActividades(tipoActividad, callback) {
   });
 }
 
-function materiasByRfcidades(rfc, callback) {
+function materiasByRfc(rfc, callback) {
   const query =
     "SELECT detD.docente,detD.materia, m.nombreMateria FROM detalle_docente as detD, materia as m WHERE m.idMateria = detD.materia AND detD.Docente = ?;";
   db.query(query, [rfc], (error, rows) => {
@@ -379,7 +379,7 @@ function eliminarDocente(id, callback) {
 
 module.exports = {
   obtenerActividades,
-  materiasByRfcidades,
+  materiasByRfc,
   buscarTipoActividad,
   insertarActividad,
   editarActividad,
