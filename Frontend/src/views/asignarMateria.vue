@@ -307,20 +307,6 @@ export default {
 
       let promise;
 
-      const asignacionExistente = this.dataDetalleDocente.find(
-          (detalle) => detalle.materia === this.form.materias.idMateria
-        );
-
-        if (asignacionExistente) {
-          Swal.fire({
-            title: "Asignación existente",
-            text: "Esta materia ya ha sido asignada a un docente",
-            icon: "error",
-          });
-          return;
-        }
-
-
       if (this.form.id_Det_d) {
         promise = apiEnsenanza.editarMateriaDocente(this.form.id_Det_d, data);
       } else {

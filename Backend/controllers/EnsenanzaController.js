@@ -51,7 +51,7 @@ function buscarTipoActividad(req, res) {
 function materiasByRfc(req, res) {
   const rfc = req.params.id;
 
-  EnsenanzaModel.materiasByRfcidades(rfc, (error, rows) => {
+  EnsenanzaModel.materiasByRfc(rfc, (error, rows) => {
     if (error) {
       res
         .status(500)
