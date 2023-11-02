@@ -13,8 +13,19 @@ const store = createStore({
   getters: {
     sideBarOpen: (state) => state.sideBarOpen,
     tienePermiso: (state) => (permiso) => {
-      return state.permisos.some(p => p.Permiso === permiso) || state.permisos.some(p => p.Permiso === "Super-Admin");
-    },
+      // Si tiene permiso de Super-Admin, puede acceder a todo.
+      if (state.permisos.some(p => p.Permiso === "Super-Admin")) {
+          return true;
+      }
+  
+      // Si el permiso solicitado es de tipo *-Admin, verifica si el usuario tiene ese permiso específico.
+      if (permiso.endsWith('-Admin')) {
+          return state.permisos.some(p => p.Permiso === permiso);
+      }
+  
+      // Para otros permisos (no Admin), verifica si el usuario tiene el permiso o el permiso Admin correspondiente.
+      return state.permisos.some(p => p.Permiso === permiso || p.Permiso === `${permiso}-Admin`);
+  },
     getSelectedMateria: state => state.selectedMateria
   },
   mutations: {
