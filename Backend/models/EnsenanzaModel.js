@@ -275,7 +275,7 @@ function eliminarDetalleDocente(id, callback) {
           });
         }
 
-        const usuariosPermisosQuery = "DELETE FROM usuarios_permisos WHERE idUsuario = ?";
+        const usuariosPermisosQuery = " DELETE FROM usuarios_permisos WHERE idUsuario = ? AND idPermiso NOT IN (1, 2, 5, 7, 9);";
         db.query(usuariosPermisosQuery, [rfc], (usuariosPermisosError, usuariosPermisosResults) => {
           if (usuariosPermisosError) {
             return db.rollback(() => {
