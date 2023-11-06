@@ -91,6 +91,38 @@ function insertarEvidencias(data, callback) {
     }
   });
 }
+function actualizarEvidencias(id, data, callback) {
+  const query = "UPDATE evidenciasTutorias SET ? WHERE idevidenciasT = ?";
+  db.query(query, [data, id], (error, results) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, results);
+    }
+  });
+}
+
+function eliminarEvidencia(id, callback) {
+  const query = "DELETE FROM evidenciasTutorias WHERE idevidenciasT = ?";
+  db.query(query, [id], (error, results) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, results);
+    }
+  });
+}
+function obtenerEvidenciaPorId(id, callback) {
+  const query = "SELECT * FROM evidenciasTutorias WHERE idevidenciasT = ?";
+  db.query(query, [id], (error, results) => {
+    if (error) {
+      callback(error, null);
+    } else {
+      callback(null, results);
+    }
+  });
+}
+
 
 module.exports = {
   obtenerActividades,
@@ -100,5 +132,8 @@ module.exports = {
   buscarActividad,
   buscarProgAcademico,
   obtenerEvidencias,
-  insertarEvidencias
+  insertarEvidencias,
+  obtenerEvidenciaPorId,
+  actualizarEvidencias,
+  eliminarEvidencia
 };

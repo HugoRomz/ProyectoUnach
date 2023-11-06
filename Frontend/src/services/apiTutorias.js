@@ -24,7 +24,7 @@ export default {
   },
 
   eliminarActividad(id) {
-    return axios.delete(`${API_URL}/tutorias/tutorias/${id}`);
+    return axios.delete(`${API_URL}/tutorias/eliminarEvidencias/${id}`);
   },
   // Agrega más funciones para otras peticiones si es necesario
 
@@ -33,5 +33,14 @@ export default {
   },
   insertarEvidencias(formData) {
     return axios.post(`${API_URL}/tutorias/insertarEvidencias`, formData);
+  },
+  eliminarEvidencia(id) {
+    return axios.delete(`${API_URL}/tutorias/eliminarEvidencias/${id}`);
+  },
+  actualizarEvidencias(id, formData) {
+    return axios.put(
+      `${API_URL}/tutorias/actualizarEvidencias/${id}`,
+      formData
+    );
   },
 };

@@ -19,9 +19,10 @@ router.put("/tutorias/:id", actividadesController.editarActividad);
 router.delete("/tutorias/:id", actividadesController.eliminarActividad);
 
 
-
 router.get("/evidencias/:idEvidencia", actividadesController.obtenerEvidencias);
+router.post("/insertarEvidencias", actividadesController.cargarEvidencia);
+router.put('/actualizarEvidencias/:id', actividadesController.actualizarEvidencias);
+router.delete('/eliminarEvidencias/:id', actividadesController.eliminarEvidencia);
 
-router.post('/insertarEvidencias', actividadesController.cargarEvidencia);
 
 module.exports = router;
