@@ -3,12 +3,12 @@
 
   <div
     v-if="visible && dataLoaded"
-    class="fixed top-0 left-0 w-full h-full bg-gray-700 bg-opacity-50 flex justify-center items-center"
+    class="fixed top-0 left-0 w-full h-full bg-gray-700 bg-opacity-50 flex justify-center items-center z-50"
   >
     <div class="bg-white p-8 rounded-lg w-1/2">
       <h2 class="text-lg mb-4 text-center font-semibold">{{ modalTitle }}</h2>
       <form class="w-full" @submit.prevent="submitForm">
-        <input type="text" id="id_act" v-model="form.id_act" />
+        <input type="hidden" id="id_act" v-model="form.id_act" />
         <div class="flex flex-wrap -mx-3 mb-6">
           <div class="w-full px-3">
             <label

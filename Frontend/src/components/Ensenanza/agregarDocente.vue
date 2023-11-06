@@ -9,7 +9,7 @@
     >
       <div class="m-3">
         <form @submit.prevent="submitForm" class="w-full mt-5">
-          <input type="text" v-model="form.editRFC" />
+          <input type="hidden" v-model="form.editRFC" />
           <div class="flex flex-wrap -mx-3">
             <div class="w-full lg:w-1/3 px-3">
               <label

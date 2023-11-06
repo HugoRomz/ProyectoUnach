@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="show"
-    class="fixed top-0 left-0 flex justify-center items-center h-screen w-screen"
+    class="fixed top-0 left-0 flex justify-center items-center h-screen w-screen z-50"
   >
     <button
       class="absolute inset-0 w-screen h-screen bg-black opacity-50 cursor-default"
@@ -22,7 +22,7 @@
         <div class="w-full p-6 shadow-lg rounded-md border border-gray-300">
           <form class="w-full" @submit.prevent="submitForm">
             <input type="hidden" v-model="form.idEvidenciasE" />
-            <input type="text" v-model="form.idActEnsenanza" />
+            <input type="hidden" v-model="form.idActEnsenanza" />
             <div class="flex flex-wrap -mx-3 mb-6">
               <div class="w-full px-3">
                 <label
@@ -82,8 +82,11 @@
               Guardar
             </button>
           </form>
-          <button @click="resetForm" class="w-full mt-4 bg-red-500 text-white p-2 rounded hover:bg-red-600">
-              Limpiar
+          <button
+            @click="resetForm"
+            class="w-full mt-4 bg-red-500 text-white p-2 rounded hover:bg-red-600"
+          >
+            Limpiar
           </button>
         </div>
 
@@ -161,10 +164,10 @@ export default {
           this.form.idActEnsenanza = this.actividadId;
         });
       } else {
-        this.resetForm(); 
+        this.resetForm();
       }
     },
-},
+  },
 
   mounted() {
     this.$nextTick(() => {
@@ -207,6 +210,9 @@ export default {
         evidencias: "",
       };
       this.archivo = null;
+      if (this.$refs.evidenciasInput && this.$refs.evidenciasInput.files) {
+        this.$refs.evidenciasInput.value = null; // <-- Reinicia el input del archivo
+      }
     },
     submitForm() {
       const formData = new FormData();
@@ -215,8 +221,8 @@ export default {
       formData.append("nombreEvi", this.form.nombreEvi);
       formData.append("descripcionEvi", this.form.descripcionEvi);
       if (this.archivo) {
-      formData.append("evidencias", this.archivo);
-    }
+        formData.append("evidencias", this.archivo);
+      }
 
       if (!this.form.nombreEvi || !this.form.descripcionEvi) {
         Swal.fire({
@@ -294,21 +300,25 @@ export default {
       });
     },
     cargarEvidenciaParaEditar(id) {
-        // Buscar la evidencia con el id dado
-        const evidencia = this.evidencias.find(ev => ev.idevidenciasE == id);
+      // Buscar la evidencia con el id dado
+      const evidencia = this.evidencias.find((ev) => ev.idevidenciasE == id);
 
-        // Si no se encuentra la evidencia, manejar el error apropiadamente
-        if (!evidencia) {
-            console.error("No se pudo encontrar la evidencia para editar");
-            Swal.fire("Error", "No se pudo encontrar la evidencia para editar.", "error");
-            return;
-        }
+      // Si no se encuentra la evidencia, manejar el error apropiadamente
+      if (!evidencia) {
+        console.error("No se pudo encontrar la evidencia para editar");
+        Swal.fire(
+          "Error",
+          "No se pudo encontrar la evidencia para editar.",
+          "error"
+        );
+        return;
+      }
 
-        // Asignar los datos de la evidencia al formulario
-        this.form.idEvidenciasE = evidencia.idevidenciasE;
-        this.form.nombreEvi = evidencia.nombreEvi;
-        this.form.descripcionEvi = evidencia.descripcionEvi;
-        // (y cualquier otro campo que necesites)
+      // Asignar los datos de la evidencia al formulario
+      this.form.idEvidenciasE = evidencia.idevidenciasE;
+      this.form.nombreEvi = evidencia.nombreEvi;
+      this.form.descripcionEvi = evidencia.descripcionEvi;
+      // (y cualquier otro campo que necesites)
     },
   },
 };

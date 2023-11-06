@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="show"
-    class="fixed top-0 left-0 flex justify-center items-center h-screen w-screen"
+    class="fixed top-0 left-0 flex justify-center items-center h-screen w-screen z-50"
   >
     <button
       class="absolute inset-0 w-screen h-screen bg-black opacity-50 cursor-default"
@@ -21,8 +21,8 @@
       <div class="modal-body p-4 max-h-96 overflow-y-auto">
         <div class="w-full p-6 shadow-lg rounded-md border border-gray-300">
           <form class="w-full" @submit.prevent="submitForm">
-            <input type="text" v-model="form.idEvidenciasT" />
-            <input type="text" v-model="form.idActTutorias" />
+            <input type="hidden" v-model="form.idEvidenciasT" />
+            <input type="hidden" v-model="form.idActTutorias" />
             <div class="flex flex-wrap -mx-3 mb-6">
               <div class="w-full px-3">
                 <label
@@ -141,8 +141,8 @@ export default {
           data: null,
           render: (data, type, row) => {
             return `
-                        <button class="btn-editar-actividad bg-yellow-500 text-white p-2 pt-2 rounded" data-id="${data.idEvidenciasT}"><i class="pi pi-pencil pointer-events-none"></i></button>
-                        <button class="btn-eliminar-actividad bg-red-500 text-white  p-2 pt-2  rounded" data-id="${data.idEvidenciasT}"><i class="pi pi-trash pointer-events-none"></i></button>
+                        <button class="btn-editar-evidencia bg-yellow-500 text-white p-2 pt-2 rounded" data-id="${data.idevidenciasT}"><i class="pi pi-pencil pointer-events-none"></i></button>
+                        <button class="btn-eliminar-evidencia bg-red-500 text-white  p-2 pt-2  rounded" data-id="${data.idevidenciasT}"><i class="pi pi-trash pointer-events-none"></i></button>
                         <a href="http://localhost:3000${data.urlEvi}" target="_blank" class="btn-ver-archivo bg-green-500 text-white p-2 pt-3 rounded"><i class="pi pi-eye pointer-events-none"></i></a>
                       `;
           },
@@ -160,7 +160,23 @@ export default {
       }
     },
   },
+  mounted() {
+    this.$nextTick(() => {
+      document.addEventListener("click", (event) => {
+        // Verificar si se hizo clic en el botón de editar
+        if (event.target.matches(".btn-editar-evidencia")) {
+          const id = event.target.getAttribute("data-id");
+          this.cargarEvidenciaParaEditar(id);
+        }
 
+        // Verificar si se hizo clic en el botón de eliminar
+        if (event.target.matches(".btn-eliminar-evidencia")) {
+          const id = event.target.getAttribute("data-id");
+          this.eliminarEvidencia(id);
+        }
+      });
+    });
+  },
   methods: {
     handleFileUpload() {
       this.archivo = this.$refs.evidenciasInput.files[0];
@@ -181,9 +197,12 @@ export default {
         idEvidenciasT: "",
         nombreEvi: "",
         descripcionEvi: "",
-        evidencias:""
+        evidencias: "",
       };
       this.archivo = null;
+      if (this.$refs.evidenciasInput && this.$refs.evidenciasInput.files) {
+        this.$refs.evidenciasInput.value = null; // <-- Reinicia el input del archivo
+      }
     },
     submitForm() {
       const formData = new FormData();
@@ -209,7 +228,7 @@ export default {
       if (!this.form.idEvidenciasT) {
         promise = apiTutorias.insertarEvidencias(formData);
       } else {
-        promise = apiTutorias.actualizarEvidencias(this.form.idEvidenciasT,data);
+        promise = apiTutorias.actualizarEvidencias(this.form.idEvidenciasT,formData);
       }
       promise
         .then((res) => {
@@ -238,6 +257,53 @@ export default {
             icon: "error",
           });
         });
+    },
+    eliminarEvidencia(id) {
+      Swal.fire({
+        title: "¿Estás seguro de eliminar la evidencia?",
+        text: "No podrás revertir esta acción",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, borrar",
+        cancelButtonText: "Cancelar",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          apiTutorias
+            .eliminarEvidencia(id)
+            .then(() => {
+              Swal.fire(
+                "Eliminado",
+                "La evidencia ha sido eliminada.",
+                "success"
+              );
+              console.log("holalaa llegeu aqu");
+              this.obtenerData();
+            })
+            .catch((err) => {
+              console.error(err);
+              Swal.fire("Error", "Error al eliminar la evidencia.", "error");
+            });
+        }
+      });
+    },
+    cargarEvidenciaParaEditar(id) {
+        // Buscar la evidencia con el id dado
+        const evidencia = this.evidencias.find(ev => ev.idevidenciasT == id);
+
+        // Si no se encuentra la evidencia, manejar el error apropiadamente
+        if (!evidencia) {
+            console.error("No se pudo encontrar la evidencia para editar");
+            Swal.fire("Error", "No se pudo encontrar la evidencia para editar.", "error");
+            return;
+        }
+
+        // Asignar los datos de la evidencia al formulario
+        this.form.idEvidenciasT = evidencia.idevidenciasT;
+        this.form.nombreEvi = evidencia.nombreEvi;
+        this.form.descripcionEvi = evidencia.descripcionEvi;
+        // (y cualquier otro campo que necesites)
     },
   },
 };

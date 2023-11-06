@@ -1,4 +1,4 @@
-<template>
+<template >
   <div class="m-4">
     <button
       v-if="!mostrarFormulario"
