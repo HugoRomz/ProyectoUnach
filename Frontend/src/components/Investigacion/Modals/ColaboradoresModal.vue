@@ -123,7 +123,7 @@ export default {
   data() {
     return {
       colaboradores: [],
-
+      maxColaboradores: 5,
       form: {
         idColaborador: "",
         idProyecto: "",
@@ -219,7 +219,8 @@ export default {
     },
     eliminarColaborador(id) {
       Swal.fire({
-        title: "¿Estás seguro de que deseas quitar este colaborador del proyecto?",
+        title:
+          "¿Estás seguro de que deseas quitar este colaborador del proyecto?",
         text: "Si quitas este colaborador, no podrás recuperarlo.",
         icon: "warning",
         showCancelButton: true,
@@ -271,6 +272,16 @@ export default {
       }
 
       if (this.form.idColaborador === null || this.form.idColaborador === "") {
+        // Verifica si ya se alcanzó el límite de colaboradores
+        if (this.colaboradores.length >= this.maxColaboradores) {
+          Swal.fire({
+            title: "Límite alcanzado",
+            text: `No puedes agregar más de ${this.maxColaboradores} colaboradores.`,
+            icon: "warning",
+          });
+          return;
+        }
+
         apiInvestigacion
           .insertarColaborador(data)
           .then((response) => {
