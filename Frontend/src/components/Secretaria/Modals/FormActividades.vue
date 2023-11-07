@@ -1,0 +1,292 @@
+<template>
+  <!-- Ventana flotante con formulario -->
+
+  <div
+    v-if="visible && dataLoaded"
+    class="fixed top-0 left-0 flex justify-center items-center h-screen w-screen z-50"
+  >
+    <button
+      class="absolute inset-0 w-screen h-screen bg-black opacity-50 cursor-default"
+      @click="closeModal"
+    ></button>
+
+    <div
+      class="relative bg-white rounded-xl w-2/4 shadow-xl max-h-screen overflow-y-auto"
+    >
+      <div
+        class="modal-header bg-blue-500 flex justify-between items-center rounded-tl-lg rounded-tr-lg"
+      >
+        <h2 class="text-lg text-white font-bold py-3 px-4">{{ modalTitle }}</h2>
+        <button @click="closeModal" class="mx-4">
+          <span class="text-white font-bold text-lg">x</span>
+        </button>
+      </div>
+
+      <div class="modal-body p-4 max-h-96 overflow-y-auto">
+        <form class="w-full" @submit.prevent="submitForm">
+        <input type="hidden" id="id_act" v-model="form.id_act" />
+        <div class="flex flex-wrap -mx-3 mb-6">
+          <div class="w-full px-3">
+            <label
+              class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+              for="nombre"
+            >
+              Nombre de la actividad:
+            </label>
+            <input
+              class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              id="nombre"
+              v-model="form.nombre"
+              type="text"
+              placeholder="Simposio de tutorías"
+            />
+          </div>
+        </div>
+        <div class="flex flex-wrap -mx-3 mb-6">
+          <div class="w-full md:w-1/2 px-3">
+            <label
+              class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+              for="fecha"
+            >
+              Fecha:
+            </label>
+            <input
+              class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              id="fecha"
+              v-model="form.fecha"
+              type="date"
+            />
+          </div>
+         <div class="w-full md:w-1/2 px-3">
+            <label
+              class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+              for="prog_academico"
+            >
+              Tipo de Actividad:
+            </label>
+            <vue-multiselect
+              id="prog_academico"
+              v-model="form.prog_academico"
+              :options="options"
+              :multiple="false"
+              label="nombreProg"
+              track-by="idprog_academicos"
+              :searchable="true"
+              :loading="isLoading"
+              :clear-on-select="true"
+              :append-to-body="true"
+            ></vue-multiselect>
+          </div>
+        </div>
+        <div class="flex flex-wrap -mx-3 mb-6">
+          <div class="w-full px-3">
+            <label
+              class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+              for="descripcion"
+            >
+              Descripcion de la actividad:
+            </label>
+            <textarea
+              id="descripcion"
+              v-model="form.descripcion"
+              rows="4"
+              class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            ></textarea>
+          </div>
+        </div>
+        <button
+          type="submit"
+          class="w-full bg-blue-800 text-white p-2 rounded hover:bg-blue-900"
+        >
+          Guardar
+        </button>
+      </form>
+        <button
+          @click="closeModal"
+          class="w-full bg-red-500 text-white p-2 rounded hover:bg-red-600 mt-4"
+        >
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import apiTutorias from "../../../services/apiTutorias";
+import VueMultiselect from "vue-multiselect";
+import Swal from "sweetalert2";
+
+export default {
+  props: ["visible", "id_act"],
+  components: { VueMultiselect },
+  data() {
+    return {
+      form: {
+        id_act: "",
+        nombre: "",
+        fecha: "",
+        descripcion: "",
+        prog_academico: "",
+      },
+      modalTitle: "Insertar",
+      dataLoaded: false,
+      selected: null,
+      options: [],
+      isLoading: false
+    };
+  },
+  watch: {
+    // Este watcher se mantendrá para reaccionar a cambios de `visible`
+    async visible(newVal) {
+      if (newVal) {
+        if (this.id_act) {
+          (this.modalTitle = "Editar"), await this.loadActivityData();
+        } else {
+          this.modalTitle = "Insertar";
+          this.dataLoaded = true;
+          this.resetForm();
+        }
+      } else {
+        this.dataLoaded = false;
+        this.resetForm();
+      }
+    },
+  },
+  methods: {
+    buscarOpciones() {
+      if (!this.options.length) {
+        this.isLoading = true;
+        // Solo realiza la búsqueda si las opciones están vacías
+        apiTutorias
+          .buscarProgAcademico()
+          .then((res) => {
+            this.options = res.data;
+            this.isLoading = false;
+          })
+          .catch((err) => {
+            console.log("Error al buscar opciones", err);
+            this.isLoading = false;
+          });
+      }
+    },
+    async loadActivityData() {
+      this.loading = true;
+      try {
+        const response = await apiTutorias.buscarActividad(this.id_act);
+
+        const fecha = new Date(response.data[0].fechaActTutorias);
+        const formattedDate = `${fecha.getFullYear()}-${(fecha.getMonth() + 1)
+          .toString()
+          .padStart(2, "0")}-${fecha.getDate().toString().padStart(2, "0")}`;
+
+        this.form.id_act = response.data[0].idActTutorias;
+        this.form.nombre = response.data[0].nombreActTutorias;
+        this.form.fecha = formattedDate;
+        this.form.descripcion = response.data[0].descripcionActTutorias;
+
+        const prog_academico = response.data[0].prog_academico;
+        this.form.prog_academico = this.options.find(
+          (option) => option.idprog_academicos === prog_academico
+        );
+
+        this.dataLoaded = true;
+      } catch (error) {
+        Swal.fire({
+          title: "Error",
+          text: "Hubo un error obteniendo los datos de la actividad",
+          icon: "error",
+        });
+      } finally {
+        this.loading = false;
+      }
+    },
+    closeModal() {
+      this.$emit("update:visible", false);
+      this.dataLoaded = false;
+      this.resetForm();
+    },
+    resetForm() {
+      this.form = {
+        id_act: "",
+        nombre: "",
+        fecha: "",
+        descripcion: "",
+        prog_academico: "",
+        evidencias: null,
+      };
+    },
+
+    // Función para manejar el envío del formulario
+    submitForm() {
+      const data = {
+        idActTutorias: this.form.id_act,
+        nombreActTutorias: this.form.nombre,
+        descripcionActTutorias: this.form.descripcion,
+        fechaActTutorias: this.form.fecha,
+        prog_academico: this.form.prog_academico.idprog_academicos,
+      };
+
+      // Verifica si los campos del formulario están vacíos
+      if (
+        !this.form.nombre ||
+        !this.form.fecha ||
+        !this.form.descripcion ||
+        !this.form.prog_academico 
+      ) {
+        Swal.fire({
+          title: "Datos incompletos",
+          text: "Por favor rellena todos los campos",
+          icon: "warning",
+        });
+        return;
+      }
+
+      if (this.form.id_act === null || this.form.id_act === "") {
+        apiTutorias
+          .insertarActividad(data) // Envía el FormData con el archivo
+          .then((response) => {
+            Swal.fire({
+              title: "Actividad registrada",
+              text: "La actividad se ha registrado exitosamente",
+              icon: "success",
+            });
+            //   this.obtenerActividades(); // Actualiza la lista de actividades
+            this.closeModal();
+            this.$emit("activityChanged");
+          })
+          .catch((error) => {
+            Swal.fire({
+              title: "Error",
+              text: "Hubo un error enviando el formulario",
+              icon: "error",
+            });
+          });
+      } else if (this.form.id_act != null || this.form.id_act != "") {
+        apiTutorias
+          .editarActividad(this.form.id_act, data) // Envía el FormData con el archivo
+          .then((response) => {
+            Swal.fire({
+              title: "Actividad editada",
+              text: "La actividad se ha editado exitosamente",
+              icon: "success",
+            });
+            this.closeModal();
+            this.$emit("activityChanged");
+          })
+          .catch((error) => {
+            Swal.fire({
+              title: "Error",
+              text: "Hubo un error editando la actividad",
+              icon: "error",
+            });
+          });
+      }
+    },
+
+  },
+  mounted(){
+    this.buscarOpciones();
+  },
+};
+</script>

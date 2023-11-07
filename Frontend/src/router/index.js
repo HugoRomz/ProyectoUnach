@@ -3,14 +3,15 @@ import ModulosView from "../views/ModulosView.vue";
 import Home from "../views/Home.vue";
 import TutoriasView from "../views/TutoriaView.vue";
 import EnsenanzaView from "../views/EnsenanzaView.vue";
-import asignarMateria from "../views/asignarMateria.vue"
+import asignarMateria from "../views/asignarMateria.vue";
 import Login from "../views/Login.vue";
 import InvestigacionView from "../views/InvestigacionView.vue";
-import agregarMateria from "../components/Ensenanza/agregarMateria.vue"
-import agregarDocente from "../components/Ensenanza/agregarDocente.vue"
+import agregarMateria from "../components/Ensenanza/agregarMateria.vue";
+import agregarDocente from "../components/Ensenanza/agregarDocente.vue";
 import NotFound from "../views/404.vue";
 import NoPermisos from "../views/noPermisos.vue";
 
+import SecretariaView from "../views/SecretariaView.vue";
 
 const routes = [
   {
@@ -29,40 +30,59 @@ const routes = [
         path: "tutorias",
         name: "Tutorias",
         component: TutoriasView,
-        meta: { title: "Tutorias", requiredPermission: 'Tutorias' }, 
+        meta: { title: "Tutorias", requiredPermission: "Tutorias" },
       },
       {
         path: "ensenanza",
         name: "Enseñanza",
         component: EnsenanzaView,
-        meta: { title: "Enseñanza", requiredPermission: 'Enseñanza'  },
+        meta: { title: "Enseñanza", requiredPermission: "Enseñanza" },
       },
       {
         path: "/asignarMateria",
         name: "Asignar Materia",
         component: asignarMateria,
-        meta: { title: "Asignacion de Materia", requiredPermission: 'Enseñanza-Admin'},
+        meta: {
+          title: "Asignacion de Materia",
+          requiredPermission: "Enseñanza-Admin",
+        },
       },
       {
         path: "/agregarDocente",
         name: "Agregar Docente",
         component: agregarDocente,
-        meta: { title: "Agregar Docente" ,requiredPermission: 'Enseñanza-Admin'},
+        meta: {
+          title: "Agregar Docente",
+          requiredPermission: "Enseñanza-Admin",
+        },
       },
       {
         path: "/agregarMateria",
         name: "Agregar Materia",
         component: agregarMateria,
-        meta: { title: "Agregar Materia",requiredPermission: 'Enseñanza-Admin' },
+        meta: {
+          title: "Agregar Materia",
+          requiredPermission: "Enseñanza-Admin",
+        },
+      },
+      {
+        path: "/secretaria",
+        name: "Secretaria",
+        component: SecretariaView,
+        meta: { title: "Secretaria Academica" },
+      },
+      {
+        path: "/investigacion",
+        name: "Investigacion",
+        component: InvestigacionView,
+        meta: {
+          title: "Coordinacion de Investigacion",
+          requiredPermission: "Investigacion",
+        },
       },
     ],
   },
-  {
-    path: "/investigacion",
-    name: "Investigacion",
-    component: InvestigacionView,
-    meta: { title: "Coordinacion de Investigacion",requiredPermission: 'Investigacion' },
-  },
+
   {
     path: "/Login",
     name: "Login",
@@ -80,7 +100,7 @@ const routes = [
     name: "NoPermisos",
     component: NoPermisos,
     meta: { title: "No Tienes Permisos" },
-},
+  },
   {
     path: "/:pathMatch(.*)*",
     redirect: { name: "NotFound" },
@@ -94,25 +114,32 @@ const router = createRouter({
 
 function isAuthenticated() {
   return !!localStorage.getItem("user");
-};
+}
 
 function hasPermission(requiredPermission) {
   const userPermissionsObject = JSON.parse(localStorage.getItem("permisos"));
 
-  if (!userPermissionsObject || !userPermissionsObject.data || !Array.isArray(userPermissionsObject.data.permisos)) {
-      return false;  // Si no es un array o no existe, directamente retornamos false.
+  if (
+    !userPermissionsObject ||
+    !userPermissionsObject.data ||
+    !Array.isArray(userPermissionsObject.data.permisos)
+  ) {
+    return false; // Si no es un array o no existe, directamente retornamos false.
   }
 
   const userPermissions = userPermissionsObject.data.permisos;
 
   // Si es superadmin, permite el acceso a cualquier ruta
-  if (userPermissions.some(permission => permission.Permiso === "Super-Admin")) {
-      return true;
+  if (
+    userPermissions.some((permission) => permission.Permiso === "Super-Admin")
+  ) {
+    return true;
   }
 
-  return userPermissions.some(permission => permission.Permiso === requiredPermission);
+  return userPermissions.some(
+    (permission) => permission.Permiso === requiredPermission
+  );
 }
-
 
 router.beforeEach((to, from, next) => {
   // Set the document title based on route metadata
@@ -137,12 +164,11 @@ router.beforeEach((to, from, next) => {
 
   const requiredPermission = to.meta.requiredPermission;
   if (requiredPermission && !hasPermission(requiredPermission)) {
-    next("/no-permisos");  
+    next("/no-permisos");
     return;
   }
 
   next();
 });
-
 
 export default router;
