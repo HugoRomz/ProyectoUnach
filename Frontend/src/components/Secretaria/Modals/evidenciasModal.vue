@@ -21,8 +21,8 @@
       <div class="modal-body p-4 max-h-96 overflow-y-auto">
         <div class="w-full p-6 shadow-lg rounded-md border border-gray-300">
           <form class="w-full" @submit.prevent="submitForm">
-            <input type="hidden" v-model="form.idEvidenciasE" />
-            <input type="hidden" v-model="form.idActEnsenanza" />
+            <input type="hidden" v-model="form.idEvidenciasT" />
+            <input type="hidden" v-model="form.idActTutorias" />
             <div class="flex flex-wrap -mx-3 mb-6">
               <div class="w-full px-3">
                 <label
@@ -36,7 +36,7 @@
                   id="nombreEvi"
                   v-model="form.nombreEvi"
                   type="text"
-                  placeholder="Ingreso de Estudiantes 2023"
+                  placeholder="Simposio de tutorías"
                 />
               </div>
             </div>
@@ -53,6 +53,7 @@
                   id="evidencias"
                   name="evidencias"
                   type="file"
+                  placeholder="Simposio de tutorías"
                   ref="evidenciasInput"
                   @change="handleFileUpload"
                 />
@@ -71,7 +72,6 @@
                   v-model="form.descripcionEvi"
                   rows="4"
                   class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                  placeholder="Describa brevemente la evidencia, incluyendo los objetivos, participantes y cualquier detalle relevante."
                 ></textarea>
               </div>
             </div>
@@ -82,12 +82,6 @@
               Guardar
             </button>
           </form>
-          <button
-            @click="resetForm"
-            class="w-full mt-4 bg-red-500 text-white p-2 rounded hover:bg-red-600"
-          >
-            Limpiar
-          </button>
         </div>
 
         <div
@@ -110,7 +104,7 @@
 
 <script>
 import DataTableComponent from "../../Plantillas/DataTableComponent.vue";
-import apiEnsenanza from "../../../services/apiEnsenanza";
+import apiTutorias from "../../../services/apiTutorias";
 import Swal from "sweetalert2";
 export default {
   components: {
@@ -130,31 +124,30 @@ export default {
     return {
       // Para el formulario
       form: {
-        idEvidenciasE: "",
-        idActEnsenanza: "",
+        idEvidenciasT: "",
+        idActTutorias: "",
         nombreEvi: "",
         descripcionEvi: "",
       },
       archivo: null,
       evidencias: [],
       columns: [
-        { data: "idevidenciasE" },
+        { data: "idevidenciasT" },
         { data: "nombreEvi" },
         { data: "descripcionEvi" },
-        { data: "nombreAct" },
+        { data: "nombreActTutorias" },
         {
           title: "Acciones",
           data: null,
           render: (data, type, row) => {
             return `
-                        <button class="btn-editar-evidencia bg-yellow-500 text-white p-2 pt-2 rounded" data-id="${data.idevidenciasE}"><i class="pi pi-pencil pointer-events-none"></i></button>
-                        <button class="btn-eliminar-evidencia bg-red-500 text-white  p-2 pt-2  rounded" data-id="${data.idevidenciasE}"><i class="pi pi-trash pointer-events-none"></i></button>
-                        <a href="http://localhost:${serverPort}${data.urlEvi}" target="_blank" class="btn-ver-archivo bg-green-500 text-white p-2 pt-3 rounded"><i class="pi pi-eye pointer-events-none"></i></a>
+                        <button class="btn-editar-evidencia bg-yellow-500 text-white p-2 pt-2 rounded" data-id="${data.idevidenciasT}"><i class="pi pi-pencil pointer-events-none"></i></button>
+                        <button class="btn-eliminar-evidencia bg-red-500 text-white  p-2 pt-2  rounded" data-id="${data.idevidenciasT}"><i class="pi pi-trash pointer-events-none"></i></button>
+                        <a href="http://localhost:3000${data.urlEvi}" target="_blank" class="btn-ver-archivo bg-green-500 text-white p-2 pt-3 rounded"><i class="pi pi-eye pointer-events-none"></i></a>
                       `;
           },
         },
       ],
-      serverPort: null,
     };
   },
   watch: {
@@ -162,21 +155,12 @@ export default {
       if (newVal) {
         this.$nextTick(() => {
           this.obtenerData();
-          this.form.idActEnsenanza = this.actividadId;
+          this.form.idActTutorias = this.actividadId;
         });
-      } else {
-        this.resetForm();
       }
     },
   },
-
   mounted() {
-    fetch('/config')
-    .then(response => response.json())
-    .then(config => {
-      this.serverPort = config.serverPort;
-    });
-
     this.$nextTick(() => {
       document.addEventListener("click", (event) => {
         // Verificar si se hizo clic en el botón de editar
@@ -193,13 +177,12 @@ export default {
       });
     });
   },
-
   methods: {
     handleFileUpload() {
       this.archivo = this.$refs.evidenciasInput.files[0];
     },
     obtenerData() {
-      apiEnsenanza
+      apiTutorias
         .obtenerEvidencias(this.actividadId)
         .then((response) => {
           this.evidencias = response.data;
@@ -211,7 +194,7 @@ export default {
     resetForm() {
       this.form = {
         ...this.form,
-        idEvidenciasE: "",
+        idEvidenciasT: "",
         nombreEvi: "",
         descripcionEvi: "",
         evidencias: "",
@@ -223,15 +206,16 @@ export default {
     },
     submitForm() {
       const formData = new FormData();
-      formData.append("idEvidenciasE", this.form.idEvidenciasE);
-      formData.append("idActEnsenanza", this.form.idActEnsenanza);
+      formData.append("idEvidenciasT", this.form.idEvidenciasT);
+      formData.append("idActTutorias", this.form.idActTutorias);
       formData.append("nombreEvi", this.form.nombreEvi);
       formData.append("descripcionEvi", this.form.descripcionEvi);
-      if (this.archivo) {
-        formData.append("evidencias", this.archivo);
-      }
+      formData.append("evidencias", this.archivo); 
 
-      if (!this.form.nombreEvi || !this.form.descripcionEvi) {
+      if (
+        !this.form.nombreEvi ||
+        !this.form.descripcionEvi
+      ) {
         Swal.fire({
           title: "Datos incompletos",
           text: "Por favor rellena todos los campos",
@@ -240,23 +224,20 @@ export default {
         return;
       }
 
-      let promise;
-      if (!this.form.idEvidenciasE) {
-        promise = apiEnsenanza.insertarEvidencias(formData);
+      let promise; 
+      if (!this.form.idEvidenciasT) {
+        promise = apiTutorias.insertarEvidencias(formData);
       } else {
-        promise = apiEnsenanza.actualizarEvidencias(
-          this.form.idEvidenciasE,
-          formData
-        );
+        promise = apiTutorias.actualizarEvidencias(this.form.idEvidenciasT,formData);
       }
       promise
         .then((res) => {
-          const message = this.form.idEvidenciasE
+          const message = this.form.idEvidenciasT
             ? "La actividad se ha actualizado correctamente"
             : "La actividad se ha insertado correctamente";
 
           Swal.fire({
-            title: this.form.idEvidenciasE
+            title: this.form.idEvidenciasT
               ? "Actividad actualizada"
               : "Actividad insertada",
             text: message,
@@ -271,7 +252,7 @@ export default {
             title: "Error",
             text:
               "Hubo un error al " +
-              (this.form.idActEnsenanza ? "actualizar" : "insertar") +
+              (this.form.idActTutorias ? "actualizar" : "insertar") +
               " la actividad",
             icon: "error",
           });
@@ -289,7 +270,7 @@ export default {
         cancelButtonText: "Cancelar",
       }).then((result) => {
         if (result.isConfirmed) {
-          apiEnsenanza
+          apiTutorias
             .eliminarEvidencia(id)
             .then(() => {
               Swal.fire(
@@ -297,6 +278,7 @@ export default {
                 "La evidencia ha sido eliminada.",
                 "success"
               );
+              console.log("holalaa llegeu aqu");
               this.obtenerData();
             })
             .catch((err) => {
@@ -307,25 +289,21 @@ export default {
       });
     },
     cargarEvidenciaParaEditar(id) {
-      // Buscar la evidencia con el id dado
-      const evidencia = this.evidencias.find((ev) => ev.idevidenciasE == id);
+        // Buscar la evidencia con el id dado
+        const evidencia = this.evidencias.find(ev => ev.idevidenciasT == id);
 
-      // Si no se encuentra la evidencia, manejar el error apropiadamente
-      if (!evidencia) {
-        console.error("No se pudo encontrar la evidencia para editar");
-        Swal.fire(
-          "Error",
-          "No se pudo encontrar la evidencia para editar.",
-          "error"
-        );
-        return;
-      }
+        // Si no se encuentra la evidencia, manejar el error apropiadamente
+        if (!evidencia) {
+            console.error("No se pudo encontrar la evidencia para editar");
+            Swal.fire("Error", "No se pudo encontrar la evidencia para editar.", "error");
+            return;
+        }
 
-      // Asignar los datos de la evidencia al formulario
-      this.form.idEvidenciasE = evidencia.idevidenciasE;
-      this.form.nombreEvi = evidencia.nombreEvi;
-      this.form.descripcionEvi = evidencia.descripcionEvi;
-      // (y cualquier otro campo que necesites)
+        // Asignar los datos de la evidencia al formulario
+        this.form.idEvidenciasT = evidencia.idevidenciasT;
+        this.form.nombreEvi = evidencia.nombreEvi;
+        this.form.descripcionEvi = evidencia.descripcionEvi;
+        // (y cualquier otro campo que necesites)
     },
   },
 };

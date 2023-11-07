@@ -1,45 +1,59 @@
 <template>
-    <div>
-        <!-- Pestañas -->
-        <div class="flex space-x-4 m-2">
-            <button v-for="(tab, index) in tabs" :key="index" @click="activeTab = tab"
-                :class="['px-4 py-2 text-base font-bold text-primaryBlue', activeTab === tab ? 'bg-SecundaryGold text-white border rounded-lg' : 'rounded-lg hover:bg-gray-300 hover:duration-500 hover:ease-in-out']">
-                {{ tab }}
-            </button>
-        </div>
-        <hr class="h-px bg-gray-300 border-0 m-0">
-        <!-- Contenido de las pestañas -->
-        <div >
-            <div v-if="activeTab === 'Ejercicios'">
-                <TabEjercicios />
-            </div>
-            <div v-if="activeTab === 'Examenes'">
-                <TabExamenes />
-            </div>
-            <div v-if="activeTab === 'Apuntes'">
-                <TabApuntes />
-            </div>
-        </div>
-
+  <div>
+    <!-- Pestañas -->
+    <div class="flex space-x-4 m-2">
+      <button
+        v-for="tipoActividad in tiposActividades"
+        :key="tipoActividad.id"
+        @click="activeTab = tipoActividad.id"
+        :class="[
+          'px-4 py-2 text-base font-bold text-primaryBlue',
+          activeTab === tipoActividad.id
+            ? 'bg-SecundaryGold text-white border rounded-lg'
+            : 'rounded-lg hover:bg-gray-300 hover:duration-500 hover:ease-in-out',
+        ]"
+      >
+        {{ tipoActividad.nombre }}
+      </button>
     </div>
+    <hr class="h-px bg-gray-300 border-0 m-0" />
+    <!-- Contenido de la pestaña activa -->
+    <actividad-tab :id-actividad="activeTab" />
+  </div>
 </template>
 
 <script>
-    import TabApuntes from './TabApuntes.vue';
-    import TabEjercicios from './TabEjercicios.vue';
-    import TabExamenes from './TabExamenes.vue';
+import ActividadTab from "./TabTipoAct.vue";
+import apiEnsenanza from "../../services/apiEnsenanza";
 
-    export default {
-        components: {
-            TabApuntes,
-            TabEjercicios,
-            TabExamenes
-        },
-        data() {
-            return {
-                activeTab: 'Ejercicios', // Pestaña activa por defecto
-                tabs: ['Ejercicios', 'Examenes', 'Apuntes'] // Puedes añadir más pestañas aquí
-            };
-        }
+export default {
+  components: {
+    ActividadTab,
+  },
+  data() {
+    return {
+      activeTab: null,
+      tiposActividades: [],
     };
+  },
+  created() {
+    this.cargarTiposActividades();
+  },
+  methods: {
+    async cargarTiposActividades() {
+      try {
+        const response = await apiEnsenanza.buscarTipoActividad();
+        this.tiposActividades = response.data.map((tipo) => ({
+          id: tipo.idtipoActividad,
+          nombre: tipo.nombretipoAct,
+        }));
+        if (this.tiposActividades.length > 0) {
+          this.activeTab = this.tiposActividades[0].id;
+        }
+      } catch (error) {
+        console.error("Error al cargar tipos de actividad:", error);
+      }
+    },
+  },
+};
 </script>

@@ -1,54 +1,51 @@
 <template>
-  <img
-    src="../assets/wave.png"
-    alt="wavelogin"
-    class="fixed hidden lg:block inset-0 h-full -z-10"
-  />
-  <div
-    class="w-screen h-screen flex flex-col justify-center items-center lg:grid lg:grid-cols-2"
-  >
-    <img
-      src="../assets/teacher.svg"
-      alt="teacherlogin"
-      class="hidden lg:block w-1/2 hover:scale-150 transition-all duration-500 transform mx-auto"
-    />
-    <form class="flex flex-col justify-center items-center w-1/2">
-      <img src="../assets/profile.svg" alt="profilelogin" class="w-32" />
-      <h2
-        class="my-8 font-bold text-3xl text-gray-500 text-center tracking-wider"
-      >
-        Bienvenido
-      </h2>
-      <div class="relative">
-        <i class="pi pi-user absolute text-amber-500 text-xl"></i>
-        <input
-          class="pl-8 border-b-2 capitalize focus:outline-none focus:border-amber-500 transition-all duration-500 text-lg"
-          type="text"
-          v-model="rfc"
-          placeholder="RFC"
-        />
+    <nav class="bg-primaryBlue w-full">
+    <div class="container mx-auto flex items-center px-4 h-auto">
+      <img src="../assets/unach.png" alt="Logo UNACH" class="h-28 m-1" />
+    </div>
+  </nav>
+  <section class="flex flex-col md:flex-row justify-center items-center p-5 mt-32">
+    
+    <div class="flex-1 max-w-md">
+      <img
+        src="../assets/teacher.svg"
+        alt="Sample image" 
+      />
+    </div>
+    <div class="flex-1 max-w-md mx-16">
+      <div class="text-center md:text-left mb-5">
+        <!-- Botones de acceso rápido o social login -->
       </div>
-      <div class="relative mt-8">
-        <i class="pi pi-lock absolute text-amber-500 text-xl"></i>
-        <input
-          class="pl-8 border-b-2 capitalize focus:outline-none focus:border-amber-500 transition-all duration-500 text-lg"
-          type="password"
-          v-model="password"
-          placeholder="*******"
-        />
+      <div class="my-5 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-neutral-300 after:mt-0.5 after:flex-1 after:border-t after:border-neutral-300">
+        <p class="mx-4 mb-0 text-center font-semibold text-slate-500">Bienvenido</p>
       </div>
-      <button
-        @click.prevent="login"
-        class="mt-8 py-3 px-20 bg-amber-500 text-white rounded-full font-bold text-lg uppercase transform hover:translate-y-1 transition-all duration-500"
+      <input 
+        class="text-sm w-full px-4 py-2 border border-solid border-gray-300 rounded mb-4" 
+        type="text" 
+        placeholder="RFC" 
+        v-model="rfc"
+      />
+      <input 
+        class="text-sm w-full px-4 py-2 border border-solid border-gray-300 rounded mb-4" 
+        type="password" 
+        placeholder="Contraseña" 
+        v-model="password"
+      />
+      <button 
+        class="w-full bg-primaryBlue hover:bg-blue-950 text-white uppercase rounded py-2 mb-4" 
+        type="button" 
+        @click="login"
       >
         Iniciar sesión
       </button>
-    </form>
-  </div>
+      <div class="text-center">
+        <!-- Enlace a registro -->
+      </div>
+    </div>
+  </section>
 </template>
-
 <script>
-import { login,getPermisos } from "../services/authServices";
+import { login, getPermisos } from "../services/authServices";
 import Swal from "sweetalert2";
 
 export default {
@@ -93,20 +90,19 @@ export default {
 
       try {
         const user = await login(this.rfc, this.password);
-        
+
         // Guardar permisos en Vuex
         this.$store.dispatch("setToken", user.token);
         this.$store.dispatch("setUser", user.usuario);
-        
+
         // guardarlos en localStorage,
         localStorage.setItem("token", user.token);
         localStorage.setItem("user", JSON.stringify(user.usuario));
 
-        
         const permisos = await getPermisos(this.rfc);
         localStorage.setItem("permisos", JSON.stringify(permisos));
         this.$store.dispatch("setPermisos", permisos);
-        
+
         this.$router.push("/");
       } catch (error) {
         console.error("Error al iniciar sesión:", error);
