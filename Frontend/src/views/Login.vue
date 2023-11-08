@@ -16,7 +16,7 @@
           <p
             class="mx-4 mb-0 text-center font-semibold text-slate-600 uppercase tracking-widest text-2xl"
           >
-            SIGEA
+            SIGEAA
           </p>
         </div>
 

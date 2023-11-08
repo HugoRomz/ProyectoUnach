@@ -149,12 +149,11 @@ export default {
             return `
                         <button class="btn-editar-evidencia bg-yellow-500 text-white p-2 pt-2 rounded" data-id="${data.idevidenciasE}"><i class="pi pi-pencil pointer-events-none"></i></button>
                         <button class="btn-eliminar-evidencia bg-red-500 text-white  p-2 pt-2  rounded" data-id="${data.idevidenciasE}"><i class="pi pi-trash pointer-events-none"></i></button>
-                        <a href="http://localhost:${serverPort}${data.urlEvi}" target="_blank" class="btn-ver-archivo bg-green-500 text-white p-2 pt-3 rounded"><i class="pi pi-eye pointer-events-none"></i></a>
+                        <a href="http://localhost:3000${data.urlEvi}" target="_blank" class="btn-ver-archivo bg-green-500 text-white p-2 pt-3 rounded"><i class="pi pi-eye pointer-events-none"></i></a>
                       `;
           },
         },
       ],
-      serverPort: null,
     };
   },
   watch: {
@@ -171,12 +170,6 @@ export default {
   },
 
   mounted() {
-    fetch('/config')
-    .then(response => response.json())
-    .then(config => {
-      this.serverPort = config.serverPort;
-    });
-
     this.$nextTick(() => {
       document.addEventListener("click", (event) => {
         // Verificar si se hizo clic en el botón de editar

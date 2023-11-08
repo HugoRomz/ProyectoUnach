@@ -18,13 +18,15 @@
     </div>
     <hr class="h-px bg-gray-300 border-0 m-0" />
     <!-- Contenido de la pestaña activa -->
-    <actividad-tab :id-actividad="activeTab" />
+    <ActividadTab :actividades="actividadesTotales" :id-actividad="activeTab" />
   </div>
 </template>
 
 <script>
 import ActividadTab from "./TabTipoAct.vue";
 import apiEnsenanza from "../../services/apiEnsenanza";
+import { mapGetters } from "vuex";
+import { mapState, mapActions } from 'vuex';
 
 export default {
   components: {
@@ -32,14 +34,41 @@ export default {
   },
   data() {
     return {
-      activeTab: null,
+      activeTab: 0,
       tiposActividades: [],
+      actividadesTotales: [],
     };
   },
   created() {
     this.cargarTiposActividades();
+    this.cargarActividadesTotales();
+  },
+  computed:{
+    ...mapGetters(["getSelectedMateria"]),
+    ...mapState(['actualizarTabla']),
+  },
+  watch:{
+    actualizarTabla(newValue) {
+      if (newValue) {
+        this.cargarActividadesTotales();
+        this.cambiarBanderaActualizarTabla();
+      }
+    },
   },
   methods: {
+    ...mapActions(['cambiarBanderaActualizarTabla']),
+    cargarActividadesTotales() {
+      // Simula la carga de datos, reemplaza con tu llamada a la API
+      apiEnsenanza.obtenerActividades().then((response) => {
+        if (this.getSelectedMateria) {
+          this.actividadesTotales = response.data.filter(
+            (act) => act.idMateria === this.getSelectedMateria
+          );
+        } else {
+          this.actEjercicios = [];
+        }
+      });
+    },
     async cargarTiposActividades() {
       try {
         const response = await apiEnsenanza.buscarTipoActividad();

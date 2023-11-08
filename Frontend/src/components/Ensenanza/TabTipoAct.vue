@@ -2,7 +2,7 @@
   <div class="w-full p-4">
     <div class="w-full">
       <DataTableComponent
-        :data="actEjercicios"
+        :data="actividadesFiltradas"
         :columns="columns"
         :dtoptions="dtoptions"
       >
@@ -32,7 +32,7 @@ import apiEnsenanza from "../../services/apiEnsenanza";
 import DataTableComponent from "../Plantillas/DataTableComponent.vue";
 import Swal from "sweetalert2";
 import dayjs from "dayjs";
-import { mapGetters } from "vuex";
+
 
 import evidenciasModal from "./Modals/evidenciasModal.vue";
 
@@ -44,11 +44,15 @@ export default {
     DataTableComponent,
     evidenciasModal,
   },
+  props: {
+    actividades: Array,
+    idActividad: Number
+  },
   data() {
     return {
+      
       isModalVisible: false,
       modalData: "",
-      actEjercicios: [],
       columns: [
         { data: "idActEnsenanza" },
         { data: "nombreAct" },
@@ -153,31 +157,16 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["getSelectedMateria"]),
-    actualizarTabla() {
-      return this.$store.state.actualizarTabla;
-    },
-  },
-  props: {
-    idActividad: {
-      type: Number,
-      required: true,
-    },
-  },
-  watch: {
-    actualizarTabla() {
-      this.obtenerData();
-    },
-    idActividad: {
-      immediate: true,
-      handler(newValue) {
-        // Aquí llamas a la función que obtiene la data con el nuevo id
-        this.obtenerData(newValue);
-      },
-    },
-  },
+  actividadesFiltradas() {
+    if (this.idActividad) {
+      return this.actividades.filter(actividad => actividad.idtipoActividad === this.idActividad);
+    }
+    return this.actividades;
+  }
+},
+
+
   mounted() {
-    this.obtenerData();
     this.$nextTick(() => {
       document.addEventListener("click", (event) => {
         // Verificar si se hizo clic en el botón de editar
@@ -199,20 +188,8 @@ export default {
     });
   },
   methods: {
-    obtenerData(id) {
-      // Usas el id para obtener los datos específicos de esa actividad
-      apiEnsenanza.obtenerActividades(id).then((response) => {
-        if (this.getSelectedMateria) {
-          this.actEjercicios = response.data.filter(
-            (act) => act.idMateria === this.getSelectedMateria
-          );
-        } else {
-          this.actEjercicios = [];
-        }
-      });
-    },
     cargarActividadParaEditar(id) {
-      const actividadAEditar = this.actEjercicios.find(
+      const actividadAEditar = this.actividades.find(
         (act) => act.idActEnsenanza == id
       );
       this.$store.dispatch("setActividadAEditar", actividadAEditar);
@@ -235,7 +212,7 @@ export default {
                 "La actividad se eliminó correctamente",
                 "success"
               );
-              this.obtenerData();
+              this.$store.dispatch("cambiarBanderaActualizarTabla");
             })
             .catch((error) => {
               console.error("Error al eliminar la actividad:", error);
