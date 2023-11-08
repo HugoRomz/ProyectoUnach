@@ -28,8 +28,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage }).single("evidencias");
 
 function obtenerActividades(req, res) {
-  const tipoActividad = req.params.id;
-  EnsenanzaModel.obtenerActividades(tipoActividad, (error, rows) => {
+  EnsenanzaModel.obtenerActividades((error, rows) => {
     if (error) {
       res.status(500).json({ error: "Error al obtener las actividades." });
     } else {
