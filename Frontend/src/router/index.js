@@ -87,7 +87,7 @@ const routes = [
     path: "/Login",
     name: "Login",
     component: Login,
-    meta: { title: "Login" },
+    meta: { title: "SIGEA" },
   },
   {
     path: "/404",
