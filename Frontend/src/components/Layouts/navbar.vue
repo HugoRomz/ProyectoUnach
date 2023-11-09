@@ -59,33 +59,44 @@
       class="fixed z-50 top-0 left-0 w-full h-full bg-gray-500 bg-opacity-50 flex items-center justify-center"
       @click="showModal = false"
     >
-      <!-- Perfil -->
-      <div
-        class="mx-auto my-10 bg-white rounded-lg shadow-lg p-5 w-2/3 lg:w-1/3 q"
-        @click.stop
-      >
-        <img
-          class="w-32 h-32 rounded-full mx-auto"
-          src="../../assets/profile.svg"
-          alt="Perfil"
-        />
-        <div class="mt-2 text-center">
-          <p class="text-gray-600 mt-1">Nombre</p>
-          <h3 class="text-xl font-semibold">{{user.nombre_Doce + " " + user.apellido_paterno + " " + user.apellido_materno}}</h3>
-          <p class="text-gray-600 mt-1">RFC:</p>
-          <h3 class="text-xl font-semibold">{{ user.rfc }}</h3>
-          <p class="text-gray-600 mt-1">Numero de Plaza</p>
-          <h3 class="text-xl font-semibold">{{ user.n_plaza }}</h3>
-        </div>
-        
-        <!-- Botón de cierre -->
-        <div class="mt-4 flex justify-end">
-          <button
-            @click="showModal = false"
-            class="bg-gray-200 px-4 py-2 rounded"
-          >
-            Cerrar
-          </button>
+      <div class="max-w-xs" @click.stop>
+        <div class="bg-white shadow-xl rounded-lg py-3 ">
+          <div class="photo-wrapper p-2">
+            <img
+              class="w-32 h-32 rounded-full mx-auto"
+              src="../../assets/profile.svg"
+              alt="User Profile"
+            />
+          </div>
+          <div class="p-10">
+            <h3 class="text-center text-3xl text-gray-900 font-medium leading-8">
+              {{ user.nombre_Doce + " " + user.apellido_paterno }}
+            </h3>
+            <div
+              class="text-center text-gray-400 text-sm font-semibold"
+              v-for="(item, index) in permisos"
+              :key="index"
+            >
+              <p>{{ item.Permiso }}</p>
+            </div>
+            <table class=" text-lg my-3">
+              <tbody>
+                <tr>
+                  <td class="px-2 py-2 text-gray-500 font-semibold">RFC</td>
+                  <td class="px-2 py-2">{{ user.rfc }}</td>
+                </tr>
+                <tr>
+                  <td class="px-2 py-2 text-gray-500 font-semibold">N_Plaza</td>
+                  <td class="px-2 py-2">{{ user.n_plaza}}</td>
+                </tr>
+                <tr>
+                  <td class="px-2 py-2 text-gray-500 font-semibold">Sexo</td>
+                  <td class="px-2 py-2">{{ user.sexo }}</td>
+                </tr>
+              </tbody>
+            </table>
+
+          </div>
         </div>
       </div>
     </div>
@@ -98,7 +109,7 @@ import { logout } from "../../services/authServices";
 export default {
   name: "Navbar",
   computed: {
-    ...mapState(["sideBarOpen", "user"]),
+    ...mapState(["sideBarOpen", "user", "permisos"]),
   },
   data() {
     return {

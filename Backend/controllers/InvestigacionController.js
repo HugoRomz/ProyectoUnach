@@ -30,7 +30,7 @@ function insertarProyecto(req, res) {
     fecha_final: req.body.fechaFin,
     linea_investigacion: req.body.lineaInvestigacion,
     lider_de_proyecto: req.body.liderProyecto,
-    estatus: req.body.status,
+    estatus: 1,
     recursos_utilizados: req.body.recursosUtilizados,
     tipo_de_recurso: req.body.tipoRecurso,
   };
