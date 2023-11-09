@@ -6,6 +6,7 @@ import EnsenanzaView from "../views/EnsenanzaView.vue";
 import asignarMateria from "../views/asignarMateria.vue";
 import Login from "../views/Login.vue";
 import InvestigacionView from "../views/InvestigacionView.vue";
+import reportesInvestigacion from "../components/Investigacion/Reportes/reportesInvestigacion.vue"
 import agregarMateria from "../components/Ensenanza/agregarMateria.vue";
 import agregarDocente from "../components/Ensenanza/agregarDocente.vue";
 import NotFound from "../views/404.vue";
@@ -77,6 +78,15 @@ const routes = [
         component: InvestigacionView,
         meta: {
           title: "Coordinacion de Investigacion",
+          requiredPermission: "Investigacion",
+        },
+      },
+      {
+        path: "/reportesInvestigacion",
+        name: "Reportes Investigación",
+        component: reportesInvestigacion,
+        meta: {
+          title: "Reportes Investigación",
           requiredPermission: "Investigacion",
         },
       },
