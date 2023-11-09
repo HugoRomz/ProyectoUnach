@@ -4,12 +4,11 @@
       class="bg-white w-full md:max-w-md lg:max-w-full md:mx-auto md:w-1/2 xl:w-1/3 h-screen px-6 lg:px-16 xl:px-12 flex items-center justify-center"
     >
       <div class="w-full h-100">
-        <div class=" text-black">
-          <img
-            src="../assets/logounach.svg"
-            class="h-56 mx-auto mt-10 fill-current"
-          />
-        </div>
+        <img
+          src="../assets/unachlogo.svg"
+          class="h-56 mx-auto mt-10 fill-current"
+        />
+
         <div
           class="my-5 mt-10 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-neutral-300 after:mt-0.5 after:flex-1 after:border-t after:border-neutral-300"
         >
