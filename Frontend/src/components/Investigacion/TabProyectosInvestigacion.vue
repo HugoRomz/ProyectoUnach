@@ -103,7 +103,19 @@ export default {
         },
         { data: "linea_investigacion" },
         { data: "lider_de_proyecto" },
-        { data: "estatus" },
+        {
+          data: "estatus",
+          render: (data, type, row) => {
+            if (data === 1) {
+              // O cualquier otro número o condición que decidas
+              return '<span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">Activo</span>';
+            } else if (data === 2) {
+              return '<span class="inline-flex items-center rounded-md bg-amber-50 px-2 py-1 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-600/10">En proceso</span>';
+            } else {
+              return '<span class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">Inactivo</span>';
+            }
+          },
+        },
         {
           data: null,
           title: "Colaboradores",
@@ -244,7 +256,6 @@ export default {
           this.cargarDatosParaEditar(id);
         }
       });
-
     });
   },
   methods: {
