@@ -61,12 +61,21 @@
     </div>
     <div class="mb-4 px-4">
       <p class="pl-4 text-sm font-semibold mb-1 uppercase text-white tracking-widest border-b border-gray-600" v-if="tienePermiso('Investigacion')">Investigación</p>
+      
       <router-link to="/investigacion" v-if="tienePermiso('Investigacion')">
         <div
           class="w-full flex items-center text-SecundaryGold h-10 pl-4 hover:bg-SecundaryGold rounded-lg cursor-pointer hover:text-white"
         >
           <i class="pi pi-folder-open text-2xl fill-current mr-2"></i>
           <span class="text-white">Actividades</span>
+        </div>
+      </router-link>
+      <router-link to="/reportesInvestigacion" v-if="tienePermiso('Investigacion')">
+        <div
+          class="w-full flex items-center text-SecundaryGold h-10 pl-4 hover:bg-SecundaryGold rounded-lg cursor-pointer hover:text-white"
+        >
+          <i class="pi pi-book text-2xl fill-current mr-2"></i>
+          <span class="text-white">Reportes</span>
         </div>
       </router-link>
     </div>
