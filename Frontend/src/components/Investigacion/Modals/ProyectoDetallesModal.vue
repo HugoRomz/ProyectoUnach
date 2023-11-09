@@ -83,7 +83,32 @@
         </div>
         <div class="form-group">
           <label>Status:</label>
-          <span>{{ projectData.estatus }}</span>
+          <span
+            class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
+            :class="{
+              'bg-red-50 text-red-700 ring-red-600/10':
+                projectData.estatus === 0,
+              'bg-green-50 text-green-700 ring-green-600/20':
+                projectData.estatus === 1,
+              'bg-amber-50 text-amber-700 ring-amber-600/10':
+                projectData.estatus === 2,
+              'bg-blue-50 text-blue-700 ring-blue-600/10':
+                projectData.estatus === 3,
+              'bg-gray-500 text-white': !projectData.estatus,
+            }"
+          >
+            {{
+              projectData.estatus === 0
+                ? "Rechazado"
+                : projectData.estatus === 1
+                ? "Activo"
+                : projectData.estatus === 2
+                ? "En proceso"
+                : projectData.estatus === 3
+                ? "Finalizado"
+                : "Desconocido"
+            }}
+          </span>
         </div>
         <div class="form-group">
           <label>Recursos Utilizados:</label>
@@ -96,25 +121,24 @@
       </div>
       <!-- Agrega aquí todos los campos que desees mostrar -->
       <div class="project-info">
-    <h3 class="mb-4 text-xl font-bold">Colaboradores</h3>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div 
-            v-for="collaborator in collaboratorsData" 
-            :key="collaborator.id" 
-            class="p-4 border border-gray-200 rounded-md bg-white">
+        <h3 class="mb-4 text-xl font-bold">Colaboradores</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div
+            v-for="collaborator in collaboratorsData"
+            :key="collaborator.id"
+            class="p-4 border border-gray-200 rounded-md bg-white"
+          >
             <div class="mb-2">
-                <label class="font-semibold">Nombre:</label>
-                <span class="ml-2">{{ collaborator.nombre }}</span>
+              <label class="font-semibold">Nombre:</label>
+              <span class="ml-2">{{ collaborator.nombre }}</span>
             </div>
             <div class="mb-2">
-                <label class="font-semibold">Tipo:</label>
-                <span class="ml-2">{{ collaborator.tipo }}</span>
+              <label class="font-semibold">Tipo:</label>
+              <span class="ml-2">{{ collaborator.tipo }}</span>
             </div>
+          </div>
         </div>
-        
-    </div>
-</div>
-
+      </div>
     </div>
   </div>
 </template>

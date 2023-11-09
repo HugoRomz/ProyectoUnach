@@ -58,6 +58,7 @@ import dayjs from "dayjs";
 import colaboradoresModal from "../Investigacion/Modals/ColaboradoresModal.vue";
 import evidenciasModal from "../Investigacion/Modals/EvidenciasModal.vue";
 import ProyectoDetallesModal from "./Modals/ProyectoDetallesModal.vue";
+import Swal from "sweetalert2";
 
 export default {
   components: {
@@ -106,16 +107,37 @@ export default {
         {
           data: "estatus",
           render: (data, type, row) => {
-            if (data === 1) {
-              // O cualquier otro número o condición que decidas
-              return '<span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">Activo</span>';
-            } else if (data === 2) {
-              return '<span class="inline-flex items-center rounded-md bg-amber-50 px-2 py-1 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-600/10">En proceso</span>';
-            } else {
-              return '<span class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">Inactivo</span>';
+            let badgeHTML;
+            switch (data) {
+              case 0: // Rechazado
+                badgeHTML =
+                  '<span class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">Rechazado</span>';
+                break;
+              case 1: // Activo
+                badgeHTML =
+                  '<span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">Activo</span>';
+                break;
+              case 2: // En proceso
+                badgeHTML =
+                  '<span class="inline-flex items-center rounded-md bg-amber-50 px-2 py-1 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-600/10">En proceso</span>';
+                break;
+              case 3: // Finalizado
+                badgeHTML =
+                  '<span class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/10">Finalizado</span>';
+                break;
+              default:
+                badgeHTML =
+                  '<span class="inline-flex items-center rounded-md bg-gray-500 px-2 py-1 text-xs font-medium text-white">Desconocido</span>';
             }
+
+            // Botón para cambiar el estatus
+            let buttonHTML = `<button class="flex btn-status bg-yellow-500 hover:bg-yellow-600 text-white p-2 pt-2 rounded transition duration-150 ease-in-out" data-id="${row.id}"><i class="pi pi-sync mt-0.5"></i>Status</button>`;
+
+            // Devuelve el badge y el botón en una fila de flexbox
+            return `<div class="flex items-center space-x-2">${badgeHTML}${buttonHTML}</div>`;
           },
         },
+
         {
           data: null,
           title: "Colaboradores",
@@ -147,6 +169,7 @@ export default {
         },
       ],
       dtoptions: {
+        autoWidth: false,
         dom: "Bfrtip",
         language: {
           search: "Buscar",
@@ -165,7 +188,7 @@ export default {
             tittle: "Reporte de Proyectos de Investigacion",
             extend: "excelHtml5",
             text: "Excel",
-            className: "bg-green-500 btn btn-success border-0",
+            className: "bg-green-500 btn btn-success border-0 ",
           },
           {
             tittle: "Reporte de Proyectos de Investigacion",
@@ -250,10 +273,16 @@ export default {
       });
 
       document.addEventListener("click", (event) => {
-        // Verificar si se hizo clic en el botón de editar
         if (event.target.matches(".btn-editar-proyecto")) {
           const id = event.target.getAttribute("data-id");
           this.cargarDatosParaEditar(id);
+        }
+      });
+
+      document.addEventListener("click", (event) => {
+        if (event.target.matches(".btn-status")) {
+          const id = parseInt(event.target.getAttribute("data-id"));
+          this.cambiarStatus(id);
         }
       });
     });
@@ -273,7 +302,7 @@ export default {
         });
     },
     updateData() {
-      this.obtenerProyectos(); // Esta función ya esta definida para obtener las actividades
+      this.obtenerProyectos();
     },
     cargarDatosParaEditar(id) {
       this.editingId = id; // Asigna el ID a editar
@@ -301,6 +330,56 @@ export default {
         .catch((error) => {
           console.error("Error al obtener los colaboradores:", error);
         });
+    },
+    cambiarStatus(id) {
+      Swal.fire({
+        title: "Actualizar Estatus del Proyecto",
+        showDenyButton: true,
+        showCancelButton: true,
+        showCloseButton: true,
+        confirmButtonColor: "#5CB85C",
+        denyButtonColor: "#EF4444",
+        cancelButtonColor: "#3B82F6",
+        confirmButtonText: "Aceptar",
+        denyButtonText: "Rechazar",
+        cancelButtonText: "Finalizar",
+      }).then((result) => {
+        let action = null;
+        if (result.isConfirmed) {
+          action = 2;
+        } else if (result.isDenied) {
+          action = 0;
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          action = 3;
+        } else if (result.dismiss === Swal.DismissReason.close) {
+          console.log("El modal se cerró usando la X");
+        }
+
+        if (action !== null) {
+          const data = {
+            idProyecto: id,
+            status: action,
+          };
+
+          apiInvestigacion
+            .editarProyecto(data.idProyecto, data)
+            .then((response) => {
+              Swal.fire({
+                title: `Status Actualizado`,
+                text: `El estado del proyecto ha sido cambiado.`,
+                icon: "success",
+              });
+              this.obtenerProyectos();
+    s        })
+            .catch((error) => {
+              Swal.fire({
+                title: "Error",
+                text: "Hubo un problema al actualizar el proyecto.",
+                icon: "error",
+              });
+            });
+        }
+      });
     },
   },
 };

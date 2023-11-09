@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="show"
-    class="fixed top-0 left-0 flex justify-center items-center h-screen w-screen"
+    class="fixed top-0 left-0 flex justify-center items-center h-screen w-screen z-50"
   >
     <button
       class="absolute inset-0 w-screen h-screen bg-black opacity-50 cursor-default"
