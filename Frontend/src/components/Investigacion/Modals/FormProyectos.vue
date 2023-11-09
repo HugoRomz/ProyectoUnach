@@ -2,7 +2,7 @@
   <!-- Ventana flotante con formulario -->
   <div
     v-if="visible && dataLoaded"
-    class="fixed top-0 left-0 w-full h-full bg-gray-700 bg-opacity-50 flex justify-center items-center"
+    class="fixed top-0 left-0 w-full h-full bg-gray-700 bg-opacity-50 flex justify-center items-center z-50"
   >
     <div class="bg-white p-8 rounded-lg w-3/4">
       <h1
