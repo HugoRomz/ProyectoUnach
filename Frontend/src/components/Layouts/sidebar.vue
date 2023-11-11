@@ -1,7 +1,7 @@
 <template>
  
-  <div
-    class="w-1/2 md:w-1/3 lg:w-64 fixed md:top-0 md:left-0 h-screen lg:block bg-primaryBlue  z-30"
+ <div
+    class="w-1/2 md:w-1/3 lg:w-64 fixed md:top-0 md:left-0 h-screen lg:block bg-primaryBlue dark:bg-[#2D3748] z-30 rounded-lg shadow-lg mx-2 my-2"
     :class="sideBarOpen ? '' : 'hidden'"
     id="main-nav"
   >

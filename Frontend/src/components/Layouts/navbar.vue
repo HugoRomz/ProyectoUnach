@@ -1,7 +1,7 @@
 <template>
-  <div class="sticky top-0 z-40">
+    <div class="sticky top-2 z-40 mx-4 my-2">
     <div
-      class="w-full h-20 px-6 bg-SecundaryGold border-b flex items-center justify-between"
+      class="w-full h-20 px-6 py-3 bg-SecundaryGold dark:bg-[#2D3748] border-b flex items-center justify-between rounded-lg border-none"
     >
       <!-- left navbar -->
       <div class="flex">
@@ -26,6 +26,16 @@
 
       <!-- right navbar -->
       <div class="flex items-center relative">
+        <button @click="toggleDarkMode" class="mr-8 text-xl">
+          <i
+            :class="
+              isDarkMode
+                ? 'pi pi-sun text-white'
+                : 'pi pi-moon text-white'
+            "
+          ></i>
+        </button>
+
         <img
           src="../../assets/profile.svg"
           class="w-12 h-12 rounded-full shadow-lg"
@@ -60,7 +70,7 @@
       @click="showModal = false"
     >
       <div class="max-w-xs" @click.stop>
-        <div class="bg-white shadow-xl rounded-lg py-3 ">
+        <div class="bg-white shadow-xl rounded-lg py-3">
           <div class="photo-wrapper p-2">
             <img
               class="w-32 h-32 rounded-full mx-auto"
@@ -69,7 +79,9 @@
             />
           </div>
           <div class="p-10">
-            <h3 class="text-center text-3xl text-gray-900 font-medium leading-8">
+            <h3
+              class="text-center text-3xl text-gray-900 font-medium leading-8"
+            >
               {{ user.nombre_Doce + " " + user.apellido_paterno }}
             </h3>
             <div
@@ -79,7 +91,7 @@
             >
               <p>{{ item.Permiso }}</p>
             </div>
-            <table class=" text-lg my-3">
+            <table class="text-lg my-3">
               <tbody>
                 <tr>
                   <td class="px-2 py-2 text-gray-500 font-semibold">RFC</td>
@@ -87,7 +99,7 @@
                 </tr>
                 <tr>
                   <td class="px-2 py-2 text-gray-500 font-semibold">N_Plaza</td>
-                  <td class="px-2 py-2">{{ user.n_plaza}}</td>
+                  <td class="px-2 py-2">{{ user.n_plaza }}</td>
                 </tr>
                 <tr>
                   <td class="px-2 py-2 text-gray-500 font-semibold">Sexo</td>
@@ -95,7 +107,6 @@
                 </tr>
               </tbody>
             </table>
-
           </div>
         </div>
       </div>
@@ -113,11 +124,22 @@ export default {
   },
   data() {
     return {
+      isDarkMode: localStorage.getItem("darkMode") === "false",
       dropDownOpen: false,
       showModal: false,
     };
   },
   methods: {
+    toggleDarkMode() {
+      this.isDarkMode = !this.isDarkMode; // Reactividad
+      localStorage.setItem("darkMode", this.isDarkMode);
+
+      if (this.isDarkMode) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    },
     showAccountModal() {
       this.showModal = true;
     },

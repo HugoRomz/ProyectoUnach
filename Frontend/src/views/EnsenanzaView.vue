@@ -5,16 +5,16 @@
       ciclo="AGTO - NOV 2023"
     />
     <div
-      class="w-full bg-white shadow-xl border rounded-lg border-gray-300 mb-3"
+      class="w-full bg-white dark:bg-[#404040] dark:shadow-gray-950 shadow-xl border rounded-lg  mb-3 border-transparent"
     >
       <formEsenanza />
     </div>
     <div
-      class="w-full bg-white shadow-xl border rounded-lg border-gray-300 mb-3"
+      class="w-full bg-white dark:bg-[#404040] dark:shadow-gray-950 shadow-xl border rounded-lg mb-3 border-transparent"
     >
       <div class="w-2/3 m-5">
         <label
-          class="block uppercase tracking-wide text-gray-700 text-sm font-bold mb-2"
+          class="block uppercase tracking-wide text-gray-700 text-sm font-bold mb-2 dark:text-white"
           for="tipoActividad"
         >
           Seleccione la Materia:

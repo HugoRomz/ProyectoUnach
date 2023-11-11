@@ -7,6 +7,7 @@ const authRoutes = require('./routes/authRoutes');
 const tutoriasRoutes = require('./routes/TutoriasRoutes');
 const ensenanzaRoutes = require('./routes/EnsenanzaRoutes');
 const investigacionRoutes = require('./routes/InvestigacionRoutes');
+const secretariaRoutes =  require('./routes/secretariaRoutes')
 
 // Cargar las variables de entorno desde el archivo .env
 dotenv.config();
@@ -19,6 +20,7 @@ app.use('/auth', authRoutes);
 app.use('/tutorias', tutoriasRoutes);
 app.use('/ensenanza', ensenanzaRoutes);
 app.use('/investigacion', investigacionRoutes);
+app.use('/secretaria', secretariaRoutes);
 
 function startServer(port) {
     const server = app.listen(port, () => {
