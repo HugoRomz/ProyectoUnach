@@ -14,7 +14,7 @@
       class="relative bg-white rounded-xl w-2/4 shadow-xl max-h-screen overflow-y-auto"
     >
       <div
-        class="modal-header bg-blue-500 flex justify-between items-center rounded-tl-lg rounded-tr-lg"
+        class="modal-header bg-green-500 flex justify-between items-center rounded-tl-lg rounded-tr-lg"
       >
         <h2 class="text-lg text-white font-bold py-3 px-4">{{ modalTitle }}</h2>
         <button @click="closeModal" class="mx-4">
@@ -24,83 +24,87 @@
 
       <div class="modal-body p-4 max-h-96 overflow-y-auto">
         <form class="w-full" @submit.prevent="submitForm">
-        <input type="hidden" id="id_act" v-model="form.id_act" />
-        <div class="flex flex-wrap -mx-3 mb-6">
-          <div class="w-full px-3">
-            <label
-              class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              for="nombre"
-            >
-              Nombre de la actividad:
-            </label>
-            <input
-              class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-              id="nombre"
-              v-model="form.nombre"
-              type="text"
-              placeholder="Simposio de tutorías"
-            />
+          <input type="hidden" id="idSecretaria" v-model="form.idSecretaria" />
+          <div class="flex flex-wrap -mx-3 mb-6">
+            <div class="w-full px-3">
+              <label
+                class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                for="nombre"
+              >
+                Docente:
+              </label>
+              <vue-multiselect
+                id="materia"
+                v-model="form.rfc"
+                :options="users"
+                :multiple="false"
+                label="nameUser"
+                track-by="rfc"
+                :searchable="true"
+                :loading="isLoading"
+                :clear-on-select="true"
+                :append-to-body="true"
+              ></vue-multiselect>
+            </div>
           </div>
-        </div>
-        <div class="flex flex-wrap -mx-3 mb-6">
-          <div class="w-full md:w-1/2 px-3">
-            <label
-              class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              for="fecha"
-            >
-              Fecha:
-            </label>
-            <input
-              class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-              id="fecha"
-              v-model="form.fecha"
-              type="date"
-            />
+          <div class="flex flex-wrap -mx-3 mb-6">
+            <div class="w-full md:w-1/3 px-3">
+              <label
+                class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                for="fecha"
+              >
+                Nivel de Estudio:
+              </label>
+              <vue-multiselect
+                id="prog_academico"
+                v-model="form.nivelEstudio"
+                :options="options"
+                :multiple="false"
+                label="nivelEstudio"
+                track-by="nivelEstudio"
+                :clear-on-select="true"
+                :append-to-body="true"
+                :max-height="120"
+              ></vue-multiselect>
+            </div>
+            <div class="w-full md:w-1/3 px-3">
+              <label
+                class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                for="nombreInstitucion"
+              >
+                Institución:
+              </label>
+              <input
+                class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id="nombreInstitucion"
+                v-model="form.nombreInstitucion"
+                type="text"
+                placeholder="Ej. Universidad Autónoma de Chiapas"
+              />
+            </div>
+            <div class="w-full md:w-1/3 px-3">
+              <label
+                class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                for="areaEspecializacion"
+              >
+                Area de Especialidad:
+              </label>
+              <input
+                class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id="areaEspecializacion"
+                v-model="form.areaEspecializacion"
+                type="text"
+                placeholder="Ej. Ingeniería de Sistemas"
+              />
+            </div>
           </div>
-         <div class="w-full md:w-1/2 px-3">
-            <label
-              class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              for="prog_academico"
-            >
-              Tipo de Actividad:
-            </label>
-            <vue-multiselect
-              id="prog_academico"
-              v-model="form.prog_academico"
-              :options="options"
-              :multiple="false"
-              label="nombreProg"
-              track-by="idprog_academicos"
-              :searchable="true"
-              :loading="isLoading"
-              :clear-on-select="true"
-              :append-to-body="true"
-            ></vue-multiselect>
-          </div>
-        </div>
-        <div class="flex flex-wrap -mx-3 mb-6">
-          <div class="w-full px-3">
-            <label
-              class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              for="descripcion"
-            >
-              Descripcion de la actividad:
-            </label>
-            <textarea
-              id="descripcion"
-              v-model="form.descripcion"
-              rows="4"
-              class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-            ></textarea>
-          </div>
-        </div>
-        <button
-          type="submit"
-          class="w-full bg-blue-800 text-white p-2 rounded hover:bg-blue-900"
-        >
-          Guardar
-        </button>
-      </form>
+          <button
+            type="submit"
+            class="w-full bg-primaryBlue text-white p-2 rounded hover:bg-blue-900"
+          >
+            Guardar
+          </button>
+        </form>
         <button
           @click="closeModal"
           class="w-full bg-red-500 text-white p-2 rounded hover:bg-red-600 mt-4"
@@ -113,7 +117,7 @@
 </template>
 
 <script>
-import apiTutorias from "../../../services/apiTutorias";
+import apiEnsenanza from "../../../services/apiEnsenanza";
 import VueMultiselect from "vue-multiselect";
 import Swal from "sweetalert2";
 
@@ -123,17 +127,32 @@ export default {
   data() {
     return {
       form: {
-        id_act: "",
-        nombre: "",
-        fecha: "",
-        descripcion: "",
-        prog_academico: "",
+        idSecretaria: "",
+        rfc: "",
+        nivelEstudio: "",
+        nombreInstitucion: "",
+        areaEspecializacion: "",
       },
-      modalTitle: "Insertar",
+      modalTitle: "Registrar",
       dataLoaded: false,
       selected: null,
-      options: [],
-      isLoading: false
+      options: [
+        { id: "1", nivelEstudio: "Primaria" },
+        { id: "2", nivelEstudio: "Secundaria" },
+        { id: "3", nivelEstudio: "Preparatoria" },
+        { id: "4", nivelEstudio: "TSU" },
+        { id: "5", nivelEstudio: "Licenciatura" },
+        { id: "6", nivelEstudio: "Título Profesional" },
+        { id: "7", nivelEstudio: "Especialidad" },
+        { id: "8", nivelEstudio: "Maestría" },
+        { id: "9", nivelEstudio: "Doctorado" },
+        { id: "10", nivelEstudio: "Diplomado" },
+        { id: "11", nivelEstudio: "Curso de Actualización" },
+        { id: "12", nivelEstudio: "Certificación Profesional" },
+      ],
+
+      users: [],
+      isLoading: false,
     };
   },
   watch: {
@@ -143,7 +162,7 @@ export default {
         if (this.id_act) {
           (this.modalTitle = "Editar"), await this.loadActivityData();
         } else {
-          this.modalTitle = "Insertar";
+          this.modalTitle = "Registrar";
           this.dataLoaded = true;
           this.resetForm();
         }
@@ -154,14 +173,17 @@ export default {
     },
   },
   methods: {
-    buscarOpciones() {
-      if (!this.options.length) {
+    buscarUsuarios() {
+      if (!this.users.length) {
         this.isLoading = true;
         // Solo realiza la búsqueda si las opciones están vacías
-        apiTutorias
-          .buscarProgAcademico()
+        apiEnsenanza
+          .getUsuarios()
           .then((res) => {
-            this.options = res.data;
+            this.users = res.data.map((user) => ({
+              ...user,
+              nameUser: `${user.rfc} - ${user.nombre_Doce} ${user.apellido_paterno} - ${user.n_plaza}`,
+            }));
             this.isLoading = false;
           })
           .catch((err) => {
@@ -232,7 +254,7 @@ export default {
         !this.form.nombre ||
         !this.form.fecha ||
         !this.form.descripcion ||
-        !this.form.prog_academico 
+        !this.form.prog_academico
       ) {
         Swal.fire({
           title: "Datos incompletos",
@@ -283,10 +305,9 @@ export default {
           });
       }
     },
-
   },
-  mounted(){
-    this.buscarOpciones();
+  mounted() {
+    this.buscarUsuarios();
   },
 };
 </script>

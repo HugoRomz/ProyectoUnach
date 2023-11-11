@@ -7,7 +7,7 @@
     <div class="w-full bg-white shadow-xl border rounded-lg border-gray-300 mb-7">
       <button
         @click="showModal = true"
-        class="bg-blue-500 text-white font-bold p-2 rounded m-4"
+        class="bg-green-500  text-white font-bold p-2 rounded m-4"
       >
         Registrar Documento
       </button>

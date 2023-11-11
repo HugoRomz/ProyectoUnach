@@ -2,16 +2,16 @@
   <div class="w-full p-4">
     <div class="w-full">
       <DataTableComponent
-        :data="actividades"
+        :data="secretariaData"
         :columns="columns"
         :dtoptions="dtoptions"
       >
         <template #headers>
-          <th>No_Actividad</th>
-          <th>Nombre</th>
-          <th>Descripcion</th>
-          <th>Fecha</th>
-          <th>Programa Academico</th>
+          <th>Id</th>
+          <th>RFC</th>
+          <th>Nivel de Estudio</th>
+          <th>Institución</th>
+          <th>Area</th>
           <th>Acciones</th>
         </template>
       </DataTableComponent>
@@ -21,7 +21,7 @@
     :visible="showModal"
     :id_act="editingId"
     @update:visible="closeModal"
-    @activityChanged="obtenerActividades"
+    @activityChanged="obtenerData"
   />
 
   <!-- Modal Component -->
@@ -33,11 +33,11 @@
 </template>
 
 <script>
-import api from "../../services/apiTutorias";
+import apiSecretaria from "../../services/apiSecretaria";
 import DataTableComponent from "../Plantillas/DataTableComponent.vue"; // Asegúrate de ajustar la ruta
 import Swal from "sweetalert2";
 import dayjs from "dayjs";
-import ModalFormComponent from "../Tutorias/Modals/FormActividades.vue";
+import ModalFormComponent from "../Secretaria/Modals/FormActividades.vue";
 import logoSuperior from "../../assets/LogoSuperior";
 import logoInferior from "../../assets/LogoInferior";
 import evidenciasModal from "./Modals/evidenciasModal.vue";
@@ -52,21 +52,13 @@ export default {
     return {
       isModalVisible: false,
       modalData: "",
-      actividades: [],
+      secretariaData: [],
       columns: [
-        { data: "idActTutorias" },
-        { data: "nombreActTutorias" },
-        { data: "descripcionActTutorias" },
-        {
-          data: "fechaActTutorias",
-          render: function (data, type, row) {
-            if (type === "display" || type === "filter") {
-              return dayjs(data).format("YYYY-MM-DD"); // ajusta el formato como desees
-            }
-            return data;
-          },
-        },
-        { data: "nombreProg" },
+        { data: "idSecretaria" },
+        { data: "rfc" },
+        { data: "nivelEstudio" },
+        { data: "nombreInstitucion" },
+        { data: "areaEspecializacion" },
         {
           title: "Acciones",
           data: null,
@@ -166,7 +158,7 @@ export default {
     };
   },
   mounted() {
-    this.obtenerActividades();
+    this.obtenerData();
 
     this.$nextTick(() => {
       document.addEventListener("click", (event) => {
@@ -191,18 +183,18 @@ export default {
     });
   },
   methods: {
-    obtenerActividades() {
-      api
-        .obtenerActividades()
+    obtenerData() {
+      apiSecretaria
+        .obtenerSecretaria()
         .then((response) => {
-          this.actividades = response.data;
+          this.secretariaData = response.data;
         })
         .catch((error) => {
           console.error("Error al obtener las actividades:", error);
         });
     },
     updateData() {
-      this.obtenerActividades(); // Esta función ya la tienes definida para obtener las actividades
+      this.obtenerData(); // Esta función ya la tienes definida para obtener las actividades
     },
     eliminarActividad(id) {
       Swal.fire({
@@ -223,7 +215,7 @@ export default {
                 "El registro fue eliminado correctamente",
                 "success"
               );
-              this.obtenerActividades();
+              this.obtenerData();
             })
             .catch((error) => {
               Swal.fire(
@@ -280,7 +272,7 @@ export default {
           .insertarActividad(this.form)
           .then((response) => {
             console.log("Formulario enviado exitosamente", response);
-            this.obtenerActividades(); // Actualiza la lista de actividades
+            this.obtenerData(); // Actualiza la lista de actividades
             this.showModal = false;
           })
           .catch((error) => {
@@ -291,7 +283,7 @@ export default {
           .editarActividad(this.editingId, this.form)
           .then((response) => {
             console.log("Actividad editada exitosamente", response);
-            this.obtenerActividades();
+            this.obtenerData();
             this.showModal = false;
           })
           .catch((error) => {
