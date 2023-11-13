@@ -83,6 +83,8 @@ import colaboradoresModal from '../../Investigacion/Modals/ColaboradoresModal.vu
 import evidenciasModal from '../../Investigacion/Modals/EvidenciasModal.vue'
 import ProyectoDetallesModal from '../Modals/ProyectoDetallesModal.vue';
 import HeaderModule from "../../HeaderModuleComponent.vue";
+import logoSuperior from '../../../assets/LogoSuperior';
+import logoInferior from '../../../assets/LogoInferior';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
@@ -273,13 +275,20 @@ export default {
         };
       });
     const doc = new jsPDF();
-      doc.text('Reporte de Proyectos por Fecha', 10, 10);
+    
+      //doc.text('Reporte de Proyectos por Fecha', 10, 10);
       doc.autoTable({
+        didDrawPage:(data)=>{
+          doc.addImage(logoSuperior,'JPEG',5,5,195,15);
+          const centroX = (doc.internal.pageSize.width / 2) - (100 / 2);
+          doc.addImage(logoInferior, 'JPEG', centroX, doc.internal.pageSize.height - 10, 100, 5);
+        },
         head: [['ID', 'Nombre', 'Fecha Registro']],
         body: datosTabla.map(proyecto => [proyecto.id, proyecto.nombre, proyecto.fecha_registro]),
-        startY: 20,
+        startY: 30,
         styles: { fontSize: 8 },
         // ... otras configuraciones de AutoTable ...
+      
       });
 
       doc.save(`reporte_proyectos_${this.fechaInicio}_${this.fechaFin}.pdf`);

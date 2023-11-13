@@ -34,7 +34,7 @@ export default {
           img: imgTutorias,
           alt: "png-card-sitio-web",
           description:
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown",
+          "Bienvenido al Módulo de Tutorías: Aquí puedes gestionar y participar en diversas actividades del Programa de Orientación Profesional (POP), incluyendo conferencias, talleres, y ferias de empleo. Este módulo te permite registrar eventos, controlar la asistencia, y emitir constancias, asegurando un seguimiento efectivo del desarrollo profesional de los estudiantes.",
           route: "/tutorias",
           requiredPermission: "Tutorias",
         },
@@ -43,7 +43,7 @@ export default {
           img: imgTutorias,
           alt: "png-card-sitio-web",
           description:
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown",
+          "Bienvenido al Módulo de Enseñanza: Este módulo te permite administrar y supervisar las actividades de enseñanza-aprendizaje. Incluye funciones para controlar información sobre docentes, materias, evaluaciones, y avance de contenidos, facilitando la gestión académica y la evaluación del rendimiento estudiantil en cada unidad académica.",
           route: "/ensenanza",
           requiredPermission: "Enseñanza",
         },
@@ -52,16 +52,16 @@ export default {
           img: imgTutorias,
           alt: "png-card-sitio-web",
           description:
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown",
+          "Bienvenido al Módulo de Coordinación de Investigación: Este espacio está dedicado al registro y seguimiento de proyectos de investigación. Aquí podrás introducir y consultar información sobre proyectos en curso, incluyendo líderes de proyecto, colaboradores, fechas clave, recursos utilizados y resultados obtenidos, fomentando así la colaboración y el avance académico en la facultad.",
           route: "/investigacion",
           requiredPermission: "Investigacion",
         },
         {
-          title: "Otro no recuerdo",
+          title: "Secretaria",
           img: imgTutorias,
           alt: "png-card-sitio-web",
           description:
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown",
+          "Bienvenido al Módulo de Secretaría Académica: Esta plataforma está diseñada para gestionar y almacenar información detallada sobre los docentes y sus actividades académicas. Aquí podrás acceder y actualizar datos sobre formación académica, certificaciones, participación en congresos, cursos impartidos, y publicaciones, contribuyendo a un eficiente manejo de los recursos académicos.",
           route: "/",
           requiredPermission: "Secretaria",
         },
