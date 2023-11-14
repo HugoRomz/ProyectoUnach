@@ -21,21 +21,32 @@
       <div class="modal-body p-4 max-h-96 overflow-y-auto">
         <div class="w-full p-6 shadow-lg rounded-md border border-gray-300">
           <form class="w-full" @submit.prevent="submitForm">
-            <input type="hidden" v-model="form.idEvidenciasT" />
-            <input type="hidden" v-model="form.idActTutorias" />
-            <div class="flex flex-wrap -mx-3 mb-6">
+            <input type="hidden" v-model="form.idDocumento" />
+            <input type="text" v-model="form.idSecretaria" />
+            <div class="flex flex-wrap -mx-3">
               <div class="w-full px-3">
                 <label
                   class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                   for="nombre"
                 >
-                  Nombre de la Evidencia:
+                  Tipo de Documento:
+                </label>
+               
+              </div>
+            </div>
+            <div class="flex flex-wrap -mx-3">
+              <div class="w-full px-3">
+                <label
+                  class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                  for="nombre"
+                >
+                  Fecha:
                 </label>
                 <input
                   class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                   id="nombreEvi"
-                  v-model="form.nombreEvi"
-                  type="text"
+                  v-model="form.fecha"
+                  type="date"
                   placeholder="Simposio de tutorías"
                 />
               </div>
@@ -59,22 +70,6 @@
                 />
               </div>
             </div>
-            <div class="flex flex-wrap -mx-3 mb-6">
-              <div class="w-full px-3">
-                <label
-                  class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  for="descripcion"
-                >
-                  Descripcion de la evidencia:
-                </label>
-                <textarea
-                  id="descripcion"
-                  v-model="form.descripcionEvi"
-                  rows="4"
-                  class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                ></textarea>
-              </div>
-            </div>
             <button
               type="submit"
               class="w-full bg-blue-800 text-white p-2 rounded hover:bg-blue-900"
@@ -90,9 +85,9 @@
           <DataTableComponent :data="evidencias" :columns="columns">
             <template #headers>
               <th>ID</th>
-              <th>Nombre</th>
-              <th>Descripción</th>
-              <th>Actividad</th>
+              <th>Tipo de Documento</th>
+              <th>Fecha</th>
+              <th>Docente</th>
               <th>Acciones</th>
             </template>
           </DataTableComponent>
@@ -104,7 +99,7 @@
 
 <script>
 import DataTableComponent from "../../Plantillas/DataTableComponent.vue";
-import apiTutorias from "../../../services/apiTutorias";
+import apiSecretaria from "../../../services/apiSecretaria";
 import Swal from "sweetalert2";
 export default {
   components: {
@@ -115,7 +110,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    actividadId: {
+    idSecretaria: {
       type: [Number, String],
       default: "",
     },
@@ -124,26 +119,26 @@ export default {
     return {
       // Para el formulario
       form: {
-        idEvidenciasT: "",
-        idActTutorias: "",
-        nombreEvi: "",
-        descripcionEvi: "",
+        idDocumento: "",
+        idSecretaria: "",
+        tipoDocumento: "",
+        fecha: "",
       },
       archivo: null,
       evidencias: [],
       columns: [
-        { data: "idevidenciasT" },
-        { data: "nombreEvi" },
-        { data: "descripcionEvi" },
-        { data: "nombreActTutorias" },
+        { data: "idDocumento" },
+        { data: "tipoDocumento" },
+        { data: "rfc" },
+        { data: "fecha" },
         {
           title: "Acciones",
           data: null,
           render: (data, type, row) => {
             return `
-                        <button class="btn-editar-evidencia bg-yellow-500 text-white p-2 pt-2 rounded" data-id="${data.idevidenciasT}"><i class="pi pi-pencil pointer-events-none"></i></button>
-                        <button class="btn-eliminar-evidencia bg-red-500 text-white  p-2 pt-2  rounded" data-id="${data.idevidenciasT}"><i class="pi pi-trash pointer-events-none"></i></button>
-                        <a href="http://localhost:3000${data.urlEvi}" target="_blank" class="btn-ver-archivo bg-green-500 text-white p-2 pt-3 rounded"><i class="pi pi-eye pointer-events-none"></i></a>
+                        <button class="btn-editar-evidencia bg-yellow-500 text-white p-2 pt-2 rounded" data-id="${data.idDocumento}"><i class="pi pi-pencil pointer-events-none"></i></button>
+                        <button class="btn-eliminar-evidencia bg-red-500 text-white  p-2 pt-2  rounded" data-id="${data.idDocumento}"><i class="pi pi-trash pointer-events-none"></i></button>
+                        <a href="http://localhost:3000${data.urlDocumento}" target="_blank" class="btn-ver-archivo bg-green-500 text-white p-2 pt-3 rounded"><i class="pi pi-eye pointer-events-none"></i></a>
                       `;
           },
         },
@@ -155,7 +150,7 @@ export default {
       if (newVal) {
         this.$nextTick(() => {
           this.obtenerData();
-          this.form.idActTutorias = this.actividadId;
+          this.form.idSecretaria = this.idSecretaria;
         });
       }
     },
@@ -182,8 +177,8 @@ export default {
       this.archivo = this.$refs.evidenciasInput.files[0];
     },
     obtenerData() {
-      apiTutorias
-        .obtenerEvidencias(this.actividadId)
+      apiSecretaria
+        .obtenerDocumentos(this.idSecretaria)
         .then((response) => {
           this.evidencias = response.data;
         })
@@ -194,7 +189,7 @@ export default {
     resetForm() {
       this.form = {
         ...this.form,
-        idEvidenciasT: "",
+        idDocumento: "",
         nombreEvi: "",
         descripcionEvi: "",
         evidencias: "",
@@ -206,8 +201,8 @@ export default {
     },
     submitForm() {
       const formData = new FormData();
-      formData.append("idEvidenciasT", this.form.idEvidenciasT);
-      formData.append("idActTutorias", this.form.idActTutorias);
+      formData.append("idDocumento", this.form.idDocumento);
+      formData.append("idSecretaria", this.form.idSecretaria);
       formData.append("nombreEvi", this.form.nombreEvi);
       formData.append("descripcionEvi", this.form.descripcionEvi);
       formData.append("evidencias", this.archivo); 
@@ -225,19 +220,19 @@ export default {
       }
 
       let promise; 
-      if (!this.form.idEvidenciasT) {
+      if (!this.form.idDocumento) {
         promise = apiTutorias.insertarEvidencias(formData);
       } else {
-        promise = apiTutorias.actualizarEvidencias(this.form.idEvidenciasT,formData);
+        promise = apiTutorias.actualizarEvidencias(this.form.idDocumento,formData);
       }
       promise
         .then((res) => {
-          const message = this.form.idEvidenciasT
+          const message = this.form.idDocumento
             ? "La actividad se ha actualizado correctamente"
             : "La actividad se ha insertado correctamente";
 
           Swal.fire({
-            title: this.form.idEvidenciasT
+            title: this.form.idDocumento
               ? "Actividad actualizada"
               : "Actividad insertada",
             text: message,
@@ -252,7 +247,7 @@ export default {
             title: "Error",
             text:
               "Hubo un error al " +
-              (this.form.idActTutorias ? "actualizar" : "insertar") +
+              (this.form.idSecretaria ? "actualizar" : "insertar") +
               " la actividad",
             icon: "error",
           });
@@ -290,7 +285,7 @@ export default {
     },
     cargarEvidenciaParaEditar(id) {
         // Buscar la evidencia con el id dado
-        const evidencia = this.evidencias.find(ev => ev.idevidenciasT == id);
+        const evidencia = this.evidencias.find(ev => ev.idDocumento == id);
 
         // Si no se encuentra la evidencia, manejar el error apropiadamente
         if (!evidencia) {
@@ -300,7 +295,7 @@ export default {
         }
 
         // Asignar los datos de la evidencia al formulario
-        this.form.idEvidenciasT = evidencia.idevidenciasT;
+        this.form.idDocumento = evidencia.idDocumento;
         this.form.nombreEvi = evidencia.nombreEvi;
         this.form.descripcionEvi = evidencia.descripcionEvi;
         // (y cualquier otro campo que necesites)

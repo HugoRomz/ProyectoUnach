@@ -5,7 +5,7 @@
       ciclo="AGTO - NOV 2023"
     />
     <div
-      class="w-full bg-white shadow-xl border rounded-lg border-gray-300 mb-3"
+      class="w-full bg-white dark:bg-[#404040] dark:shadow-gray-950 border-transparent shadow-xl border rounded-lg border-gray-300 mb-3"
     >
       <div class="m-3">
         <form @submit.prevent="submitForm" class="w-full mt-5">
@@ -73,7 +73,7 @@
         </form>
       </div>
     </div>
-    <div class="w-full bg-white shadow-xl border rounded-lg border-gray-300">
+    <div class="w-full bg-white dark:bg-[#404040] dark:shadow-gray-950 border-transparent shadow-xl border rounded-lg border-gray-300">
       <div class="w-full p-4">
         <DataTableComponent
           :data="dataMaterias"

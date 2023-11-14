@@ -62,14 +62,24 @@ function materiasByRfc(req, res) {
 }
 
 function insertarActividad(req, res) {
-  const formData = {
-    nombreAct: req.body.nombreAct,
-    descripcionAct: req.body.descripcionAct,
-    tipoAct: req.body.tipoAct,
-    materia: req.body.idMateria,
-    cicloEscolar: "2020-2021",
-    fecha: req.body.fecha,
-  };
+   // Calcula el ciclo escolar
+   const currentYear = new Date().getFullYear();
+   const currentMonth = new Date().getMonth() + 1; // getMonth() devuelve 0-11
+   let cicloEscolar;
+   if (currentMonth >= 1 && currentMonth <= 6) {
+     cicloEscolar = `Ene - Jun ${currentYear}`;
+   } else {
+     cicloEscolar = `Ago - Dic ${currentYear}`;
+   }
+ 
+   const formData = {
+     nombreAct: req.body.nombreAct,
+     descripcionAct: req.body.descripcionAct,
+     tipoAct: req.body.tipoAct,
+     materia: req.body.idMateria,
+     cicloEscolar, // Usar el ciclo escolar calculado
+     fecha: req.body.fecha,
+   };
 
   EnsenanzaModel.insertarActividad(formData, (error, resultado) => {
     if (error) {
@@ -82,12 +92,22 @@ function insertarActividad(req, res) {
 }
 function editarActividad(req, res) {
   const id = req.params.id;
+  // Calcula el ciclo escolar
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth() + 1; // getMonth() devuelve 0-11
+  let cicloEscolar;
+  if (currentMonth >= 1 && currentMonth <= 6) {
+    cicloEscolar = `Ene - Jun ${currentYear}`;
+  } else {
+    cicloEscolar = `Ago - Dic ${currentYear}`;
+  }
+
   const formData = {
     nombreAct: req.body.nombreAct,
     descripcionAct: req.body.descripcionAct,
     tipoAct: req.body.tipoAct,
     materia: req.body.idMateria,
-    cicloEscolar: "2020-2021",
+    cicloEscolar, // Usar el ciclo escolar calculado
     fecha: req.body.fecha,
   };
   EnsenanzaModel.editarActividad(id, formData, (error, resultado) => {

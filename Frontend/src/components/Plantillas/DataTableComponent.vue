@@ -1,12 +1,12 @@
 <template>
-  <div class="w-full">
+  <div class="w-full bg-white dark:bg-[#404040] dark:shadow-gray-950">
     <DataTable
       :data="localData"
       :columns="columns"
-      class="dt-responsive table table-striped table-bordered m-0"
+      class="dt-responsive table table-striped table-bordered m-0 bg-white dark:bg-[#404040] dark:text-gray-200 dark:border-gray-600"
       :options="dtoptions"
     >
-      <thead>
+      <thead class="bg-gray-100 dark:bg-gray-700">
         <tr>
           <slot name="headers"></slot>
         </tr>

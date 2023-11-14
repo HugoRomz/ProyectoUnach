@@ -1,4 +1,4 @@
-<template >
+<template>
   <div class="m-4">
     <button
       v-if="!mostrarFormulario"
@@ -9,8 +9,15 @@
     </button>
 
     <!-- Div que contiene el formulario -->
-    <div v-if="mostrarFormulario" class="bg-white px-4">
-      <h2 class="text-lg mb-4 text-center font-semibold">{{ formTitle }}</h2>
+    <div
+      v-if="mostrarFormulario"
+      class="bg-white dark:bg-[#404040] dark:shadow-gray-950 border-transparent px-4"
+    >
+      <h2
+        class="text-lg mb-4 text-center font-semibold text-gray-800 dark:text-gray-200"
+      >
+        {{ formTitle }}
+      </h2>
       <form class="w-full" @submit.prevent="submitForm">
         <input
           type="hidden"
@@ -20,13 +27,13 @@
         <div class="flex flex-wrap -mx-3 mb-6">
           <div class="w-full px-3">
             <label
-              class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+              class="block uppercase tracking-wide text-gray-700 dark:text-gray-300 text-xs font-bold mb-2"
               for="nombre"
             >
               Nombre de la actividad:
             </label>
             <input
-              class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              class="appearance-none block w-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white dark:focus:bg-gray-600 focus:border-gray-500 dark:focus:border-gray-400"
               id="nombreAct"
               v-model="form.nombreAct"
               type="text"
@@ -37,7 +44,7 @@
         <div class="flex flex-wrap -mx-3 mb-6">
           <div class="w-full md:w-1/3 px-3">
             <label
-              class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+              class="block uppercase tracking-wide text-gray-700 dark:text-gray-300  text-xs font-bold mb-2"
               for="materia"
             >
               Materia:
@@ -57,7 +64,7 @@
           </div>
           <div class="w-full md:w-1/3 px-3">
             <label
-              class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+              class="block uppercase tracking-wide text-gray-700 dark:text-gray-300 text-xs font-bold mb-2"
               for="tipoActividad"
             >
               Tipo de Actividad:
@@ -77,13 +84,16 @@
           </div>
           <div class="w-full md:w-1/3 px-3">
             <label
-              class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+              class="block uppercase tracking-wide text-gray-700 dark:text-gray-300 text-xs font-bold mb-2"
               for="fecha"
             >
               Fecha:
             </label>
             <input
-              class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 dark:bg-gray-700
+dark:border-gray-600
+dark:focus:bg-gray-600
+dark:focus:border-gray-400"
               id="fecha"
               v-model="form.fechaAct"
               type="date"
@@ -94,7 +104,7 @@
         <div class="flex flex-wrap -mx-3 mb-6">
           <div class="w-full px-3">
             <label
-              class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+              class="block uppercase tracking-wide text-gray-700 dark:text-gray-300 text-xs font-bold mb-2"
               for="descripcion"
             >
               Descripcion de la actividad:
@@ -103,7 +113,10 @@
               id="descripcion"
               v-model="form.descripcionAct"
               rows="4"
-              class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 dark:bg-gray-700
+dark:border-gray-600
+dark:focus:bg-gray-600
+dark:focus:border-gray-400"
               placeholder="Ej. En este taller, los estudiantes aprenderán sobre los principios básicos de la física..."
             ></textarea>
           </div>

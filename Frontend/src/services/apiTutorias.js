@@ -24,7 +24,7 @@ export default {
   },
 
   eliminarActividad(id) {
-    return axios.delete(`${API_URL}/tutorias/eliminarEvidencias/${id}`);
+    return axios.delete(`${API_URL}/tutorias/eliminarActividad/${id}`);
   },
   // Agrega más funciones para otras peticiones si es necesario
 

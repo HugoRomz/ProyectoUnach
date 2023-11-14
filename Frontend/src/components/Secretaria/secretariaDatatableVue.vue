@@ -19,17 +19,17 @@
   </div>
   <ModalFormComponent
     :visible="showModal"
-    :id_act="editingId"
+    :data="dataID"
     @update:visible="closeModal"
     @activityChanged="obtenerData"
   />
 
   <!-- Modal Component -->
   <evidenciasModal
-        :show="isModalVisible"
-        :actividadId="modalData"
-        @close="isModalVisible = false"
-      ></evidenciasModal>
+    :show="isModalVisible"
+    :actividadId="modalData"
+    @close="isModalVisible = false"
+  ></evidenciasModal>
 </template>
 
 <script>
@@ -46,7 +46,7 @@ export default {
   components: {
     DataTableComponent,
     ModalFormComponent,
-    evidenciasModal
+    evidenciasModal,
   },
   data() {
     return {
@@ -64,9 +64,9 @@ export default {
           data: null,
           render: (data, type, row) => {
             return `
-                        <button class="btn-editar-actividad bg-yellow-500 text-white p-2 pt-3 rounded" data-id="${data.idActTutorias}"><i class="pi pi-pencil pointer-events-none"></i></button>
-                        <button class="btn-eliminar-actividad bg-red-500 text-white  p-2 pt-3  rounded" data-id="${data.idActTutorias}"><i class="pi pi-trash pointer-events-none"></i></button>
-                        <button class="btn-detalle-actividad bg-blue-500 text-white p-2 pt-3 rounded" data-id="${data.idActTutorias}"><i class="pi pi-info-circle pointer-events-none"></i></button>
+                        <button title="Editar Registro" class="btn-editar-registro bg-yellow-500 text-white p-2 pt-3 rounded" data-id="${data.idSecretaria}"><i class="pi pi-pencil pointer-events-none"></i></button>
+                        <button title="Eliminar Registro" class="btn-eliminar-registro bg-red-500 text-white  p-2 pt-3  rounded" data-id="${data.idSecretaria}"><i class="pi pi-trash pointer-events-none"></i></button>
+                        <button title="Ver Evidencias" class="btn-detalle-actividad bg-blue-500 text-white p-2 pt-3 rounded" data-id="${data.idSecretaria}"><i class="pi pi-info-circle pointer-events-none"></i></button>
                       `;
           },
         },
@@ -100,33 +100,35 @@ export default {
             customize: function (doc) {
               // Personalizar el documento PDF aquí
 
-               // Añadir margen superior al título
-          if (doc.content[0].text) { // Verifica si hay un título
-            doc.content[0].margin = [0, 10, 0, 0]; // 50 es el margen superior
-          }
+              // Añadir margen superior al título
+              if (doc.content[0].text) {
+                // Verifica si hay un título
+                doc.content[0].margin = [0, 10, 0, 0]; // 50 es el margen superior
+              }
 
-          // Añadir margen superior a la tabla para moverla hacia abajo
-          if (doc.content[1].table) { // Verifica si hay una tabla
-            doc.content[1].margin = [0, 10, 0, 0]; // 70 es el margen superior
-          }
-              doc['header'] = function (currentPage, pageCount, pageSize) {
+              // Añadir margen superior a la tabla para moverla hacia abajo
+              if (doc.content[1].table) {
+                // Verifica si hay una tabla
+                doc.content[1].margin = [0, 10, 0, 0]; // 70 es el margen superior
+              }
+              doc["header"] = function (currentPage, pageCount, pageSize) {
                 return {
                   image: logoSuperior,
                   width: 550,
-                  alignment: 'center',
-                  margin: [0, 28, 0, 25]  // Ajusta según necesites
+                  alignment: "center",
+                  margin: [0, 28, 0, 25], // Ajusta según necesites
                 };
               };
 
-              doc['footer'] = function (currentPage, pageCount, pageSize) {
+              doc["footer"] = function (currentPage, pageCount, pageSize) {
                 return {
                   image: logoInferior,
                   width: 450,
-                  alignment: 'center',
-                  margin: [0, 10, 0, 10]  // Ajusta según necesites
+                  alignment: "center",
+                  margin: [0, 10, 0, 10], // Ajusta según necesites
                 };
               };
-            }
+            },
           },
 
           {
@@ -154,7 +156,7 @@ export default {
       showModal: false, // Controla si se muestra o no la ventana flotante
       modalTitle: "",
       formMode: "", // Puede ser 'insertar' o 'editar'
-      editingId: null, // ID del elemento que se está editando
+      dataID: null
     };
   },
   mounted() {
@@ -163,13 +165,13 @@ export default {
     this.$nextTick(() => {
       document.addEventListener("click", (event) => {
         // Verificar si se hizo clic en el botón de editar
-        if (event.target.matches(".btn-editar-actividad")) {
+        if (event.target.matches(".btn-editar-registro")) {
           const id = event.target.getAttribute("data-id");
-          this.cargarActividadParaEditar(id);
+          this.cargarEditar(id);
         }
 
         // Verificar si se hizo clic en el botón de eliminar
-        if (event.target.matches(".btn-eliminar-actividad")) {
+        if (event.target.matches(".btn-eliminar-registro")) {
           const id = event.target.getAttribute("data-id");
           this.eliminarActividad(id);
         }
@@ -193,9 +195,6 @@ export default {
           console.error("Error al obtener las actividades:", error);
         });
     },
-    updateData() {
-      this.obtenerData(); // Esta función ya la tienes definida para obtener las actividades
-    },
     eliminarActividad(id) {
       Swal.fire({
         title: "¿Estás seguro de que deseas eliminar esta actividad?",
@@ -207,8 +206,8 @@ export default {
         confirmButtonText: "Si, eliminar!",
       }).then((result) => {
         if (result.isConfirmed) {
-          api
-            .eliminarActividad(id)
+          apiSecretaria
+            .eliminarDocente(id)
             .then((response) => {
               Swal.fire(
                 "Eliminado!",
@@ -227,75 +226,23 @@ export default {
         }
       });
     },
-    cargarActividadParaEditar(id) {
-      this.editingId = id; // Asigna el ID a editar
+    cargarEditar(id) {
+      this.dataID = this.secretariaData.find((item) => item.idSecretaria == id);
       this.showModal = true;
     },
-
-    handleFileUpload(event) {
-      this.form.evidencias = event.target.files;
-    },
-    // Nuevas funciones para abrir y cerrar la ventana flotante
     openModal() {
       this.modalTitle = "Registrar Actividad";
-      this.resetForm(); // Aquí restableces el formulario
-      this.formMode = "insertar"; // Establece el modo a insertar
+      this.resetForm();
+      this.formMode = "insertar"; 
       this.showModal = true;
     },
     closeModal() {
       this.showModal = false;
     },
-    resetForm() {
-      this.form = {
-        nombre: "",
-        fecha: "",
-        descripcion: "",
-        prog_academico: "",
-        evidencias: null,
-      };
-    },
-    // Función para manejar el envío del formulario
-    submitForm() {
-      // Verifica si los campos del formulario están vacíos
-      if (
-        !this.form.nombre ||
-        !this.form.fecha ||
-        !this.form.descripcion ||
-        !this.form.prog_academico
-      ) {
-        alert("Todos los campos son obligatorios");
-        return;
-      }
-
-      if (this.formMode === "insertar") {
-        api
-          .insertarActividad(this.form)
-          .then((response) => {
-            console.log("Formulario enviado exitosamente", response);
-            this.obtenerData(); // Actualiza la lista de actividades
-            this.showModal = false;
-          })
-          .catch((error) => {
-            console.error("Hubo un error enviando el formulario", error);
-          });
-      } else if (this.formMode === "editar") {
-        api
-          .editarActividad(this.editingId, this.form)
-          .then((response) => {
-            console.log("Actividad editada exitosamente", response);
-            this.obtenerData();
-            this.showModal = false;
-          })
-          .catch((error) => {
-            console.error("Hubo un error editando la actividad", error);
-          });
-      }
-    },
     mostrarDetalleActividad(id) {
-      this.modalData = id; // Solo guarda el ID en lugar de todo el objeto de datos
+      this.modalData = id; 
       this.isModalVisible = true;
     },
   },
-  
 };
 </script>
