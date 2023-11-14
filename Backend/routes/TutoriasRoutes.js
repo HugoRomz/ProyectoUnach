@@ -16,7 +16,7 @@ router.get("/buscartutorias/:id", actividadesController.buscarActividad);
 
 router.put("/tutorias/:id", actividadesController.editarActividad);
 
-router.delete("/tutorias/:id", actividadesController.eliminarActividad);
+router.delete("/eliminarActividad/:id", actividadesController.eliminarActividad);
 
 
 router.get("/evidencias/:idEvidencia", actividadesController.obtenerEvidencias);

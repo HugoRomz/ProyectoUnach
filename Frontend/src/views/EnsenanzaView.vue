@@ -4,11 +4,13 @@
       titulo="Gestion Enseñanza - Aprendizaje"
       ciclo="AGTO - NOV 2023"
     />
+    <!-- Contenedor del formulario -->
     <div
-      class="w-full bg-white dark:bg-[#404040] dark:shadow-gray-950 shadow-xl border rounded-lg  mb-3 border-transparent"
+      class="w-full bg-white dark:bg-[#404040] dark:shadow-gray-950 shadow-xl border rounded-lg mb-3 border-transparent"
     >
       <formEsenanza />
     </div>
+    <!-- Contenedor de selección de materia -->
     <div
       class="w-full bg-white dark:bg-[#404040] dark:shadow-gray-950 shadow-xl border rounded-lg mb-3 border-transparent"
     >
@@ -26,17 +28,20 @@
           track-by="materia"
           placeholder="Selecciona una materia"
           @select="actualizarContenido"
+          class=""
         />
       </div>
     </div>
+    <!-- Contenedor de la pestaña si se selecciona una materia -->
     <div
       v-if="selMateria"
-      class="w-full bg-white shadow-xl border rounded-lg border-gray-300"
+      class="w-full bg-white dark:bg-[#404040] shadow-xl border rounded-lg border-gray-300 dark:border-gray-600"
     >
-      <TabComponentEnsenanza/>
+      <TabComponentEnsenanza />
     </div>
   </div>
 </template>
+
 
 <script>
 import HeaderModule from "../components/HeaderModuleComponent.vue";

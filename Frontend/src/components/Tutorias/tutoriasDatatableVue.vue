@@ -215,7 +215,7 @@ export default {
         confirmButtonText: "Si, eliminar!",
       }).then((result) => {
         if (result.isConfirmed) {
-          api
+          apiSecretaria
             .eliminarActividad(id)
             .then((response) => {
               Swal.fire(
@@ -252,52 +252,6 @@ export default {
     },
     closeModal() {
       this.showModal = false;
-    },
-    resetForm() {
-      this.form = {
-        nombre: "",
-        fecha: "",
-        descripcion: "",
-        prog_academico: "",
-        evidencias: null,
-      };
-    },
-    // Función para manejar el envío del formulario
-    submitForm() {
-      // Verifica si los campos del formulario están vacíos
-      if (
-        !this.form.nombre ||
-        !this.form.fecha ||
-        !this.form.descripcion ||
-        !this.form.prog_academico
-      ) {
-        alert("Todos los campos son obligatorios");
-        return;
-      }
-
-      if (this.formMode === "insertar") {
-        api
-          .insertarActividad(this.form)
-          .then((response) => {
-            console.log("Formulario enviado exitosamente", response);
-            this.obtenerActividades(); // Actualiza la lista de actividades
-            this.showModal = false;
-          })
-          .catch((error) => {
-            console.error("Hubo un error enviando el formulario", error);
-          });
-      } else if (this.formMode === "editar") {
-        api
-          .editarActividad(this.editingId, this.form)
-          .then((response) => {
-            console.log("Actividad editada exitosamente", response);
-            this.obtenerActividades();
-            this.showModal = false;
-          })
-          .catch((error) => {
-            console.error("Hubo un error editando la actividad", error);
-          });
-      }
     },
     mostrarDetalleActividad(id) {
       this.modalData = id; // Solo guarda el ID en lugar de todo el objeto de datos

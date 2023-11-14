@@ -1,20 +1,23 @@
 <template>
-  <div class="w-full p-4">
+  <div
+    class="w-full bg-white dark:bg-[#404040] dark:shadow-gray-950 border-transparent p-4"
+  >
     <div class="w-full">
       <DataTableComponent
         :data="actividadesFiltradas"
         :columns="columns"
         :dtoptions="dtoptions"
+        class="data-table-custom dark:text-gray-200 dark:border-gray-600"
       >
         <template #headers>
-          <th>ID</th>
-          <th>Nombre</th>
-          <th>Descripción</th>
-          <th>Tipo</th>
-          <th>Materia</th>
-          <th>Ciclo Escolar</th>
-          <th>Fecha</th>
-          <th>Acciones</th>
+          <th class="bg-gray-100 dark:bg-gray-700">ID</th>
+          <th class="bg-gray-100 dark:bg-gray-700">Nombre</th>
+          <th class="bg-gray-100 dark:bg-gray-700">Descripción</th>
+          <th class="bg-gray-100 dark:bg-gray-700">Tipo</th>
+          <th class="bg-gray-100 dark:bg-gray-700">Materia</th>
+          <th class="bg-gray-100 dark:bg-gray-700">Ciclo Escolar</th>
+          <th class="bg-gray-100 dark:bg-gray-700">Fecha</th>
+          <th class="bg-gray-100 dark:bg-gray-700">Acciones</th>
         </template>
       </DataTableComponent>
       <!-- Modal Component -->
@@ -22,6 +25,7 @@
         :show="isModalVisible"
         :actividadId="modalData"
         @close="isModalVisible = false"
+        class="dark:bg-gray-800 dark:text-gray-200"
       ></evidenciasModal>
     </div>
   </div>
@@ -32,7 +36,6 @@ import apiEnsenanza from "../../services/apiEnsenanza";
 import DataTableComponent from "../Plantillas/DataTableComponent.vue";
 import Swal from "sweetalert2";
 import dayjs from "dayjs";
-
 
 import evidenciasModal from "./Modals/evidenciasModal.vue";
 
@@ -46,11 +49,10 @@ export default {
   },
   props: {
     actividades: Array,
-    idActividad: Number
+    idActividad: Number,
   },
   data() {
     return {
-      
       isModalVisible: false,
       modalData: "",
       columns: [
@@ -100,13 +102,13 @@ export default {
             tittle: "Reporte de actividades PAT",
             extend: "excelHtml5",
             text: "Excel",
-            className: "bg-green-500 btn btn-success border-0",
+            className: "bg-green-500 btn btn-success border-0 hover:bg-green-600 text-white dark:bg-green-700 dark:text-gray-200 dark:hover:bg-green-800",
           },
           {
             tittle: "Reporte de actividades PAT",
             extend: "pdfHtml5",
             text: "PDF",
-            className: "bg-red-500 btn btn-danger border-0",
+            className: "bg-red-500 btn btn-danger border-0 hover:bg-red-600 text-white dark:bg-red-700 dark:text-gray-200 dark:hover:bg-red-800" ,
             customize: function (doc) {
               // Personalizar el documento PDF aquí
               // Añadir margen superior al título
@@ -139,32 +141,32 @@ export default {
               };
             },
           },
-
           {
             tittle: "Reporte de actividades PAT",
             extend: "print",
             text: "Imprimir",
-            className: "bg-gray-500 btn btn-dark border-0",
+            className: "bg-gray-500 btn btn-dark border-0 hover:bg-gray-600 text-white dark:bg-blue-700 dark:text-gray-200 dark:hover:bg-gray-800",
           },
           {
             tittle: "Reporte de actividades PAT",
             extend: "copy",
             text: "Copiar Texto",
-            className: "bg-slate-300 btn btn-light border-0",
+            className: "bg-slate-300 btn btn-light border-0 hover:bg-slate-400 text-gray-700 dark:bg-slate-600 dark:text-gray-200 dark:hover:bg-slate-700 ",
           },
         ],
       },
     };
   },
   computed: {
-  actividadesFiltradas() {
-    if (this.idActividad) {
-      return this.actividades.filter(actividad => actividad.idtipoActividad === this.idActividad);
-    }
-    return this.actividades;
-  }
-},
-
+    actividadesFiltradas() {
+      if (this.idActividad) {
+        return this.actividades.filter(
+          (actividad) => actividad.idtipoActividad === this.idActividad
+        );
+      }
+      return this.actividades;
+    },
+  },
 
   mounted() {
     this.$nextTick(() => {
@@ -232,3 +234,19 @@ export default {
   },
 };
 </script>
+
+<style>
+/* Estilos para DataTable en Modo Oscuro */
+.dark .data-table-custom td,
+.dark .data-table-custom th {
+  background-color: #535353; /* Color de fondo para las celdas en modo oscuro */
+  color: #e0e0e0; /* Color del texto en modo oscuro */
+}
+
+/* Estilos adicionales para botones dentro de DataTable en Modo Oscuro */
+.dark .btn-editar-actividad,
+.dark .btn-eliminar-actividad,
+.dark .btn-detalle-actividad { /* Color de fondo para botones en modo oscuro */
+  color: #ffffff; /* Color del texto en botones en modo oscuro */
+}
+</style>

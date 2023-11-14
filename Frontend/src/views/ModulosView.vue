@@ -34,7 +34,7 @@ export default {
           img: imgTutorias,
           alt: "png-card-sitio-web",
           description:
-          "Bienvenido al Módulo de Tutorías: Aquí puedes gestionar y participar en diversas actividades del Programa de Orientación Profesional (POP), incluyendo conferencias, talleres, y ferias de empleo. Este módulo te permite registrar eventos, controlar la asistencia, y emitir constancias, asegurando un seguimiento efectivo del desarrollo profesional de los estudiantes.",
+          "Bienvenido al Módulo de Tutorías: Aquí puedes gestionar y participar en diversas actividades del Programa de Orientación Profesional (POP), incluyendo conferencias, talleres, y ferias de empleo. Este módulo te permite registrar eventos, asegurando un seguimiento efectivo del desarrollo profesional de los estudiantes.",
           route: "/tutorias",
           requiredPermission: "Tutorias",
         },

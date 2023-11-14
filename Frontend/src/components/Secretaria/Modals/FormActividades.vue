@@ -117,12 +117,13 @@
 </template>
 
 <script>
-import apiEnsenanza from "../../../services/apiEnsenanza";
 import VueMultiselect from "vue-multiselect";
 import Swal from "sweetalert2";
+import apiSecretaria from "../../../services/apiSecretaria";
+import apiEnsenanza from "../../../services/apiEnsenanza";
 
 export default {
-  props: ["visible", "id_act"],
+  props: ["visible", "data"],
   components: { VueMultiselect },
   data() {
     return {
@@ -156,10 +157,9 @@ export default {
     };
   },
   watch: {
-    // Este watcher se mantendrá para reaccionar a cambios de `visible`
     async visible(newVal) {
       if (newVal) {
-        if (this.id_act) {
+        if (this.data) {
           (this.modalTitle = "Editar"), await this.loadActivityData();
         } else {
           this.modalTitle = "Registrar";
@@ -176,7 +176,7 @@ export default {
     buscarUsuarios() {
       if (!this.users.length) {
         this.isLoading = true;
-        // Solo realiza la búsqueda si las opciones están vacías
+
         apiEnsenanza
           .getUsuarios()
           .then((res) => {
@@ -193,36 +193,31 @@ export default {
       }
     },
     async loadActivityData() {
-      this.loading = true;
-      try {
-        const response = await apiTutorias.buscarActividad(this.id_act);
+      if (this.data) {
+        this.form.idSecretaria = this.data.idSecretaria || "";
+        this.form.nivelEstudio =
+          this.options.find(
+            (op) => op.nivelEstudio === this.data.nivelEstudio
+          ) || "";
+        this.form.nombreInstitucion = this.data.nombreInstitucion || "";
+        this.form.areaEspecializacion = this.data.areaEspecializacion || "";
 
-        const fecha = new Date(response.data[0].fechaActTutorias);
-        const formattedDate = `${fecha.getFullYear()}-${(fecha.getMonth() + 1)
-          .toString()
-          .padStart(2, "0")}-${fecha.getDate().toString().padStart(2, "0")}`;
-
-        this.form.id_act = response.data[0].idActTutorias;
-        this.form.nombre = response.data[0].nombreActTutorias;
-        this.form.fecha = formattedDate;
-        this.form.descripcion = response.data[0].descripcionActTutorias;
-
-        const prog_academico = response.data[0].prog_academico;
-        this.form.prog_academico = this.options.find(
-          (option) => option.idprog_academicos === prog_academico
+        // Busca el usuario por RFC en el arreglo users
+        const usuarioEncontrado = this.users.find(
+          (user) => user.rfc === this.data.rfc
         );
-
-        this.dataLoaded = true;
-      } catch (error) {
-        Swal.fire({
-          title: "Error",
-          text: "Hubo un error obteniendo los datos de la actividad",
-          icon: "error",
-        });
-      } finally {
-        this.loading = false;
+        if (usuarioEncontrado) {
+          this.form.rfc = {
+            rfc: usuarioEncontrado.rfc,
+            nameUser: `${usuarioEncontrado.nameUser}`,
+          };
+        } else {
+          this.form.rfc = "";
+        }
       }
+      this.dataLoaded = true;
     },
+
     closeModal() {
       this.$emit("update:visible", false);
       this.dataLoaded = false;
@@ -230,31 +225,30 @@ export default {
     },
     resetForm() {
       this.form = {
-        id_act: "",
-        nombre: "",
-        fecha: "",
-        descripcion: "",
-        prog_academico: "",
-        evidencias: null,
+        idSecretaria: "",
+        rfc: "",
+        nivelEstudio: "",
+        nombreInstitucion: "",
+        areaEspecializacion: "",
       };
     },
 
     // Función para manejar el envío del formulario
     submitForm() {
       const data = {
-        idActTutorias: this.form.id_act,
-        nombreActTutorias: this.form.nombre,
-        descripcionActTutorias: this.form.descripcion,
-        fechaActTutorias: this.form.fecha,
-        prog_academico: this.form.prog_academico.idprog_academicos,
+        idSecretaria: this.form.idSecretaria,
+        rfc: this.form.rfc.rfc,
+        nivelEstudio: this.form.nivelEstudio.nivelEstudio,
+        nombreInstitucion: this.form.nombreInstitucion,
+        areaEspecializacion: this.form.areaEspecializacion,
       };
 
       // Verifica si los campos del formulario están vacíos
       if (
-        !this.form.nombre ||
-        !this.form.fecha ||
-        !this.form.descripcion ||
-        !this.form.prog_academico
+        !this.form.rfc ||
+        !this.form.nivelEstudio ||
+        !this.form.nombreInstitucion ||
+        !this.form.areaEspecializacion
       ) {
         Swal.fire({
           title: "Datos incompletos",
@@ -264,16 +258,15 @@ export default {
         return;
       }
 
-      if (this.form.id_act === null || this.form.id_act === "") {
-        apiTutorias
-          .insertarActividad(data) // Envía el FormData con el archivo
+      if (this.form.idSecretaria === null || this.form.idSecretaria === "") {
+        apiSecretaria
+          .insertarDocente(data)
           .then((response) => {
             Swal.fire({
               title: "Actividad registrada",
               text: "La actividad se ha registrado exitosamente",
               icon: "success",
             });
-            //   this.obtenerActividades(); // Actualiza la lista de actividades
             this.closeModal();
             this.$emit("activityChanged");
           })
@@ -284,9 +277,12 @@ export default {
               icon: "error",
             });
           });
-      } else if (this.form.id_act != null || this.form.id_act != "") {
-        apiTutorias
-          .editarActividad(this.form.id_act, data) // Envía el FormData con el archivo
+      } else if (
+        this.form.idSecretaria != null ||
+        this.form.idSecretaria != ""
+      ) {
+        apiSecretaria
+          .editarDocente(this.form.idSecretaria, data) // Envía el FormData con el archivo
           .then((response) => {
             Swal.fire({
               title: "Actividad editada",
