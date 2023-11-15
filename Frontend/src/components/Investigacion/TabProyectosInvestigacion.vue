@@ -345,6 +345,7 @@ export default {
         cancelButtonText: "Finalizar",
       }).then((result) => {
         let action = null;
+
         if (result.isConfirmed) {
           action = 2;
         } else if (result.isDenied) {
@@ -352,7 +353,7 @@ export default {
         } else if (result.dismiss === Swal.DismissReason.cancel) {
           action = 3;
         } else if (result.dismiss === Swal.DismissReason.close) {
-          console.log("El modal se cerró usando la X");
+          
         }
 
         if (action !== null) {
@@ -370,7 +371,7 @@ export default {
                 icon: "success",
               });
               this.obtenerProyectos();
-    s        })
+            })
             .catch((error) => {
               Swal.fire({
                 title: "Error",

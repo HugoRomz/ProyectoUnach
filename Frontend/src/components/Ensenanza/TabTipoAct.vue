@@ -1,14 +1,41 @@
 <template>
-  <div
-    class="w-full bg-white dark:bg-[#404040] dark:shadow-gray-950 border-transparent p-4"
-  >
+  <div class="w-full bg-white dark:bg-[#404040] dark:shadow-gray-950 border-transparent p-4">
     <div class="w-full">
-      <DataTableComponent
-        :data="actividadesFiltradas"
-        :columns="columns"
-        :dtoptions="dtoptions"
-        class="data-table-custom dark:text-gray-200 dark:border-gray-600"
-      >
+      <div v-if="mostrarSelectorFechas"
+        class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
+        <div class="p-5 border w-96 shadow-lg rounded-md bg-white">
+          <!-- Aquí tu interfaz de selección de fechas -->
+          <div class="flex flex-col items-center">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Seleccionar Rango de Fechas</h2>
+            <div class="mb-3 w-full">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="fechaInicio">
+                Fecha Inicio
+              </label>
+              <input type="date" v-model="fechaInicio"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+            <div class="mb-6 w-full">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="fechaFin">
+                Fecha Fin
+              </label>
+              <input type="date" v-model="fechaFin"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+            <div class="flex items-center justify-between space-x-4">
+              <button @click="generarReporte"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                Generar Reporte
+              </button>
+              <button @click="mostrarSelectorFechas = false"
+                class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <DataTableComponent :data="actividadesFiltradas" :columns="columns" :dtoptions="dtoptions"
+        class="data-table-custom dark:text-gray-200 dark:border-gray-600">
         <template #headers>
           <th class="bg-gray-100 dark:bg-gray-700">ID</th>
           <th class="bg-gray-100 dark:bg-gray-700">Nombre</th>
@@ -21,12 +48,8 @@
         </template>
       </DataTableComponent>
       <!-- Modal Component -->
-      <evidenciasModal
-        :show="isModalVisible"
-        :actividadId="modalData"
-        @close="isModalVisible = false"
-        class="dark:bg-gray-800 dark:text-gray-200"
-      ></evidenciasModal>
+      <evidenciasModal :show="isModalVisible" :actividadId="modalData" @close="isModalVisible = false"
+        class="dark:bg-gray-800 dark:text-gray-200"></evidenciasModal>
     </div>
   </div>
 </template>
@@ -36,7 +59,8 @@ import apiEnsenanza from "../../services/apiEnsenanza";
 import DataTableComponent from "../Plantillas/DataTableComponent.vue";
 import Swal from "sweetalert2";
 import dayjs from "dayjs";
-
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 import evidenciasModal from "./Modals/evidenciasModal.vue";
 
 import logoSuperior from "../../assets/LogoSuperior";
@@ -53,6 +77,9 @@ export default {
   },
   data() {
     return {
+      fechaInicio: null,
+      fechaFin: null,
+      mostrarSelectorFechas: false,
       isModalVisible: false,
       modalData: "",
       columns: [
@@ -108,7 +135,7 @@ export default {
             tittle: "Reporte de actividades PAT",
             extend: "pdfHtml5",
             text: "PDF",
-            className: "bg-red-500 btn btn-danger border-0 hover:bg-red-600 text-white dark:bg-red-700 dark:text-gray-200 dark:hover:bg-red-800" ,
+            className: "bg-red-500 btn btn-danger border-0 hover:bg-red-600 text-white dark:bg-red-700 dark:text-gray-200 dark:hover:bg-red-800",
             customize: function (doc) {
               // Personalizar el documento PDF aquí
               // Añadir margen superior al título
@@ -153,6 +180,14 @@ export default {
             text: "Copiar Texto",
             className: "bg-slate-300 btn btn-light border-0 hover:bg-slate-400 text-gray-700 dark:bg-slate-600 dark:text-gray-200 dark:hover:bg-slate-700 ",
           },
+          {
+            title: "Generar Reporte",
+            text: "Reportes",
+            className: "bg-cyan-500 text-white btn hover:bg-purple-600 hover:text-white",
+            action: function (e, dt, node, config) {
+              this.abrirSelectorFechas(); // Llamada al método para generar el reporte
+            }.bind(this),
+          },
         ],
       },
     };
@@ -190,6 +225,87 @@ export default {
     });
   },
   methods: {
+    abrirSelectorFechas() {
+      this.mostrarSelectorFechas = true;
+    },
+    generarReporte() {
+      if (this.fechaInicio && this.fechaFin) {
+        // Resta un día a la fecha de inicio para incluir el día completo desde el principio
+        const fechaInicio = dayjs(this.fechaInicio).subtract(1, 'day');
+        // Ajusta la fecha de fin para incluir el día completo hasta el final
+        const fechaFin = dayjs(this.fechaFin).add(1, 'day');
+
+        // Filtra las actividades para incluir desde el comienzo del día de la fecha de inicio hasta el final del día de la fecha de fin
+        const actividadesFiltradas = this.actividades.filter(actividad =>
+          dayjs(actividad.fecha).isAfter(fechaInicio) && dayjs(actividad.fecha).isBefore(fechaFin)
+        );
+
+        if (actividadesFiltradas.length === 0) {
+          // No se encontraron reportes en esas fechas
+          Swal.fire({
+            title: 'Sin Resultados',
+            text: 'No se encontraron reportes en el rango de fechas seleccionado.',
+            icon: 'info',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+          });
+        } else {
+
+          // Mapea las actividades filtradas para la tabla del PDF
+          const datosTabla = actividadesFiltradas.map(actividad => {
+            return {
+              id: actividad.idActEnsenanza,
+              nombre: actividad.nombreAct,
+              descripcion: actividad.descripcionAct,
+              tipo: actividad.nombretipoAct,
+              fecha: dayjs(actividad.fecha).format('YYYY-MM-DD')
+            };
+          });
+
+          // Crear un nuevo documento PDF
+          const doc = new jsPDF();
+
+          // Agregar encabezados y contenido a la tabla
+          doc.autoTable({
+            didDrawPage: (data) => {
+              // Agrega logotipos o cualquier otra personalización aquí
+              doc.addImage(logoSuperior, 'JPEG', 5, 5, 195, 15);
+              const centroX = (doc.internal.pageSize.width / 2) - (100 / 2);
+              doc.addImage(logoInferior, 'JPEG', centroX, doc.internal.pageSize.height - 10, 100, 5);
+            },
+            head: [['ID', 'Nombre', 'Descripción', 'Tipo', 'Fecha']],
+            body: datosTabla.map(actividad => [actividad.id, actividad.nombre, actividad.descripcion, actividad.tipo, actividad.fecha]),
+            startY: 30,
+            styles: { fontSize: 8 },
+            // ... otras configuraciones de AutoTable ...
+          });
+
+          // Guardar el PDF
+          doc.save(`reporte_actividades_${this.fechaInicio}_${this.fechaFin}.pdf`);
+
+          this.fechaInicio = null;
+          this.fechaFin = null;
+
+          this.mostrarSelectorFechas = false; // Cerrar el selector de fechas
+          Swal.fire({
+            title: '¡Éxito!',
+            text: 'El reporte se ha generado correctamente.',
+            icon: 'success',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+          });
+        }
+      } else {
+        // Mostrar alerta de error si las fechas no son válidas
+        Swal.fire({
+          title: 'Error',
+          text: 'Por favor, selecciona un rango de fechas válido.',
+          icon: 'error',
+          confirmButtonColor: '#d33',
+          confirmButtonText: 'OK'
+        });
+      }
+    },
     cargarActividadParaEditar(id) {
       const actividadAEditar = this.actividades.find(
         (act) => act.idActEnsenanza == id
@@ -239,14 +355,18 @@ export default {
 /* Estilos para DataTable en Modo Oscuro */
 .dark .data-table-custom td,
 .dark .data-table-custom th {
-  background-color: #535353; /* Color de fondo para las celdas en modo oscuro */
-  color: #e0e0e0; /* Color del texto en modo oscuro */
+  background-color: #535353;
+  /* Color de fondo para las celdas en modo oscuro */
+  color: #e0e0e0;
+  /* Color del texto en modo oscuro */
 }
 
 /* Estilos adicionales para botones dentro de DataTable en Modo Oscuro */
 .dark .btn-editar-actividad,
 .dark .btn-eliminar-actividad,
-.dark .btn-detalle-actividad { /* Color de fondo para botones en modo oscuro */
-  color: #ffffff; /* Color del texto en botones en modo oscuro */
+.dark .btn-detalle-actividad {
+  /* Color de fondo para botones en modo oscuro */
+  color: #ffffff;
+  /* Color del texto en botones en modo oscuro */
 }
 </style>

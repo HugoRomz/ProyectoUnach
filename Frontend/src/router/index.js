@@ -54,7 +54,6 @@ const routes = [
         component: agregarDocente,
         meta: {
           title: "Agregar Docente",
-          requiredPermission: "Enseñanza-Admin",
         },
       },
       {
