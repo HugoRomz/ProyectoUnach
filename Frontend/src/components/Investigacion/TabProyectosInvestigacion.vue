@@ -162,7 +162,7 @@ export default {
           render: (data, type, row) => {
             return `
                         <button class="btn-editar-proyecto bg-yellow-500 text-white p-2 pt-3 rounded" data-id="${data.id}"><i class="pi pi-pencil pointer-events-none"></i></button>
-                        <button class="btn-eliminar-proyecto bg-red-500 text-white  p-2 pt-3  rounded" data-id="${data.id}"><i class="pi pi-trash pointer-events-none"></i></button>
+                        
                         <button class="btn-detalle-proyecto bg-blue-500 text-white p-2 pt-3 rounded" data-id="${data.id}"><i class="pi pi-info-circle pointer-events-none"></i></button>
                       `;
           },

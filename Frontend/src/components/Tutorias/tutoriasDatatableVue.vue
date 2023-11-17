@@ -215,7 +215,7 @@ export default {
         confirmButtonText: "Si, eliminar!",
       }).then((result) => {
         if (result.isConfirmed) {
-          apiSecretaria
+          api
             .eliminarActividad(id)
             .then((response) => {
               Swal.fire(
