@@ -21,11 +21,14 @@ export default {
 
 
   obtenerDocumentos(id) {
-    return axios.get(`${API_URL}/secretaria/Documentos/${id}`);
+    return axios.get(`${API_URL}/secretaria/documentos/${id}`);
   },
+
+
   insertarDocumentos(formData) {
     return axios.post(`${API_URL}/secretaria/insertarDocumentos`, formData);
   },
+
   eliminarDocumentos(id) {
     return axios.delete(`${API_URL}/secretaria/eliminarDocumentos/${id}`);
   },
@@ -36,5 +39,9 @@ export default {
     );
   },
 
+
+  getTipoDoc(){
+    return axios.get(`${API_URL}/secretaria/getTipo/`);
+  }
 
 };

@@ -13,7 +13,7 @@
       <div
         class="modal-header bg-blue-500 flex justify-between items-center rounded-tl-lg rounded-tr-lg"
       >
-        <h1 class="text-white font-bold py-3 px-4">Evidencias</h1>
+        <h1 class="text-white font-bold py-3 px-4">Documentos</h1>
         <button @click="$emit('close')" class="mx-4">
           <span class="text-white font-bold text-lg">x</span>
         </button>
@@ -22,16 +22,22 @@
         <div class="w-full p-6 shadow-lg rounded-md border border-gray-300">
           <form class="w-full" @submit.prevent="submitForm">
             <input type="hidden" v-model="form.idDocumento" />
-            <input type="text" v-model="form.idSecretaria" />
-            <div class="flex flex-wrap -mx-3">
+            <input type="hidden" v-model="form.idSecretaria" />
+            <div class="flex flex-wrap -mx-3 my-4">
               <div class="w-full px-3">
                 <label
                   class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  for="nombre"
+                  for="nombreDoc"
                 >
-                  Tipo de Documento:
+                  Nombre del Documento:
                 </label>
-               
+                <input
+                  class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                  id="nombreDoc"
+                  v-model="form.nombreDoc"
+                  type="text"
+                  placeholder="Certificado de Maestria"
+                />
               </div>
             </div>
             <div class="flex flex-wrap -mx-3">
@@ -40,11 +46,32 @@
                   class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                   for="nombre"
                 >
+                  Tipo de Documento:
+                </label>
+                <vue-multiselect
+                  id="tipoDocumento"
+                  v-model="form.tipoDocumento"
+                  :options="dataTipoDocumento"
+                  :multiple="false"
+                  label="descripcion"
+                  track-by="idTipoDocumento"
+                  :searchable="true"
+                  :clear-on-select="true"
+                  :append-to-body="true"
+                ></vue-multiselect>
+              </div>
+            </div>
+            <div class="flex flex-wrap -mx-3 my-4">
+              <div class="w-full px-3">
+                <label
+                  class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                  for="fecha"
+                >
                   Fecha:
                 </label>
                 <input
                   class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                  id="nombreEvi"
+                  id="fecha"
                   v-model="form.fecha"
                   type="date"
                   placeholder="Simposio de tutorías"
@@ -77,6 +104,13 @@
               Guardar
             </button>
           </form>
+          <button
+            type="button"
+            class="w-full bg-red-500 text-white p-2 rounded hover:bg-gray-700 mt-4"
+            @click="clearForm"
+          >
+            Limpiar
+          </button>
         </div>
 
         <div
@@ -85,9 +119,9 @@
           <DataTableComponent :data="evidencias" :columns="columns">
             <template #headers>
               <th>ID</th>
+              <th>Nombre Documento</th>
               <th>Tipo de Documento</th>
               <th>Fecha</th>
-              <th>Docente</th>
               <th>Acciones</th>
             </template>
           </DataTableComponent>
@@ -101,9 +135,13 @@
 import DataTableComponent from "../../Plantillas/DataTableComponent.vue";
 import apiSecretaria from "../../../services/apiSecretaria";
 import Swal from "sweetalert2";
+import vueMultiselect from "vue-multiselect";
+import dayjs from "dayjs";
+
 export default {
   components: {
     DataTableComponent,
+    vueMultiselect,
   },
   props: {
     show: {
@@ -121,16 +159,26 @@ export default {
       form: {
         idDocumento: "",
         idSecretaria: "",
+        nombreDoc: "",
         tipoDocumento: "",
         fecha: "",
       },
       archivo: null,
+      dataTipoDocumento: [],
       evidencias: [],
       columns: [
         { data: "idDocumento" },
-        { data: "tipoDocumento" },
-        { data: "rfc" },
-        { data: "fecha" },
+        { data: "nombreDoc" },
+        { data: "descripcion" },
+        {
+          data: "fecha",
+          render: function (data, type, row) {
+            if (type === "display" || type === "filter") {
+              return dayjs(data).format("YYYY-MM-DD"); // ajusta el formato como desees
+            }
+            return data;
+          },
+        },
         {
           title: "Acciones",
           data: null,
@@ -149,13 +197,14 @@ export default {
     show(newVal) {
       if (newVal) {
         this.$nextTick(() => {
-          this.obtenerData();
           this.form.idSecretaria = this.idSecretaria;
+          this.obtenerData();
         });
       }
     },
   },
   mounted() {
+    this.buscarTipoDoc();
     this.$nextTick(() => {
       document.addEventListener("click", (event) => {
         // Verificar si se hizo clic en el botón de editar
@@ -173,44 +222,52 @@ export default {
     });
   },
   methods: {
+    async buscarTipoDoc() {
+      try {
+        const response = await apiSecretaria.getTipoDoc();
+        this.dataTipoDocumento = response.data;
+      } catch (error) {
+        console.error("Error al encontrar tipo de documentos:", error);
+      }
+    },
     handleFileUpload() {
       this.archivo = this.$refs.evidenciasInput.files[0];
     },
-    obtenerData() {
-      apiSecretaria
-        .obtenerDocumentos(this.idSecretaria)
-        .then((response) => {
-          this.evidencias = response.data;
-        })
-        .catch((error) => {
-          console.error("Error al obtener las actividades:", error);
-        });
+    async obtenerData() {
+      try {
+        const response = await apiSecretaria.obtenerDocumentos(
+          this.idSecretaria
+        );
+        this.evidencias = response.data;
+      } catch (error) {
+        console.error("Error al obtener data:", error);
+      }
     },
-    resetForm() {
+    clearForm() {
+      const currentIdSecretaria = this.form.idSecretaria;
+
       this.form = {
-        ...this.form,
         idDocumento: "",
-        nombreEvi: "",
-        descripcionEvi: "",
-        evidencias: "",
+        idSecretaria: currentIdSecretaria,
+        nombreDoc: "",
+        tipoDocumento: "",
+        fecha: "",
       };
       this.archivo = null;
       if (this.$refs.evidenciasInput && this.$refs.evidenciasInput.files) {
-        this.$refs.evidenciasInput.value = null; // <-- Reinicia el input del archivo
+        this.$refs.evidenciasInput.value = null;
       }
     },
     submitForm() {
       const formData = new FormData();
       formData.append("idDocumento", this.form.idDocumento);
       formData.append("idSecretaria", this.form.idSecretaria);
-      formData.append("nombreEvi", this.form.nombreEvi);
-      formData.append("descripcionEvi", this.form.descripcionEvi);
-      formData.append("evidencias", this.archivo); 
+      formData.append("nombreDoc", this.form.nombreDoc);
+      formData.append("idTipoDocumento",this.form.tipoDocumento.idTipoDocumento)
+      formData.append("fecha", this.form.fecha);
+      formData.append("evidencias", this.archivo);
 
-      if (
-        !this.form.nombreEvi ||
-        !this.form.descripcionEvi
-      ) {
+      if (!this.form.nombreDoc || !this.form.fecha) {
         Swal.fire({
           title: "Datos incompletos",
           text: "Por favor rellena todos los campos",
@@ -219,27 +276,30 @@ export default {
         return;
       }
 
-      let promise; 
+      let promise;
       if (!this.form.idDocumento) {
-        promise = apiTutorias.insertarEvidencias(formData);
+        promise = apiSecretaria.insertarDocumentos(formData);
       } else {
-        promise = apiTutorias.actualizarEvidencias(this.form.idDocumento,formData);
+        promise = apiSecretaria.actualizarDocumentos(
+          this.form.idDocumento,
+          formData
+        );
       }
       promise
         .then((res) => {
           const message = this.form.idDocumento
-            ? "La actividad se ha actualizado correctamente"
-            : "La actividad se ha insertado correctamente";
+            ? "El Documento se ha actualizado correctamente"
+            : "El Documento se ha insertado correctamente";
 
           Swal.fire({
             title: this.form.idDocumento
-              ? "Actividad actualizada"
-              : "Actividad insertada",
+              ? "Documento actualizada"
+              : "Documento insertada",
             text: message,
             icon: "success",
           });
 
-          this.resetForm();
+          this.clearForm();
           this.obtenerData();
         })
         .catch((err) => {
@@ -247,7 +307,7 @@ export default {
             title: "Error",
             text:
               "Hubo un error al " +
-              (this.form.idSecretaria ? "actualizar" : "insertar") +
+              (this.form.idDocumento ? "actualizar" : "insertar") +
               " la actividad",
             icon: "error",
           });
@@ -265,15 +325,14 @@ export default {
         cancelButtonText: "Cancelar",
       }).then((result) => {
         if (result.isConfirmed) {
-          apiTutorias
-            .eliminarEvidencia(id)
+          apiSecretaria
+            .eliminarDocumentos(id)
             .then(() => {
               Swal.fire(
                 "Eliminado",
                 "La evidencia ha sido eliminada.",
                 "success"
               );
-              console.log("holalaa llegeu aqu");
               this.obtenerData();
             })
             .catch((err) => {
@@ -284,21 +343,32 @@ export default {
       });
     },
     cargarEvidenciaParaEditar(id) {
-        // Buscar la evidencia con el id dado
-        const evidencia = this.evidencias.find(ev => ev.idDocumento == id);
+      // Buscar la evidencia con el id dado
+      const evidencia = this.evidencias.find((ev) => ev.idDocumento == id);
 
-        // Si no se encuentra la evidencia, manejar el error apropiadamente
-        if (!evidencia) {
-            console.error("No se pudo encontrar la evidencia para editar");
-            Swal.fire("Error", "No se pudo encontrar la evidencia para editar.", "error");
-            return;
-        }
+      // Si no se encuentra la evidencia, manejar el error apropiadamente
+      if (!evidencia) {
+        Swal.fire(
+          "Error",
+          "No se pudo encontrar la evidencia para editar.",
+          "error"
+        );
+        return;
+      }
 
-        // Asignar los datos de la evidencia al formulario
-        this.form.idDocumento = evidencia.idDocumento;
-        this.form.nombreEvi = evidencia.nombreEvi;
-        this.form.descripcionEvi = evidencia.descripcionEvi;
-        // (y cualquier otro campo que necesites)
+      // Asignar los datos de la evidencia al formulario
+      this.form.idDocumento = evidencia.idDocumento;
+      this.form.nombreDoc = evidencia.nombreDoc;
+      // Formatear la fecha correctamente para el input de tipo fecha
+      if (evidencia.fecha) {
+        this.form.fecha = dayjs(evidencia.fecha).format("YYYY-MM-DD");
+      } else {
+        this.form.fecha = "";
+      }
+
+      this.form.tipoDocumento = this.dataTipoDocumento.find(
+        (tipoDoc) => tipoDoc.descripcion === evidencia.descripcion
+      );
     },
   },
 };

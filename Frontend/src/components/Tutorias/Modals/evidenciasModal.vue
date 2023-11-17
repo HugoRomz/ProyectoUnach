@@ -181,15 +181,13 @@ export default {
     handleFileUpload() {
       this.archivo = this.$refs.evidenciasInput.files[0];
     },
-    obtenerData() {
-      apiTutorias
-        .obtenerEvidencias(this.actividadId)
-        .then((response) => {
-          this.evidencias = response.data;
-        })
-        .catch((error) => {
-          console.error("Error al obtener las actividades:", error);
-        });
+    async obtenerData() {
+      try {
+        const response = await apiTutorias.obtenerEvidencias(this.actividadId);
+        this.evidencias = response.data;
+      } catch (error) {
+        console.error("Error al obtener las actividades:", error);
+      }
     },
     resetForm() {
       this.form = {
@@ -210,12 +208,9 @@ export default {
       formData.append("idActTutorias", this.form.idActTutorias);
       formData.append("nombreEvi", this.form.nombreEvi);
       formData.append("descripcionEvi", this.form.descripcionEvi);
-      formData.append("evidencias", this.archivo); 
+      formData.append("evidencias", this.archivo);
 
-      if (
-        !this.form.nombreEvi ||
-        !this.form.descripcionEvi
-      ) {
+      if (!this.form.nombreEvi || !this.form.descripcionEvi) {
         Swal.fire({
           title: "Datos incompletos",
           text: "Por favor rellena todos los campos",
@@ -224,11 +219,14 @@ export default {
         return;
       }
 
-      let promise; 
+      let promise;
       if (!this.form.idEvidenciasT) {
         promise = apiTutorias.insertarEvidencias(formData);
       } else {
-        promise = apiTutorias.actualizarEvidencias(this.form.idEvidenciasT,formData);
+        promise = apiTutorias.actualizarEvidencias(
+          this.form.idEvidenciasT,
+          formData
+        );
       }
       promise
         .then((res) => {
@@ -289,21 +287,24 @@ export default {
       });
     },
     cargarEvidenciaParaEditar(id) {
-        // Buscar la evidencia con el id dado
-        const evidencia = this.evidencias.find(ev => ev.idevidenciasT == id);
+      // Buscar la evidencia con el id dado
+      const evidencia = this.evidencias.find((ev) => ev.idevidenciasT == id);
 
-        // Si no se encuentra la evidencia, manejar el error apropiadamente
-        if (!evidencia) {
-            console.error("No se pudo encontrar la evidencia para editar");
-            Swal.fire("Error", "No se pudo encontrar la evidencia para editar.", "error");
-            return;
-        }
+      if (!evidencia) {
+        console.error("No se pudo encontrar la evidencia para editar");
+        Swal.fire(
+          "Error",
+          "No se pudo encontrar la evidencia para editar.",
+          "error"
+        );
+        return;
+      }
 
-        // Asignar los datos de la evidencia al formulario
-        this.form.idEvidenciasT = evidencia.idevidenciasT;
-        this.form.nombreEvi = evidencia.nombreEvi;
-        this.form.descripcionEvi = evidencia.descripcionEvi;
-        // (y cualquier otro campo que necesites)
+      // Asignar los datos de la evidencia al formulario
+      this.form.idEvidenciasT = evidencia.idevidenciasT;
+      this.form.nombreEvi = evidencia.nombreEvi;
+      this.form.descripcionEvi = evidencia.descripcionEvi;
+      // (y cualquier otro campo que necesites)
     },
   },
 };

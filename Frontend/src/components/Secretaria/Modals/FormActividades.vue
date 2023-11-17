@@ -260,11 +260,11 @@ export default {
 
       if (this.form.idSecretaria === null || this.form.idSecretaria === "") {
         apiSecretaria
-          .insertarDocente(data)
+          .insertarDocente(data) 
           .then((response) => {
             Swal.fire({
-              title: "Actividad registrada",
-              text: "La actividad se ha registrado exitosamente",
+              title: "Documento insertado",
+              text: "El Documento se ha insertado exitosamente",
               icon: "success",
             });
             this.closeModal();
@@ -273,7 +273,7 @@ export default {
           .catch((error) => {
             Swal.fire({
               title: "Error",
-              text: "Hubo un error enviando el formulario",
+              text: "Hubo un error insertado la Documento",
               icon: "error",
             });
           });
@@ -285,8 +285,8 @@ export default {
           .editarDocente(this.form.idSecretaria, data) // Envía el FormData con el archivo
           .then((response) => {
             Swal.fire({
-              title: "Actividad editada",
-              text: "La actividad se ha editado exitosamente",
+              title: "Documento editada",
+              text: "El Documento se ha editado exitosamente",
               icon: "success",
             });
             this.closeModal();

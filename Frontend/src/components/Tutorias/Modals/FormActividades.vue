@@ -46,7 +46,7 @@
               class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
               for="prog_academico"
             >
-              Tipo de Actividad:
+              Programa Academico:
             </label>
             <vue-multiselect
               id="prog_academico"

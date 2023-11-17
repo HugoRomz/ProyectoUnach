@@ -186,22 +186,22 @@ export default {
         tipoColaborador: "",
       };
     },
-    obtenerColaboradores() {
-      apiInvestigacion
-        .obtenerColaboradores(this.projectId)
-        .then((response) => {
-          this.colaboradores = response.data;
-        })
-        .catch((error) => {
-          console.error("Error al obtener los colaboradores:", error);
-        });
+    async obtenerColaboradores() {
+      try {
+        const response = await apiInvestigacion.obtenerColaboradores(
+          this.projectId
+        );
+        this.colaboradores = response.data;
+        // Ahora puedes buscar en this.colaboradores después de esta línea
+      } catch (error) {
+        console.error("Error al obtener los colaboradores:", error);
+      }
     },
     cargarColaboradorParaEditar(id) {
-      // Buscar al colaborador con el id dado
       const colaborador = this.colaboradores.find(
         (col) => col.id_colaborador == id
       );
-      // Si no se encuentra el colaborador, manejar el error apropiadamente
+
       if (!colaborador) {
         console.error("No se pudo encontrar al colaborador para editar");
         Swal.fire(

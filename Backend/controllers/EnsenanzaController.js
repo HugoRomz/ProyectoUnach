@@ -440,6 +440,7 @@ function insertarDocente(req, res) {
       nombre_Doce: req.body.nombre_Doce,
       apellido_paterno: req.body.apellido_paterno,
       apellido_materno: req.body.apellido_materno,
+      status: 1
     };
   };
   formData()

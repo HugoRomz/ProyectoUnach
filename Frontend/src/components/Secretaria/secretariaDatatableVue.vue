@@ -27,7 +27,7 @@
   <!-- Modal Component -->
   <evidenciasModal
     :show="isModalVisible"
-    :actividadId="modalData"
+    :idSecretaria="modalData"
     @close="isModalVisible = false"
   ></evidenciasModal>
 </template>
@@ -185,6 +185,9 @@ export default {
     });
   },
   methods: {
+    updateData() {
+      this.obtenerData(); // Esta función ya la tienes definida para obtener las actividades
+    },
     obtenerData() {
       apiSecretaria
         .obtenerSecretaria()
@@ -240,6 +243,7 @@ export default {
       this.showModal = false;
     },
     mostrarDetalleActividad(id) {
+      console.log(id);
       this.modalData = id; 
       this.isModalVisible = true;
     },

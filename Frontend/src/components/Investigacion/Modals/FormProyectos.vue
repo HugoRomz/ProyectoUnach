@@ -123,24 +123,6 @@
                 />
               </div>
             </div>
-            <!-- 8. Status -->
-            <div class="mb-6">
-              <label
-                class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                for="status"
-              >
-                Status:
-              </label>
-              <select
-                id="status"
-                v-model="form.status"
-                class="w-full p-2 rounded border focus:border-blue-400"
-              >
-                <option value="Activo">Activo</option>
-                <option value="Pendiente">Pendiente</option>
-                <option value="Pendiente">Finalizado</option>
-              </select>
-            </div>
             <!-- 9. Recursos Utilizados -->
             <div class="mb-6">
               <label
@@ -215,7 +197,6 @@ export default {
         fechaFin: "",
         lineaInvestigacion: "",
         liderProyecto: "",
-        status: "",
         recursosUtilizados: "",
         tipoRecurso: "",
       },
@@ -273,7 +254,6 @@ export default {
         this.form.fechaFin = formattedDateFinal;
         this.form.lineaInvestigacion = response.data[0].linea_investigacion;
         this.form.liderProyecto = response.data[0].lider_de_proyecto;
-        this.form.status = response.data[0].estatus;
         this.form.recursosUtilizados = response.data[0].recursos_utilizados;
         this.form.tipoRecurso = response.data[0].tipo_de_recurso;
 
@@ -301,7 +281,6 @@ export default {
         fechaFin: "",
         lineaInvestigacion: "",
         liderProyecto: "",
-        status: "",
         recursosUtilizados: "",
         tipoRecurso: "",
       };
@@ -317,7 +296,6 @@ export default {
         fechaFin: this.form.fechaFin,
         lineaInvestigacion: this.form.lineaInvestigacion,
         liderProyecto: this.form.liderProyecto,
-        status: this.form.status,
         recursosUtilizados: this.form.recursosUtilizados,
         tipoRecurso: this.form.tipoRecurso,
       };
@@ -330,7 +308,6 @@ export default {
         !this.form.fechaFin ||
         !this.form.lineaInvestigacion ||
         !this.form.liderProyecto ||
-        !this.form.status ||
         !this.form.recursosUtilizados ||
         !this.form.tipoRecurso
       ) {

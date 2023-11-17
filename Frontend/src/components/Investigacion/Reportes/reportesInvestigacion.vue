@@ -1,28 +1,68 @@
 <template>
   <HeaderModule titulo="Investigación - Reportes" ciclo="AGTO - NOV 2023" />
-  <div class="container mx-auto flex flex-col justify-center items-center h-screen w-full md:w-3/4 lg:w-1/2 px-4">
+  <div
+    class="w-full bg-white dark:bg-[#404040] dark:shadow-gray-950 shadow-xl border rounded-lg mb-3 p-5 border-transparent"
+  >
     <!-- Otros elementos de tu plantilla... -->
-    <div v-if="!showModal1 && !showModal2" @click="showModal1 = true" class="flex justify-center items-center space-x-4">
+    <div
+      v-if="!showModal1 && !showModal2"
+      @click="showModal1 = true"
+      class="flex space-x-9"
+    >
       <button
-        class="bg-transparent border border-blue-500 text-blue-500 font-bold rounded transform transition duration-300 hover:scale-110 flex flex-col items-center justify-center p-4">
-        <img src="/path-to-your-image-1.png" alt="Icono 1" class="mb-2"> <!-- Ajusta el margen como desees -->
+        class="bg-transparent border border-blue-500 text-blue-500 font-bold rounded transform transition duration-300 hover:scale-110 flex flex-col items-center justify-center p-4"
+      >
+        <img
+          src="../../../assets/report/report.jpg"
+          alt="Icono 1"
+          class="w-24 h-24 mb-2"
+        />
+        <!-- Ajusta el margen como desees -->
         Reportes generados por estatus.
       </button>
-      <button @click.stop="showModal2 = true"
-        class="bg-transparent border border-green-500 text-green-500 font-bold rounded transform transition duration-300 hover:scale-110 flex flex-col items-center justify-center p-4">
-        <img src="/path-to-your-image-2.png" alt="Icono 2" class="mb-2">
+      <button
+        @click.stop="showModal2 = true"
+        class="bg-transparent border border-green-500 text-green-500 font-bold rounded transform transition duration-300 hover:scale-110 flex flex-col items-center justify-center p-4"
+      >
+        <img
+          src="../../../assets/report/3301542.png"
+          alt="Icono 2"
+          class="w-24 h-24 mb-2"
+        />
         Reportes generados por fecha.
       </button>
     </div>
+
     <div v-if="showModal1" class="">
       <!-- Contenido del Modal 1 -->
-      <div class="w-full bg-white shadow-xl border rounded-lg border-gray-300 mb-3">
+      <button
+        class="bg-primaryBlue p-2 rounded-xl text-white font-bold mb-5"
+        @click="showModal1 = false"
+      >
+        Regresar
+      </button>
+      <div
+        class="w-full bg-white shadow-xl border rounded-lg border-gray-300 mb-3"
+      >
         <div class="w-full p-4">
           <div class="w-full">
-            <button @click="generarPDFPorEstado(1)">Imprimir PDF de Proyectos Activos </button>
-            <button @click="generarPDFPorEstado(2)">Imprimir PDF de Proyectos Pendientes </button>
-            <button @click="generarPDFPorEstado(3)">Imprimir PDF de Proyectos Finalizados </button>
-            <DataTableComponent :data="proyectos" :columns="columns" :dtoptions="dtoptions">
+            <h1 class=" font-bold text-zinc-800 mb-2">Imprimir por:</h1>
+            <div class="mb-3 flex gap-5">
+              <button class="bg-SecundaryGold p-2 rounded-md text-white font-bold hover:bg-primaryBlue" @click="generarPDFPorEstado(1)">
+                Proyectos Activos
+              </button>
+              <button class="bg-SecundaryGold p-2 rounded-md text-white font-bold hover:bg-primaryBlue" @click="generarPDFPorEstado(2)">
+                Proyectos Pendientes
+              </button>
+              <button class="bg-SecundaryGold p-2 rounded-md text-white font-bold hover:bg-primaryBlue" @click="generarPDFPorEstado(3)">
+                Proyectos Finalizados
+              </button>
+            </div>
+            <DataTableComponent
+              :data="proyectos"
+              :columns="columns"
+              :dtoptions="dtoptions"
+            >
               <template #headers>
                 <th>ID</th>
                 <th>Nombre</th>
@@ -37,23 +77,45 @@
           </div>
         </div>
       </div>
-      <button @click="showModal1 = false"
-  class="absolute top-0 left-0 z-50 rounded-full h-8 w-8 bg-red-500 flex items-center justify-center text-white">
-  <span class="font-semibold">X</span>
-</button>
     </div>
     <!-- Modal 2 -->
-    <div v-if="showModal2" class="... clases para estilos del modal ...">
-      <input type="date" v-model="fechaInicio" 
-  class="p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300 ease-in-out">
-<input type="date" v-model="fechaFin" 
-  class="p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300 ease-in-out">
-  <button @click="generarPDFPorFechas">Generar Reporte</button>
+    <div v-if="showModal2" class="">
+      <button
+        class="bg-primaryBlue p-2 rounded-xl text-white font-bold mb-5"
+        @click="showModal2 = false"
+      >
+        Regresar
+      </button>
+
+      <div class="my-3 flex gap-5">
+        <input
+          type="date"
+          v-model="fechaInicio"
+          class="p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-SecundaryGold focus:border-transparent transition duration-300 ease-in-out"
+        />
+        <input
+          type="date"
+          v-model="fechaFin"
+          class="p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-SecundaryGold focus:border-transparent transition duration-300 ease-in-out"
+        />
+        <button
+          class="bg-SecundaryGold p-3 rounded-xl text-white font-bold hover:bg-primaryBlue"
+          @click="generarPDFPorFechas"
+        >
+          Generar Reporte
+        </button>
+      </div>
       <!-- Contenido del Modal 2 -->
-      <div class="w-full bg-white shadow-xl border rounded-lg border-gray-300 mb-3">
+      <div
+        class="w-full bg-white shadow-xl border rounded-lg border-gray-300 mb-3"
+      >
         <div class="w-full p-4">
           <div class="w-full">
-            <DataTableComponent :data="proyectos" :columns="columns" :dtoptions="dtoptions">
+            <DataTableComponent
+              :data="proyectos"
+              :columns="columns"
+              :dtoptions="dtoptions"
+            >
               <template #headers>
                 <th>ID</th>
                 <th>Nombre</th>
@@ -63,33 +125,31 @@
                 <th>Linea de Investigacion</th>
                 <th>Lider del Proyecto</th>
                 <th>Estatus</th>
-                
               </template>
             </DataTableComponent>
           </div>
         </div>
       </div>
-      <button @click="showModal2 = false">Cerrar</button>
     </div>
   </div>
 </template>
 
 <script>
-import DataTableComponent from '../../Plantillas/DataTableComponent.vue';
-import apiInvestigacion from '../../../services/apiInvestigacion';
-import ModalFormComponent from '../../Investigacion/Modals/FormProyectos.vue'
-import dayjs from 'dayjs';
-import colaboradoresModal from '../../Investigacion/Modals/ColaboradoresModal.vue';
-import evidenciasModal from '../../Investigacion/Modals/EvidenciasModal.vue'
-import ProyectoDetallesModal from '../Modals/ProyectoDetallesModal.vue';
+import DataTableComponent from "../../Plantillas/DataTableComponent.vue";
+import apiInvestigacion from "../../../services/apiInvestigacion";
+import ModalFormComponent from "../../Investigacion/Modals/FormProyectos.vue";
+import dayjs from "dayjs";
+import colaboradoresModal from "../../Investigacion/Modals/ColaboradoresModal.vue";
+import evidenciasModal from "../../Investigacion/Modals/EvidenciasModal.vue";
+import ProyectoDetallesModal from "../Modals/ProyectoDetallesModal.vue";
 import HeaderModule from "../../HeaderModuleComponent.vue";
-import logoSuperior from '../../../assets/LogoSuperior';
-import logoInferior from '../../../assets/LogoInferior';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import logoSuperior from "../../../assets/LogoSuperior";
+import logoInferior from "../../../assets/LogoInferior";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 export default {
-  props:{
+  props: {
     projectData: {
       type: Object,
       default: () => ({}),
@@ -123,13 +183,13 @@ export default {
         { data: "id" },
         { data: "nombre" },
         {
-          data:"fecha_registro",
-          render: function(data,type,row){
+          data: "fecha_registro",
+          render: function (data, type, row) {
             if (type === "display" || type === "filter") {
               return dayjs(data).format("YYYY-MM-DD");
             }
             return data;
-          }
+          },
         },
         {
           data: "fecha_inicio",
@@ -161,11 +221,10 @@ export default {
             } else if (data == 3) {
               return '<span class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">Finalizado</span>';
             }
-          }
+          },
         },
       ],
       dtoptions: {
-        dom: "Bfrtip",
         language: {
           search: "Buscar",
           zeroRecords: "No hay registros para mostrar",
@@ -214,81 +273,94 @@ export default {
           this.cargarDatosParaEditar(id);
         }
       });
-
     });
   },
   methods: {
     toggleDarkMode() {
-      this.$store.commit('toggleDarkMode');
-      document.body.classList.toggle('dark-mode');
+      this.$store.commit("toggleDarkMode");
+      document.body.classList.toggle("dark-mode");
     },
     generarPDFPorEstado(estado) {
-  const proyectosFiltrados = this.proyectos.filter(p => p.estatus === estado);
+      const proyectosFiltrados = this.proyectos.filter(
+        (p) => p.estatus === estado
+      );
 
-  const doc = new jsPDF();
+      const doc = new jsPDF();
 
-  // Título del PDF
-  doc.setFontSize(18);
-  doc.text('Reporte de Proyectos: ' + estado, 10, 10);
+      // Título del PDF
+      doc.setFontSize(18);
+      doc.text("Reporte de Proyectos: " + estado, 10, 10);
 
-  // Convertir datos para AutoTable
-  const datosTabla = proyectosFiltrados.map(proyecto => [
-    proyecto.id,
-    proyecto.nombre,
-    // ... otros campos que quieras incluir
-  ]);
+      // Convertir datos para AutoTable
+      const datosTabla = proyectosFiltrados.map((proyecto) => [
+        proyecto.id,
+        proyecto.nombre,
+        // ... otros campos que quieras incluir
+      ]);
 
-  // Añadir tabla con AutoTable
-  doc.autoTable({
-    startY: 20, // Asegúrate de que esto esté debajo del título
-    head: [['ID', 'Nombre']], // ... otros encabezados de columna]],
-    body: datosTabla,
-    theme: 'grid',
-    styles: { fontSize: 10, cellPadding: 5, overflow: 'linebreak' },
-    headStyles: { fillColor: [0, 46, 99], textColor: 255 }, // Colores personalizados
-    columnStyles: {
-      0: { cellWidth: 15 }, // Ejemplo de ajustar el ancho de una columna
-      // ... ajustes para otras columnas
+      // Añadir tabla con AutoTable
+      doc.autoTable({
+        startY: 20, // Asegúrate de que esto esté debajo del título
+        head: [["ID", "Nombre"]], // ... otros encabezados de columna]],
+        body: datosTabla,
+        theme: "grid",
+        styles: { fontSize: 10, cellPadding: 5, overflow: "linebreak" },
+        headStyles: { fillColor: [0, 46, 99], textColor: 255 }, // Colores personalizados
+        columnStyles: {
+          0: { cellWidth: 15 }, // Ejemplo de ajustar el ancho de una columna
+          // ... ajustes para otras columnas
+        },
+        didDrawPage: function (data) {
+          // Esta función se puede usar para añadir cosas como números de página
+        },
+        // ... otras opciones y estilos de AutoTable
+      });
+
+      // Guardar el PDF generado
+      doc.save(`reporte_proyectos_${estado}.pdf`);
     },
-    didDrawPage: function(data) {
-      // Esta función se puede usar para añadir cosas como números de página
-    },
-    // ... otras opciones y estilos de AutoTable
-  });
-
-  // Guardar el PDF generado
-  doc.save(`reporte_proyectos_${estado}.pdf`);
-},
 
     generarPDFPorFechas() {
-    const fechaInicio = dayjs(this.fechaInicio);
-    const fechaFin = dayjs(this.fechaFin);
+      const fechaInicio = dayjs(this.fechaInicio);
+      const fechaFin = dayjs(this.fechaFin);
 
-    const proyectosFiltrados = this.proyectos.filter(p => 
-      dayjs(p.fecha_registro).isAfter(fechaInicio) && dayjs(p.fecha_registro).isBefore(fechaFin)
-    );
-    const datosTabla = proyectosFiltrados.map(proyecto => {
+      const proyectosFiltrados = this.proyectos.filter(
+        (p) =>
+          dayjs(p.fecha_registro).isAfter(fechaInicio) &&
+          dayjs(p.fecha_registro).isBefore(fechaFin)
+      );
+      const datosTabla = proyectosFiltrados.map((proyecto) => {
         return {
           id: proyecto.id,
           nombre: proyecto.nombre,
-          fecha_registro: dayjs(proyecto.fecha_registro).format('YYYY-MM-DD')
+          fecha_registro: dayjs(proyecto.fecha_registro).format("YYYY-MM-DD"),
         };
       });
-    const doc = new jsPDF();
-    
+      const doc = new jsPDF();
+
       //doc.text('Reporte de Proyectos por Fecha', 10, 10);
       doc.autoTable({
-        didDrawPage:(data)=>{
-          doc.addImage(logoSuperior,'JPEG',5,5,195,15);
-          const centroX = (doc.internal.pageSize.width / 2) - (100 / 2);
-          doc.addImage(logoInferior, 'JPEG', centroX, doc.internal.pageSize.height - 10, 100, 5);
+        didDrawPage: (data) => {
+          doc.addImage(logoSuperior, "JPEG", 5, 5, 195, 15);
+          const centroX = doc.internal.pageSize.width / 2 - 100 / 2;
+          doc.addImage(
+            logoInferior,
+            "JPEG",
+            centroX,
+            doc.internal.pageSize.height - 10,
+            100,
+            5
+          );
         },
-        head: [['ID', 'Nombre', 'Fecha Registro']],
-        body: datosTabla.map(proyecto => [proyecto.id, proyecto.nombre, proyecto.fecha_registro]),
+        head: [["ID", "Nombre", "Fecha Registro"]],
+        body: datosTabla.map((proyecto) => [
+          proyecto.id,
+          proyecto.nombre,
+          proyecto.fecha_registro,
+        ]),
         startY: 30,
         styles: { fontSize: 8 },
         // ... otras configuraciones de AutoTable ...
-      
       });
 
       doc.save(`reporte_proyectos_${this.fechaInicio}_${this.fechaFin}.pdf`);
@@ -347,5 +419,3 @@ body.dark-mode {
   /* Otros estilos para el modo oscuro */
 }
 </style>
-
-  

@@ -1,14 +1,14 @@
 <template>
   <div
     v-if="show"
-    class="fixed top-0 left-0 flex justify-center items-center h-screen w-screen z-50 "
+    class="fixed top-0 left-0 flex justify-center items-center h-screen w-screen z-50"
   >
     <button
       class="absolute inset-0 w-screen h-screen bg-black opacity-50 cursor-default"
       @click="$emit('close')"
     ></button>
     <div
-      class="relative bg-white dark:bg-[#404040] dark:shadow-gray-950  rounded-xl w-2/4 shadow-xl max-h-screen overflow-y-auto"
+      class="relative bg-white dark:bg-[#404040] dark:shadow-gray-950 rounded-xl w-2/4 shadow-xl max-h-screen overflow-y-auto"
     >
       <div
         class="modal-header bg-blue-900 flex justify-between items-center rounded-tl-lg rounded-tr-lg"
@@ -191,15 +191,13 @@ export default {
     handleFileUpload() {
       this.archivo = this.$refs.evidenciasInput.files[0];
     },
-    obtenerData() {
-      apiEnsenanza
-        .obtenerEvidencias(this.actividadId)
-        .then((response) => {
-          this.evidencias = response.data;
-        })
-        .catch((error) => {
-          console.error("Error al obtener las actividades:", error);
-        });
+    async obtenerData() {
+      try {
+        const response = await apiEnsenanza.obtenerEvidencias(this.actividadId);
+        this.evidencias = response.data;
+      } catch (error) {
+        console.error("Error al obtener las actividades:", error);
+      }
     },
     resetForm() {
       this.form = {
@@ -303,7 +301,6 @@ export default {
       // Buscar la evidencia con el id dado
       const evidencia = this.evidencias.find((ev) => ev.idevidenciasE == id);
 
-      // Si no se encuentra la evidencia, manejar el error apropiadamente
       if (!evidencia) {
         console.error("No se pudo encontrar la evidencia para editar");
         Swal.fire(
