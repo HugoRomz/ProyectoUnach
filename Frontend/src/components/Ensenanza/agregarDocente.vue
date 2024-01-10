@@ -104,13 +104,14 @@
           </div>
 
           <!-- Botón de envío del formulario -->
-          <div class="text-center mt-4">
+          <div class="text-center mt-4 space-x-4">
             <button
               type="submit"
               class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
             >
               Guardar
             </button>
+            <button type="reset" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Limpiar</button>
           </div>
         </form>
       </div>

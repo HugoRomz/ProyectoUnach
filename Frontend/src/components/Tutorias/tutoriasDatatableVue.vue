@@ -1,11 +1,40 @@
 <template>
+  <div v-if="mostrarSelectorFechas"
+    class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
+    <div class="p-5 border w-96 shadow-lg rounded-md bg-white">
+      <!-- Aquí tu interfaz de selección de fechas -->
+      <div class="flex flex-col items-center">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Seleccionar Rango de Fechas</h2>
+        <div class="mb-3 w-full">
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="fechaInicio">
+            Fecha Inicio
+          </label>
+          <input type="date" v-model="fechaInicio"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        </div>
+        <div class="mb-6 w-full">
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="fechaFin">
+            Fecha Fin
+          </label>
+          <input type="date" v-model="fechaFin"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        </div>
+        <div class="flex items-center justify-between space-x-4">
+          <button @click="generarReporte"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            Generar Reporte
+          </button>
+          <button @click="mostrarSelectorFechas = false"
+            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="w-full p-4">
     <div class="w-full">
-      <DataTableComponent
-        :data="actividades"
-        :columns="columns"
-        :dtoptions="dtoptions"
-      >
+      <DataTableComponent :data="actividades" :columns="columns" :dtoptions="dtoptions">
         <template #headers>
           <th>No_Actividad</th>
           <th>Nombre</th>
@@ -17,19 +46,11 @@
       </DataTableComponent>
     </div>
   </div>
-  <ModalFormComponent
-    :visible="showModal"
-    :id_act="editingId"
-    @update:visible="closeModal"
-    @activityChanged="obtenerActividades"
-  />
+  <ModalFormComponent :visible="showModal" :id_act="editingId" @update:visible="closeModal"
+    @activityChanged="obtenerActividades" />
 
   <!-- Modal Component -->
-  <evidenciasModal
-        :show="isModalVisible"
-        :actividadId="modalData"
-        @close="isModalVisible = false"
-      ></evidenciasModal>
+  <evidenciasModal :show="isModalVisible" :actividadId="modalData" @close="isModalVisible = false"></evidenciasModal>
 </template>
 
 <script>
@@ -37,6 +58,8 @@ import api from "../../services/apiTutorias";
 import DataTableComponent from "../Plantillas/DataTableComponent.vue"; // Asegúrate de ajustar la ruta
 import Swal from "sweetalert2";
 import dayjs from "dayjs";
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 import ModalFormComponent from "../Tutorias/Modals/FormActividades.vue";
 import logoSuperior from "../../assets/LogoSuperior";
 import logoInferior from "../../assets/LogoInferior";
@@ -48,8 +71,15 @@ export default {
     ModalFormComponent,
     evidenciasModal
   },
+  props: {
+    actividadesT: Array,
+    idActividad: Number,
+  },
   data() {
     return {
+      fechaInicio: null,
+      fechaFin: null,
+      mostrarSelectorFechas: false,
       isModalVisible: false,
       modalData: "",
       actividades: [],
@@ -108,15 +138,15 @@ export default {
             customize: function (doc) {
               // Personalizar el documento PDF aquí
 
-               // Añadir margen superior al título
-          if (doc.content[0].text) { // Verifica si hay un título
-            doc.content[0].margin = [0, 10, 0, 0]; // 50 es el margen superior
-          }
+              // Añadir margen superior al título
+              if (doc.content[0].text) { // Verifica si hay un título
+                doc.content[0].margin = [0, 10, 0, 0]; // 50 es el margen superior
+              }
 
-          // Añadir margen superior a la tabla para moverla hacia abajo
-          if (doc.content[1].table) { // Verifica si hay una tabla
-            doc.content[1].margin = [0, 10, 0, 0]; // 70 es el margen superior
-          }
+              // Añadir margen superior a la tabla para moverla hacia abajo
+              if (doc.content[1].table) { // Verifica si hay una tabla
+                doc.content[1].margin = [0, 10, 0, 0]; // 70 es el margen superior
+              }
               doc['header'] = function (currentPage, pageCount, pageSize) {
                 return {
                   image: logoSuperior,
@@ -149,6 +179,14 @@ export default {
             text: "Copiar Texto",
             className: "bg-slate-300 btn btn-light border-0",
           },
+          {
+            title: "Generar Reporte",
+            text: "Reportes",
+            className: "bg-cyan-500 text-white btn hover:bg-purple-600 hover:text-white",
+            action: function (e, dt, node, config) {
+              this.abrirSelectorFechas(); // Llamada al método para generar el reporte
+            }.bind(this),
+          },
         ],
       },
       // Para el formulario y la ventana flotante
@@ -165,9 +203,19 @@ export default {
       editingId: null, // ID del elemento que se está editando
     };
   },
+  computed: {
+    actividadesFiltradas() {
+      if (this.idActividad) {
+        return this.actividades.filter(
+          (actividad) => actividad.idtipoActividad === this.idActividad
+        );
+      }
+      return this.actividades;
+    },
+  },
+
   mounted() {
     this.obtenerActividades();
-
     this.$nextTick(() => {
       document.addEventListener("click", (event) => {
         // Verificar si se hizo clic en el botón de editar
@@ -189,8 +237,90 @@ export default {
         }
       });
     });
+
   },
   methods: {
+    abrirSelectorFechas() {
+      this.mostrarSelectorFechas = true;
+    },
+    generarReporte() {
+      if (this.fechaInicio && this.fechaFin) {
+        // Resta un día a la fecha de inicio para incluir el día completo desde el principio
+        const fechaInicio = dayjs(this.fechaInicio).startOf('day');
+        // Ajusta la fecha de fin para incluir el día completo hasta el final
+        const fechaFin = dayjs(this.fechaFin).endOf('day');
+
+        // Filtra las actividades para incluir desde el comienzo del día de la fecha de inicio hasta el final del día de la fecha de fin
+        const actividadesFiltradas = this.actividades.filter(actividad =>
+          dayjs(actividad.fechaActTutorias).isAfter(fechaInicio) && dayjs(actividad.fechaActTutorias).isBefore(fechaFin)
+        );
+
+
+        if (actividadesFiltradas.length === 0) {
+          // No se encontraron reportes en esas fechas
+          Swal.fire({
+            title: 'Sin Resultados',
+            text: 'No se encontraron reportes en el rango de fechas seleccionado.',
+            icon: 'info',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+          });
+        } else {
+
+          // Mapea las actividades filtradas para la tabla del PDF
+          const datosTabla = actividadesFiltradas.map(actividad => {
+            return {
+              id: actividad.idActTutorias,
+              nombre: actividad.nombreActTutorias,
+              descripcion: actividad.descripcionActTutorias,
+              fecha: dayjs(actividad.fechaActTutorias).format('YYYY-MM-DD'),
+              prog_academico: actividad.prog_academico
+            };
+          });
+
+          // Crear un nuevo documento PDF
+          const doc = new jsPDF();
+
+          // Agregar encabezados y contenido a la tabla
+          doc.autoTable({
+            didDrawPage: (data) => {
+              // Agrega logotipos o cualquier otra personalización aquí
+              doc.addImage(logoSuperior, 'JPEG', 5, 5, 195, 15);
+              const centroX = (doc.internal.pageSize.width / 2) - (100 / 2);
+              doc.addImage(logoInferior, 'JPEG', centroX, doc.internal.pageSize.height - 10, 100, 5);
+            },
+            head: [['No_Actividad', 'Nombre', 'Descripción', 'Fecha']],
+            body: datosTabla.map(actividad => [actividad.id, actividad.nombre, actividad.descripcion, actividad.fecha]),
+            startY: 30,
+            styles: { fontSize: 8 },
+          });
+
+          // Guardar el PDF
+          doc.save(`reporte_actividades_${this.fechaInicio}_${this.fechaFin}.pdf`);
+
+          this.fechaInicio = null;
+          this.fechaFin = null;
+
+          this.mostrarSelectorFechas = false; // Cerrar el selector de fechas
+          Swal.fire({
+            title: '¡Éxito!',
+            text: 'El reporte se ha generado correctamente.',
+            icon: 'success',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+          });
+        }
+      } else {
+        // Mostrar alerta de error si las fechas no son válidas
+        Swal.fire({
+          title: 'Error',
+          text: 'Por favor, selecciona un rango de fechas válido.',
+          icon: 'error',
+          confirmButtonColor: '#d33',
+          confirmButtonText: 'OK'
+        });
+      }
+    },
     obtenerActividades() {
       api
         .obtenerActividades()
@@ -258,6 +388,6 @@ export default {
       this.isModalVisible = true;
     },
   },
-  
+
 };
 </script>
