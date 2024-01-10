@@ -8,7 +8,7 @@
       class="w-full h-28 border-b border-blue-900 flex px-4 items-center mb-8"
     >
       <a href="/home">
-        <img class="h-24" src="../../assets/unach.png" alt="Logo unach 2023" />
+        <img class="h-24 hidden md:flex" src="../../assets/unach.png" alt="Logo unach 2023" />
       </a>
     </div>
     <div class="mb-4 px-4">

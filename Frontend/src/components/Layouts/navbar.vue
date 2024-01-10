@@ -1,5 +1,5 @@
 <template>
-    <div class="sticky top-2 z-40 mx-4 my-2">
+    <div class="sticky top-2 z-40 mx-2 md:mx-4 my-2">
     <div
       class="w-full h-20 px-6 py-3 bg-SecundaryGold dark:bg-[#2D3748] border-b flex items-center justify-between rounded-lg border-none"
     >
@@ -26,7 +26,7 @@
 
       <!-- right navbar -->
       <div class="flex items-center relative">
-        <button @click="toggleDarkMode" class="mr-8 text-xl">
+        <!-- <button @click="toggleDarkMode" class="mr-8 text-xl">
           <i
             :class="
               isDarkMode
@@ -34,7 +34,7 @@
                 : 'pi pi-moon text-white'
             "
           ></i>
-        </button>
+        </button> -->
 
         <img
           src="../../assets/profile.svg"
