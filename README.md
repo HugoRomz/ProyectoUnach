@@ -149,7 +149,9 @@ Para el Backend:
 ## Usage
 
 Para loguearte, puedes hacerlo con el administrador:
+<br>
 User: ABCE121212ABC
+<br>
 password: root
 
 
