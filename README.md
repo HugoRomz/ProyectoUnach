@@ -148,6 +148,11 @@ Para el Backend:
 <!-- USAGE EXAMPLES -->
 ## Usage
 
+Para loguearte, puedes hacerlo con el administrador:
+User: ABCE121212ABC
+password: root
+
+
 Usalo a tu modo jajaj, [AQUI se anexara el manual de usuario en un futuro]
 
 
